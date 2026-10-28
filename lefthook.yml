@@ -1,0 +1,20 @@
+# Git hooks shared by the team. Installed by `npm install` (see CONTRIBUTING.md).
+commit-msg:
+  commands:
+    commitlint:
+      run: npx --no -- commitlint --edit {1}
+
+pre-commit:
+  parallel: true
+  commands:
+    dart-format:
+      glob: "*.dart"
+      run: dart format --output=none --set-exit-if-changed {staged_files}
+
+pre-push:
+  parallel: true
+  commands:
+    architecture:
+      run: node tool/check-architecture.mjs
+    test-names:
+      run: node tool/check-test-names.mjs
