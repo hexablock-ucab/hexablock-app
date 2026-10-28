@@ -1,4 +1,4 @@
-# Monthly dependency updates, at most two pull requests per ecosystem.
+# Monthly dependency updates, grouped into one pull request per ecosystem.
 # Each update is a normal PR: it runs CI and needs a review.
 version: 2
 updates:
@@ -7,6 +7,9 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      all-updates:
+        patterns: ["*"]
     commit-message:
       prefix: chore
       include: scope
@@ -15,6 +18,9 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      all-updates:
+        patterns: ["*"]
     commit-message:
       prefix: ci
   - package-ecosystem: npm
@@ -22,6 +28,9 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      all-updates:
+        patterns: ["*"]
     commit-message:
       prefix: chore
       include: scope
