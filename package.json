@@ -1,0 +1,16 @@
+{
+  "name": "hexablock-app-tooling",
+  "private": true,
+  "description": "Git tooling only (commitlint and lefthook). The app itself is a Dart workspace.",
+  "scripts": {
+    "prepare": "lefthook install",
+    "check:architecture": "node tool/check-architecture.mjs",
+    "check:test-names": "node tool/check-test-names.mjs",
+    "check:coverage": "node tool/check-coverage.mjs"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "lefthook": "^1.7.0"
+  }
+}

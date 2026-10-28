@@ -1,0 +1,42 @@
+{
+  "$comment": "Architecture rules as checks (C-05, NFR-03, NFR-05). Paths follow the PROPOSED layout of ADR-0003; update them in the same PR that accepts or changes that ADR. Rules whose folders do not exist yet are skipped.",
+  "sourceExtensions": [".dart"],
+  "rules": [
+    {
+      "id": "domain-is-pure-dart",
+      "paths": ["packages/hexablock_engine/lib"],
+      "forbidden": [
+        { "pattern": "import\\s+['\"]package:flutter", "reason": "The domain must not depend on Flutter." },
+        { "pattern": "import\\s+['\"]dart:(io|ui|html)", "reason": "The domain must not depend on I/O or the UI runtime." },
+        { "pattern": "import\\s+['\"]package:(http|dio|shared_preferences|sqflite|hive)", "reason": "The domain must not depend on network or storage libraries." },
+        { "pattern": "import\\s+['\"]package:hexablock_(application|adapters|app)", "reason": "Dependency Rule: the domain must not import outer layers." },
+        { "pattern": "\\bRandom\\(", "reason": "Randomness is injected through a port, never created in the domain (NFR-12)." }
+      ]
+    },
+    {
+      "id": "use-cases-depend-only-on-domain",
+      "paths": ["packages/hexablock_application/lib"],
+      "forbidden": [
+        { "pattern": "import\\s+['\"]package:flutter", "reason": "Use cases must not depend on Flutter." },
+        { "pattern": "import\\s+['\"]dart:(io|ui|html)", "reason": "Use cases must not depend on I/O or the UI runtime." },
+        { "pattern": "import\\s+['\"]package:(http|dio|shared_preferences|sqflite|hive)", "reason": "Use cases depend on ports, not on network or storage libraries." },
+        { "pattern": "import\\s+['\"]package:hexablock_(adapters|app)", "reason": "Dependency Rule: use cases must not import outer layers." }
+      ]
+    },
+    {
+      "id": "adapters-do-not-import-the-app",
+      "paths": ["packages/hexablock_adapters/lib"],
+      "forbidden": [
+        { "pattern": "import\\s+['\"]package:hexablock_app", "reason": "Dependency Rule: adapters must not import the framework layer." }
+      ]
+    },
+    {
+      "id": "engine-has-no-variant-conditionals",
+      "paths": ["packages/hexablock_engine/lib/src/engine"],
+      "forbidden": [
+        { "pattern": "\\bis\\s+Hexa(Lines|Fit|Sort|Merge)", "reason": "LSP/OCP: the engine never checks the concrete variant type (NFR-05)." },
+        { "pattern": "Hexa(Lines|Fit|Sort|Merge)", "reason": "The generic engine must not mention a concrete variant (NFR-01)." }
+      ]
+    }
+  ]
+}
