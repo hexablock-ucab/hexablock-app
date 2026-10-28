@@ -20,7 +20,7 @@ ODD is the workflow of this repository. It applies spec-driven principles (Marti
 
 For a substantial task:
 
-1. **Explore.** Delegate read-only mapping to `odd-explore`. Read the requirement IDs the task touches in `docs/requirements.md` and the relevant ADRs.
+1. **Explore.** Delegate read-only mapping to `odd-explore`. Read the requirement IDs the task touches in `docs/requirements.md`, the relevant ADRs and, when available, the assignment section they trace to (see *Course sources*).
 2. **Resolve uncertainty.** If a real decision is open, ask the user. Use the `grill-me` skill for design questions and `weigh-options` when two options compete. Never decide architecture silently.
 3. **Track.** Create `odd/tasks/NNNN-<slug>.md` from `odd/_TEMPLATE.md` with the `odd-task` skill. Each spec `S#` links to requirement IDs. Copy the user's request verbatim into `## Log`.
 4. **Implement.** Delegate bounded work to `odd-worker`. Always pass `## Allowed edit surfaces` (exact paths) and `## Verification` (exact commands).
@@ -28,6 +28,15 @@ For a substantial task:
 6. **Close.** Update the README sections, `docs/EXTENSIBILITY.md` and diagrams if needed. Run `ci-local` and `log-ai-usage`. Ship with the `ship` skill.
 
 Keep the task document current. Append every user decision and every verdict to `## Log` as it happens. The document is what survives a context reset.
+
+## Course sources (local, outside this repository)
+
+Each teammate's setup can link two read-only folders of the team's private workspace through the personal `.claude/settings.local.json`:
+
+- `../hexablock-workspace/context/proyecto/ENUNCIADO_HexaBlockSuite_v1.0.md`: the assignment. It overrides every other source, and `docs/requirements.md` traces to it. Read the section itself; do not rely on a summary.
+- `../hexablock-workspace/library/README.md`: maps each topic (Clean Architecture, SOLID, GoF patterns, generics, AOP, testing, UML) to the chapters of the books the professor published. Read only the chapter you need; each book's `_INDEX.md` lists sizes in tokens.
+
+Never copy text from these folders into this repository: the books are copyrighted and the course material is internal. Cite author and chapter in ADRs and the README instead. If the folders are missing, say so and continue with `docs/requirements.md`.
 
 ## Delegation routing
 
