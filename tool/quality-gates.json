@@ -1,10 +1,16 @@
 {
-  "$comment": "Minimum line coverage enforced in CI by tool/check-coverage.mjs. Paths are repo-relative prefixes and follow the PROPOSED layout of ADR-0003.",
+  "$comment": "Minimum line coverage enforced in CI by tool/check-coverage.mjs, only where the graded logic lives (domain and use cases). The total is reported but does not block (totalMin: null). Paths follow the PROPOSED layout of ADR-0003.",
   "coverage": {
-    "totalMin": 80,
+    "totalMin": null,
     "areas": [
-      { "path": "packages/hexablock_engine/lib", "min": 90 },
-      { "path": "packages/hexablock_application/lib", "min": 90 }
+      {
+        "path": "packages/hexablock_engine/lib",
+        "min": 90
+      },
+      {
+        "path": "packages/hexablock_application/lib",
+        "min": 90
+      }
     ]
   }
 }

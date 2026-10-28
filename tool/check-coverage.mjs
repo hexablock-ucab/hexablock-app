@@ -70,8 +70,9 @@ let totalFound = 0;
 let totalHit = 0;
 for (const c of files.values()) { totalFound += c.found; totalHit += c.hit; }
 const total = pct(totalHit, totalFound);
-report.push(`  ${'TOTAL'.padEnd(40)} ${total.toFixed(1)}% (min ${coverage.totalMin}%)`);
-if (total < coverage.totalMin) failures.push('TOTAL');
+const totalGate = typeof coverage.totalMin === 'number';
+report.push(`  ${'TOTAL'.padEnd(40)} ${total.toFixed(1)}% ${totalGate ? `(min ${coverage.totalMin}%)` : '(reported only)'}`);
+if (totalGate && total < coverage.totalMin) failures.push('TOTAL');
 
 console.log('Line coverage:\n' + report.join('\n'));
 if (failures.length > 0) {

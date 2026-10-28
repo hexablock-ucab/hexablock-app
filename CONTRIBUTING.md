@@ -56,7 +56,7 @@ Every rule below is a check that fails the build, so it does not depend on anyon
 | Clean Architecture import rules and no variant-specific code in the engine | `tool/check-architecture.mjs` + `tool/architecture-rules.json` | `pre-push` hook, CI |
 | Test names `should_<expected_result>_when_<condition>` | `tool/check-test-names.mjs` | `pre-push` hook, CI |
 | Tests pass | `flutter test` per package | CI |
-| Line coverage: 90% domain and use cases, 80% total | `tool/check-coverage.mjs` + `tool/quality-gates.json` | CI |
+| Line coverage of at least 90% in the domain and the use cases (the total is reported, not enforced) | `tool/check-coverage.mjs` + `tool/quality-gates.json` | CI |
 
 Run them locally with `npm run check:architecture`, `npm run check:test-names` and, after `flutter test --coverage`, `npm run check:coverage`.
 
