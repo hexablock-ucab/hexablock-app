@@ -1,0 +1,31 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+coverage/
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec_overrides.yaml
+**/android/key.properties
+**/android/app/upload-keystore.jks
+*.jks
+*.keystore
+
+# Node tooling (commitlint, lefthook)
+node_modules/
+
+# Secrets
+.env
+.env.*
+
+# Claude Code personal files
+.claude/settings.local.json
+CLAUDE.local.md
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
