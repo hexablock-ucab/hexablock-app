@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Architecture rules
+        run: node tool/check-architecture.mjs
+
+      - name: Test names
+        run: node tool/check-test-names.mjs
+
+      - name: Detect Dart workspace
+        id: detect
+        run: echo "present=$([ -f pubspec.yaml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Flutter
+        if: steps.detect.outputs.present == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        if: steps.detect.outputs.present == 'true'
+        run: flutter pub get
+
+      - name: Check formatting
+        if: steps.detect.outputs.present == 'true'
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze (infos and warnings fail)
+        if: steps.detect.outputs.present == 'true'
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Test every package with coverage
+        if: steps.detect.outputs.present == 'true'
+        run: |
+          set -e
+          for dir in $(find . -name pubspec.yaml -not -path '*/.dart_tool/*' -not -path '*/build/*' -exec dirname {} \; | sort); do
+            if [ -d "$dir/test" ]; then
+              echo "::group::flutter test $dir"
+              (cd "$dir" && flutter test --coverage)
+              echo "::endgroup::"
+            fi
+          done
+
+      - name: Coverage gate
+        if: steps.detect.outputs.present == 'true'
+        run: node tool/check-coverage.mjs
+
+  commits:
+    name: commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v6
+
+  pr-title:
+    name: pr-title
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
