@@ -15,7 +15,7 @@ A fifth variant must need new classes or configuration only. It must never need 
 The jury will ask for a small rule change live during the defense.
 
 The backend lives in a separate repository: `hexablock-ucab/hexablock-api`.
-This app talks to it only through ports and adapters, so it can work with another team's backend.
+This app talks to it only through ports and adapters, so the backend can be replaced without touching the engine or the use cases.
 
 ## 2. Sources of truth
 
@@ -47,7 +47,7 @@ Proposed layout (ADR-0003):
 | 3. Interface adapters | `packages/hexablock_adapters` | layers 1–2 (and small, mainstream packages) |
 | 4. Frameworks and drivers | `app/` (the Flutter app) | everything above |
 
-Binding rules (C-05, NFR-02 to NFR-07):
+Binding rules (C-05, C-19 to C-22, NFR-02 to NFR-05):
 
 - The domain and the use cases are **pure Dart** (with the proposed layout: `hexablock_engine` and `hexablock_application`). They never import `package:flutter`, a database, `http`, or a random-number library. The package boundary enforces this: a forbidden import does not compile.
 - Ports (interfaces) are declared in the inner layer that **uses** them. Adapters implement them in an outer layer.
@@ -57,7 +57,7 @@ Binding rules (C-05, NFR-02 to NFR-07):
 - Rendering, persistence and the remote API are replaceable details behind ports (NFR-02). Grid geometry as an extension point is proposed in ADR-0004. Do not hard-code a widget or an HTTP detail inside the domain.
 - **Do not over-engineer.** Add an abstraction only when a requirement, an ADR or a second real implementation needs it. Abstractions declared in an ADR are requirements, not speculation.
 
-The professor's guidance: the design must survive change (another grid shape, another renderer, another team's backend) without rewriting the project. Hard-coded low-level details are the main thing he penalizes.
+The professor's guidance: shortly before the defense he may ask for a change in a low-level detail (for example square cells instead of hexagons, or a 3D board), and the design must absorb it without rewriting the project. Hard-coded low-level details are the main thing he penalizes.
 
 ## 4. Code conventions
 
