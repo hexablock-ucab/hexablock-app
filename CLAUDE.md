@@ -38,7 +38,7 @@ Each teammate's setup can link two read-only folders of the team's private works
 
 Never copy text from these folders into this repository: the books are copyrighted and the course material is internal. Cite author and chapter in ADRs and the README instead. If the folders are missing, say so and continue with `docs/requirements.md`.
 
-When the assignment is ambiguous, or a choice affects grading and is not the team's to make, stop and tell the user: the team keeps a list of questions for the professor in the private workspace. Never resolve such a question silently.
+When the assignment is ambiguous, or a choice affects grading and is not the team's to make, stop and tell the user. Never resolve such a question silently. The team keeps these questions as issues labeled `pregunta-profesor` in its private workspace repository: check the open ones first, and with the user's approval create the issue in Spanish with `gh issue create -R hexablock-ucab/hexablock-workspace --label pregunta-profesor --label prioridad-<alta|media|baja> --title "..." --body "..."`.
 
 ## Delegation routing
 
