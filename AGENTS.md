@@ -79,6 +79,8 @@ The professor's guidance: shortly before the defense he may ask for a change in 
 - The engine has tests with a **fake cell type** that belongs to no variant.
 - Each variant has its own rule tests (lines on 3 axes, exact cover, cascade transfer, merge on collision).
 - Unit tests use fakes or stubs for repositories, network, clock and the seeded random source.
+- Avoid structural coupling: a test exercises one behavior through the public API of the engine or a use case, not one test per class or method. Use real domain objects; replace only what sits behind a port (storage, network, clock, randomness).
+- Build test data with the domain's builders (ADR-0006) instead of long hand-written fixtures, and test level loading also with the real level files.
 - Widget tests cover rendering and navigation (home, game select, level select, game, victory, defeat).
 
 ## 6. Git workflow
