@@ -28,6 +28,7 @@ There is no code yet. Every later task needs the package layout, the dependency 
 - **S5** (C-13): The CI workflow is green on the pull request: architecture, test names, format, analysis, tests and coverage.
 - **S6** (C-02): The README *Getting Started* section records the Flutter and Dart versions used.
 
+- **S7** (C-13): Given production code and a test step that finds no tests, when CI runs, then it fails; every CI run prints how many tests ran. A green check that verified nothing is not accepted.
 ## Allowed edit surfaces
 
 - `pubspec.yaml` (workspace root), `analysis_options.yaml`
@@ -35,6 +36,7 @@ There is no code yet. Every later task needs the package layout, the dependency 
 - `app/**`
 - `tool/architecture-rules.json` (paths only)
 - `README.md` (*Getting Started*, *Running Tests*)
+- `tool/**` and `.github/workflows/ci.yml` (S7 only)
 
 ## Tasks
 
@@ -67,6 +69,7 @@ node tool/check-coverage.mjs
 | S4 | | |
 | S5 | | |
 | S6 | | |
+| S7 | | |
 
 ## Open questions
 
