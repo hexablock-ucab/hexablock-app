@@ -20,7 +20,7 @@ ODD is the workflow of this repository. It applies spec-driven principles (Marti
 
 For a substantial task:
 
-1. **Explore.** Delegate read-only mapping to `odd-explore`. Read the requirement IDs the task touches in `docs/requirements.md`, the relevant ADRs and, when available, the assignment section they trace to (see *Course sources*).
+1. **Explore.** Delegate read-only mapping to `odd-explore`. Read the requirement IDs the task touches in `docs/requirements.md`, the relevant ADRs and, when available, the assignment section they trace to (see *Course sources* in `AGENTS.md` §2).
 2. **Resolve uncertainty.** If a real decision is open, ask the user. Use the `grill-me` skill for design questions and `weigh-options` when two options compete. Never decide architecture silently.
 3. **Track.** Create `odd/tasks/NNNN-<slug>.md` from `odd/_TEMPLATE.md` with the `odd-task` skill. Each spec `S#` links to requirement IDs. Copy the user's request verbatim into `## Log`.
 4. **Implement.** Delegate bounded work to `odd-worker`. Always pass `## Allowed edit surfaces` (exact paths) and `## Verification` (exact commands).
@@ -29,16 +29,9 @@ For a substantial task:
 
 Keep the task document current. Append every user decision and every verdict to `## Log` as it happens. The document is what survives a context reset.
 
-## Course sources (local, outside this repository)
+## Course sources and questions for the professor
 
-Each teammate's setup can link two read-only folders of the team's private workspace through the personal `.claude/settings.local.json`:
-
-- `../hexablock-workspace/context/proyecto/ENUNCIADO_HexaBlockSuite_v1.0.md`: the assignment. It overrides every other source, and `docs/requirements.md` traces to it. Read the section itself; do not rely on a summary.
-- `../hexablock-workspace/library/README.md`: maps each topic (Clean Architecture, SOLID, GoF patterns, generics, AOP, testing, UML) to the chapters of the books the professor published. Read only the chapter you need; each book's `_INDEX.md` lists sizes in tokens.
-
-Never copy text from these folders into this repository: the books are copyrighted and the course material is internal. Cite author and chapter in ADRs and the README instead. If the folders are missing, say so and continue with `docs/requirements.md`.
-
-When the assignment is ambiguous, or a choice affects grading and is not the team's to make, stop and tell the user. Never resolve such a question silently. The team keeps these questions as issues labeled `pregunta-profesor` in its private workspace repository: check the open ones first, and with the user's approval create the issue in Spanish with `gh issue create -R hexablock-ucab/hexablock-workspace --label pregunta-profesor --label prioridad-<alta|media|baja> --title "..." --body "..."`.
+See `AGENTS.md` §2 (*Course sources and questions for the professor*). Each teammate's personal `.claude/settings.local.json`, created by the workspace bootstrap, gives this session read-only access to those folders.
 
 ## Delegation routing
 

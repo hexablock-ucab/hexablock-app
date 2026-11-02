@@ -30,6 +30,18 @@ Read these before you design or change behavior. Do not rely on memory or summar
 | `README.md` | The public face of the project. It is graded. |
 | `AI_USAGE.md` | Mandatory log of AI usage. It is graded. |
 
+### Course sources and questions for the professor
+
+The team's private workspace sits next to this repository (`../hexablock-workspace`). When it is present, read from it (never write to it from here):
+
+- `../hexablock-workspace/context/proyecto/ENUNCIADO_HexaBlockSuite_v1.0.md`: the assignment. It overrides every other source, and `docs/requirements.md` traces to it. Read the section itself; do not rely on a summary.
+- `../hexablock-workspace/library/README.md`: maps each topic (Clean Architecture, SOLID, GoF patterns, generics, AOP, DDD, testing, UML) to the chapters of the books the professor published. Read only the chapter you need.
+- `../hexablock-workspace/docs/preguntas-profesor.md`: what the professor already clarified in class.
+
+Never copy text from these folders into this repository: the books are copyrighted and the course material is internal. Cite author and chapter instead. If the folders are missing, say so and continue with `docs/requirements.md`.
+
+When the assignment is ambiguous, or a choice affects grading and is not the team's to make, stop and tell the user; never resolve it silently. The team keeps these questions as issues labeled `pregunta-profesor` in the workspace repository: check the open ones first and, with the user's approval, create one in Spanish (`gh issue create -R hexablock-ucab/hexablock-workspace --label pregunta-profesor --label prioridad-<alta|media|baja> --title "..." --body "..."`).
+
 ## 3. Architecture rules (Clean Architecture)
 
 > **Decision status.** The assignment fixes Clean Architecture and the Dependency Rule (C-05): those rules are binding now.
@@ -63,6 +75,8 @@ The professor's guidance: shortly before the defense he may ask for a change in 
 
 - Everything in the repository is **English**: code, identifiers, comments, docs, commit messages, PR text. Team chat and `odd/tasks` logs may be Spanish.
 - Names say what a thing is in the domain: `HexCoord`, `ColorStack`, `LineClearRule`. No `Manager`, `Helper`, `Util` or `Data` suffix without a real reason.
+- **No primitive obsession** (professor's guidance in class): the domain and the use cases model their concepts as value objects, not as bare numbers or strings: coordinates, identifiers, scores, colors, tile values, `gameId`. Booleans are acceptable. Primitives appear only at the boundaries (DTOs, persistence, UI) and the mappers in layer 3 convert them. A value object validates itself when created and compares by value.
+- **Names say the role and the layer** (professor's guidance): input ports are interfaces named after the use case (`StartGameUseCase`, `ApplyMoveUseCase`); the application class that implements them is a service (`GameSessionService`); output ports name what the inner layer needs (`ProgressRepository`, `PieceSource`, `Clock`); adapters name the technology and the role (`SqliteProgressRepository`, `HttpLeaderboardGateway`); presentation classes name their screen (`GameViewModel`). Repositories, factories, builders and value objects carry those names too.
 - One reason to change per class (SRP). Small interfaces (ISP). Depend on abstractions (DIP).
 - Use bounded generics when the engine needs a capability of the cell content (for example `TCell extends Mergeable<TCell>`). Document each bound in the README *Generic Engine* section.
 - Prefer composition over inheritance. Use inheritance only for a real *is-a* relation or a Template Method.
@@ -126,3 +140,12 @@ node tool/check-coverage.mjs                # 90% minimum in domain and use case
 ```
 
 The quality gates are described in `CONTRIBUTING.md`. A rule that matters has a check; if you add a rule here, add its check too.
+
+## 10. Working with another AI agent (Codex, ChatGPT, Copilot)
+
+Everything above applies to any agent. Claude Code adds automation in `.claude/`; other agents can use the same material by hand:
+
+- `.claude/skills/<name>/SKILL.md` and `.claude/agents/*.md` are plain Markdown instructions. Ask the agent to read and follow one, for example: "read `.claude/skills/ship/SKILL.md` and follow it to open the pull request".
+- For a substantial task, create the task document from `odd/_TEMPLATE.md`, get the specs approved, then implement test first (`odd/README.md`).
+- The git hooks (lefthook), the CI and the protection of `main` apply to everyone, whatever the agent. The Claude Code hooks do not run in other agents, so never use `--no-verify`, never push to `main` and never force-push.
+- Record the tool and model in `AI_USAGE.md` (for example "Codex, GPT-5") in every entry.
