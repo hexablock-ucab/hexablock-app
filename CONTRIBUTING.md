@@ -26,7 +26,7 @@ Requires Node.js 22 LTS. The Flutter toolchain is described in the README *Getti
 
 [optional body: why, not what]
 
-[optional footer, e.g. Refs: FR-04, odd/tasks/0003-hexa-lines-rules.md]
+[optional footer, e.g. Refs: FR-33, odd/tasks/0003-hexa-lines-rules.md]
 ```
 
 Examples:

@@ -15,7 +15,7 @@ A fifth variant must need new classes or configuration only. It must never need 
 The jury will ask for a small rule change live during the defense.
 
 The backend lives in a separate repository: `hexablock-ucab/hexablock-api`.
-This app talks to it only through ports and adapters, so it can work with another team's backend.
+This app talks to it only through ports and adapters, so the backend can be replaced without touching the engine or the use cases.
 
 ## 2. Sources of truth
 
@@ -29,6 +29,18 @@ Read these before you design or change behavior. Do not rely on memory or summar
 | `docs/EXTENSIBILITY.md` | How to add a fifth variant. Keep it true. |
 | `README.md` | The public face of the project. It is graded. |
 | `AI_USAGE.md` | Mandatory log of AI usage. It is graded. |
+
+### Course sources and questions for the professor
+
+The team's private workspace sits next to this repository (`../hexablock-workspace`). When it is present, read from it (never write to it from here):
+
+- `../hexablock-workspace/context/proyecto/ENUNCIADO_HexaBlockSuite_v1.0.md`: the assignment. It overrides every other source, and `docs/requirements.md` traces to it. Read the section itself; do not rely on a summary.
+- `../hexablock-workspace/library/README.md`: maps each topic (Clean Architecture, SOLID, GoF patterns, generics, AOP, DDD, testing, UML) to the chapters of the books the professor published. Read only the chapter you need.
+- `../hexablock-workspace/docs/preguntas-profesor.md`: what the professor already clarified in class.
+
+Never copy text from these folders into this repository: the books are copyrighted and the course material is internal. Cite author and chapter instead. If the folders are missing, say so and continue with `docs/requirements.md`.
+
+When the assignment is ambiguous, or a choice affects grading and is not the team's to make, stop and tell the user; never resolve it silently. The team keeps these questions as issues labeled `pregunta-profesor` in the workspace repository: check the open ones first and, with the user's approval, create one in Spanish (`gh issue create -R hexablock-ucab/hexablock-workspace --label pregunta-profesor --label prioridad-<alta|media|baja> --title "..." --body "..."`).
 
 ## 3. Architecture rules (Clean Architecture)
 
@@ -47,7 +59,7 @@ Proposed layout (ADR-0003):
 | 3. Interface adapters | `packages/hexablock_adapters` | layers 1–2 (and small, mainstream packages) |
 | 4. Frameworks and drivers | `app/` (the Flutter app) | everything above |
 
-Binding rules (C-05, NFR-02 to NFR-07):
+Binding rules (C-05, C-19 to C-22, NFR-02 to NFR-05):
 
 - The domain and the use cases are **pure Dart** (with the proposed layout: `hexablock_engine` and `hexablock_application`). They never import `package:flutter`, a database, `http`, or a random-number library. The package boundary enforces this: a forbidden import does not compile.
 - Ports (interfaces) are declared in the inner layer that **uses** them. Adapters implement them in an outer layer.
@@ -57,12 +69,14 @@ Binding rules (C-05, NFR-02 to NFR-07):
 - Rendering, persistence and the remote API are replaceable details behind ports (NFR-02). Grid geometry as an extension point is proposed in ADR-0004. Do not hard-code a widget or an HTTP detail inside the domain.
 - **Do not over-engineer.** Add an abstraction only when a requirement, an ADR or a second real implementation needs it. Abstractions declared in an ADR are requirements, not speculation.
 
-The professor's guidance: the design must survive change (another grid shape, another renderer, another team's backend) without rewriting the project. Hard-coded low-level details are the main thing he penalizes.
+The professor's guidance: shortly before the defense he may ask for a change in a low-level detail (for example square cells instead of hexagons, or a 3D board), and the design must absorb it without rewriting the project. Hard-coded low-level details are the main thing he penalizes.
 
 ## 4. Code conventions
 
 - Everything in the repository is **English**: code, identifiers, comments, docs, commit messages, PR text. Team chat and `odd/tasks` logs may be Spanish.
 - Names say what a thing is in the domain: `HexCoord`, `ColorStack`, `LineClearRule`. No `Manager`, `Helper`, `Util` or `Data` suffix without a real reason.
+- **No primitive obsession** (professor's guidance in class): the domain and the use cases model their concepts as value objects, not as bare numbers or strings: coordinates, identifiers, scores, colors, tile values, `gameId`. Booleans are acceptable. Primitives appear only at the boundaries (DTOs, persistence, UI) and the mappers in layer 3 convert them. A value object validates itself when created and compares by value.
+- **Names say the role and the layer** (professor's guidance): input ports are interfaces named after the use case (`StartGameUseCase`, `ApplyMoveUseCase`); the application class that implements them is a service (`GameSessionService`); output ports name what the inner layer needs (`ProgressRepository`, `PieceSource`, `Clock`); adapters name the technology and the role (`SqliteProgressRepository`, `HttpLeaderboardGateway`); presentation classes name their screen (`GameViewModel`). Repositories, factories, builders and value objects carry those names too.
 - One reason to change per class (SRP). Small interfaces (ISP). Depend on abstractions (DIP).
 - Use bounded generics when the engine needs a capability of the cell content (for example `TCell extends Mergeable<TCell>`). Document each bound in the README *Generic Engine* section.
 - Prefer composition over inheritance. Use inheritance only for a real *is-a* relation or a Template Method.
@@ -79,6 +93,8 @@ The professor's guidance: the design must survive change (another grid shape, an
 - The engine has tests with a **fake cell type** that belongs to no variant.
 - Each variant has its own rule tests (lines on 3 axes, exact cover, cascade transfer, merge on collision).
 - Unit tests use fakes or stubs for repositories, network, clock and the seeded random source.
+- Avoid structural coupling: a test exercises one behavior through the public API of the engine or a use case, not one test per class or method. Use real domain objects; replace only what sits behind a port (storage, network, clock, randomness).
+- Build test data with the domain's builders (ADR-0006) instead of long hand-written fixtures, and test level loading also with the real level files.
 - Widget tests cover rendering and navigation (home, game select, level select, game, victory, defeat).
 
 ## 6. Git workflow
@@ -124,3 +140,12 @@ node tool/check-coverage.mjs                # 90% minimum in domain and use case
 ```
 
 The quality gates are described in `CONTRIBUTING.md`. A rule that matters has a check; if you add a rule here, add its check too.
+
+## 10. Working with another AI agent (Codex, ChatGPT, Copilot)
+
+Everything above applies to any agent. Claude Code adds automation in `.claude/`; other agents can use the same material by hand:
+
+- `.claude/skills/<name>/SKILL.md` and `.claude/agents/*.md` are plain Markdown instructions. Ask the agent to read and follow one, for example: "read `.claude/skills/ship/SKILL.md` and follow it to open the pull request".
+- For a substantial task, create the task document from `odd/_TEMPLATE.md`, get the specs approved, then implement test first (`odd/README.md`).
+- The git hooks (lefthook), the CI and the protection of `main` apply to everyone, whatever the agent. The Claude Code hooks do not run in other agents, so never use `--no-verify`, never push to `main` and never force-push.
+- Record the tool and model in `AI_USAGE.md` (for example "Codex, GPT-5") in every entry.
