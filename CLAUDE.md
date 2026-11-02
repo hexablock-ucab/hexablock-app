@@ -45,7 +45,7 @@ See `AGENTS.md` §2 (*Course sources and questions for the professor*). Each tea
 ## Context hygiene
 
 - One task per session. When a task closes, start a new session (`/clear`) for the next one.
-- Compact (`/compact`) or restart when the context passes about 150k tokens, after you write the state to the task document.
+- Compact (`/compact`) or restart when the context passes about 150k tokens, after you write the state to the task document. The `context-check` hook reminds you and the user when that happens; act on it at the next task boundary, never in the middle of a step.
 - Read whole files once instead of many small ranges. Batch independent tool calls.
 
 ## Skills of this repository
