@@ -18,7 +18,7 @@ Writing rules:
 - One requirement per row. When a row lists items (a), (b), (c)…, each item can be cited on its own, for example `C-23e`.
 - **shall** marks a mandatory requirement; **should** marks a recommendation.
 - Functional requirements use the EARS patterns: *The app shall…*, *When <event>, the app shall…*, *If <unwanted condition>, then the app shall…*.
-- `§` is the section of the assignment that states the requirement. *class* means guidance the professor gave in class. *derived* means the team inferred it from the cited sections; the team confirms derived requirements in review.
+- `§` is the section of the assignment that states the requirement. *class* means guidance the professor gave in class; *prof.* means an answer the professor gave to a question, recorded in the team workspace. *derived* means the team inferred it from the cited sections; the team confirms derived requirements in review.
 - `Repo`: **app** is the game client, **api** is the backend, **both** applies to both repositories.
 - This catalog states *what*. The acceptance criteria and examples of each piece of work live in its task document (`odd/tasks/`, specs `S#`), which cite these IDs.
 
@@ -53,6 +53,8 @@ Writing rules:
 | C-25 | Verification | Widget tests shall verify that the game components render and respond to interaction, and the navigation among home, game select, level select, game, victory and defeat. | app | 3.6 |
 | C-26 | Verification | Contract tests should verify, with Pact or an equivalent tool, that the contract between client and backend holds across changes. | both | 3.6 |
 | C-27 | Integrity | Every member shall be able to explain any piece of the code, the patterns applied, the design of the generic types and the split of responsibilities between the engine and the variants. | both | 7.1, 7.4 |
+| C-28 | Delivery | The backend shall be deployed on a server reachable from the internet (the provider is the team's choice), and the whole product shall work as a production-level product of commercial quality. | both | prof. |
+| C-29 | Delivery | The professor shall be able to play the final version on his own phone, as a native app (Android or iOS) or as a progressive web app. | app | 8, prof. |
 
 ## Functional requirements — game client, common (FR-01 to FR-19)
 
@@ -69,9 +71,10 @@ Writing rules:
 | FR-09 | The app shall play sound effects and background music, and shall let the player mute them. | app | 5.1 |
 | FR-10 | The app shall be available in at least Spanish and English. | app | 5.1 |
 | FR-11 | The app shall let the player register and sign in through the backend API. | app | 2, 5.2 (derived) |
-| FR-12 | When the player is signed in, the app shall sync the player's progress per variant with the backend. | app | 2, 5.2 (derived) |
+| FR-12 | When the player is signed in and online, the app shall sync the player's progress per variant with the backend. | app | 2, 5.2, prof. |
 | FR-13 | The app shall show the global leaderboard per variant and, for level-based variants, per level. | app | 2, 5.2 (derived) |
 | FR-14 | The app shall download level definitions from the backend, so new levels appear without an app update. | app | 5.2 (derived) |
+| FR-15 | While the device has no connection, the app shall let the player play every variant and keep the progress on the device; when the connection returns, the app shall sync the pending progress with the backend without the player having to act. | app | prof. |
 
 ## Functional requirements — backend (FR-20 to FR-29)
 
@@ -144,3 +147,4 @@ Writing rules:
 | NFR-04 | Maintainability — reusability | What the variants share — board, geometry, rendering, navigation, persistence and the game flow — shall exist once. What varies — cell content, board shape, move type, resolution rule, piece source, end condition, progress model and undo — shall sit behind the engine's extension points. | Architecture review: no board, renderer, persistence or game flow duplicated per variant. | app | 1.5, 2 |
 | NFR-05 | Maintainability — testability | Every random source shall be injectable and, given the same seed, shall produce the same sequence, so a game can be replayed deterministically. | Tests replay a game with a fixed seed. | app | 1.4, 3.6 |
 | NFR-06 | Security | The API shall store only hashed passwords, validate every input and keep no secrets in the repository (OWASP practices). | Tests for invalid input; code review; secret scanning. | api | 5.2, 10 (derived) |
+| NFR-07 | Reliability — fault tolerance, recoverability | Progress made without a connection shall never be lost: a failed or interrupted sync shall be retried later, and repeating a sync shall not duplicate or overwrite newer progress. | Tests with a network fake that fails and recovers; a manual test in airplane mode; API tests that send the same sync twice. | both | prof. (derived) |
