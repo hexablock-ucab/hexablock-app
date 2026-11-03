@@ -54,7 +54,7 @@ Writing rules:
 | C-26 | Verification | Contract tests should verify, with Pact or an equivalent tool, that the contract between client and backend holds across changes. | both | 3.6 |
 | C-27 | Integrity | Every member shall be able to explain any piece of the code, the patterns applied, the design of the generic types and the split of responsibilities between the engine and the variants. | both | 7.1, 7.4 |
 | C-28 | Delivery | The backend shall be deployed on a server reachable from the internet (the provider is the team's choice), and the whole product shall work as a production-level product of commercial quality. | both | prof. |
-| C-29 | Delivery | The professor shall be able to play the final version on his own phone, as a native app (Android or iOS) or as a progressive web app. | app | 8, prof. |
+| C-29 | Delivery | The professor shall be able to install and play the final version on his own phone (Android or iOS). | app | 8, prof. |
 
 ## Functional requirements — game client, common (FR-01 to FR-19)
 
