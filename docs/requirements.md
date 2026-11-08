@@ -57,7 +57,7 @@ Writing rules:
 | C-29 | Architecture | The backend shall be one deployable service organized in modules, not a set of microservices. | api | meeting |
 | C-30 | Delivery | The app shall be installable on iOS devices, through TestFlight or direct installation from a Mac, in addition to the executable in the GitHub Release (C-16d). | app | 8, meeting |
 | C-31 | Delivery | The defense may include a change in a low-level detail announced the day before, not made live: the database, the board shape (for example square cells instead of hexagons), the user interface or the levels. The architecture is never the subject of that change (see NFR-02). | both | class, meeting |
-| C-32 | Design | The domain and the use cases shall model their concepts as value objects that validate themselves when created and compare by value. Only booleans, or an integer that only expresses a quantity, may stay primitive; other primitives appear only at the boundaries (DTOs, persistence, UI). | both | class, meeting |
+| C-32 | Design | The domain and the use cases shall model their concepts as value objects that validate themselves when created and compare by value. Only booleans, and an integer the team can justify as needing no value object of its own, may stay primitive; each such case is justified in the design. Other primitives appear only at the boundaries (DTOs, persistence, UI). | both | class, meeting |
 | C-33 | Process | Game rules the assignment leaves open (for example the details of the Hexa Sort cascade, what counts as a line, the ranking criteria and tie-breaks) are decided by the team, and shall be documented in the README and covered by tests. | both | meeting |
 
 ## Functional requirements — game client, common (FR-01 to FR-19)
