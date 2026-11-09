@@ -20,3 +20,5 @@ body {
 .nav .spacer { width: 48px; }
 /* Decorative floating hexes for backgrounds */
 .deco { position: absolute; opacity: 0.18; pointer-events: none; }
+[data-icon] > svg { width: 100%; height: 100%; display: block; }
+.icon-btn[data-icon] > svg { width: 24px; height: 24px; }

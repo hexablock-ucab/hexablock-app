@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>09 · Victoria (Hexa Fit)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--variant-fit);
+    background: radial-gradient(420px 380px at 50% 28%, rgba(255,210,60,0.22), transparent 70%),
+                radial-gradient(520px 360px at 110% -5%, rgba(180,124,255,0.25), transparent 65%), var(--bg); }
+  .burst { position: absolute; inset: 0; pointer-events: none; }
+  .head { text-align: center; margin-top: 40px; }
+  .stars { display: flex; justify-content: center; align-items: flex-end; gap: 6px; margin: 26px 0 8px; }
+  .stars svg { filter: drop-shadow(0 0 16px rgba(255,210,60,0.75)); }
+  .stars svg.off { filter: none; }
+  .result { margin-top: 26px; padding: 6px 18px; }
+  .line { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1.5px solid rgba(52,64,138,0.6); }
+  .line:last-child { border-bottom: 0; }
+  .line .v { font: 600 24px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+  .ok, .miss { font: 800 11px/1 var(--font-body); letter-spacing: 1px; padding: 5px 8px; border-radius: 999px; margin-left: 10px; }
+  .ok { color: var(--bg); background: var(--success); }
+  .miss { color: var(--text-muted); background: var(--surface); border: 1.5px solid var(--line); }
+  .actions { margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 14px; }
+  .actions .btn { width: 100%; }
+  .row2 { display: flex; gap: 12px; }
+  .row2 .btn { flex: 1; }
+</style>
+</head>
+<body>
+<div class="burst" data-render="burst"></div>
+<div class="screen">
+  <div class="head">
+    <div class="t-label" style="color:var(--accent)">Hexa Fit · Nivel 7</div>
+    <div class="t-display" style="margin-top:10px">¡Nivel<br>completado!</div>
+  </div>
+
+  <div class="stars">
+    <svg width="64" height="64" style="fill:var(--primary)"><use href="#star"/></svg>
+    <svg width="88" height="88" style="fill:var(--primary)"><use href="#star"/></svg>
+    <svg class="off" width="64" height="64" style="fill:#3A4580"><use href="#star"/></svg>
+  </div>
+  <div class="t-body" style="text-align:center; color:var(--text-muted)">2 de 3 estrellas</div>
+
+  <div class="card result">
+    <div class="line"><span class="t-label">Movimientos</span><span><span class="v">7</span><span class="ok">≤ 8 ★</span></span></div>
+    <div class="line"><span class="t-label">Tiempo</span><span><span class="v">1:12</span><span class="miss">≤ 1:00</span></span></div>
+    <div class="line"><span class="t-label">Mejor en este nivel</span><span class="v" style="color:var(--primary); font-size:20px">¡Nuevo récord!</span></div>
+  </div>
+
+  <div class="actions">
+    <span class="btn btn-primary">Siguiente nivel <span data-icon="next" style="width:22px; height:22px; display:inline-flex"></span></span>
+    <div class="row2">
+      <span class="btn btn-secondary"><span data-icon="retry" style="width:20px; height:20px; display:inline-flex"></span>Reintentar</span>
+      <span class="btn btn-ghost"><span data-icon="home" style="width:20px; height:20px; display:inline-flex"></span>Inicio</span>
+    </div>
+  </div>
+</div>
+<div class="home-indicator"></div>
+<script>
+  // Small hexes flying out, like confetti. Fixed positions so the mockup is the same every time.
+  function burst() {
+    const bits = [[40,120,"--tile-cyan",14,-20],[330,96,"--tile-violet",18,15],[300,210,"--tile-yellow",10,30],[70,250,"--tile-green",12,-10],
+                  [24,360,"--tile-red",9,40],[352,330,"--tile-orange",13,-35],[120,64,"--tile-orange",8,10],[262,58,"--tile-green",9,-25],
+                  [196,40,"--tile-red",7,0],[340,430,"--tile-cyan",8,20]];
+    return bits.map(([x, y, c, s, rot]) =>
+      `<svg style="position:absolute; left:${x}px; top:${y}px; transform: rotate(${rot}deg); opacity:0.85" width="${s * 1.8}" height="${s * 2}"><use href="#hx" width="${s * 1.8}" height="${s * 2}" fill="var(${c})"/></svg>`).join("");
+  }
+</script>
+</body>
+</html>

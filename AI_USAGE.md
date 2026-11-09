@@ -50,6 +50,28 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
   - Dependabot commits failed commitlint — detected in CI; commitlint now ignores Dependabot's sign-off line and updates are grouped.
 - **Lessons:** Let the AI prepare infrastructure and drafts, but keep design decisions explicit, reviewed and recorded in ADRs. Review commit metadata, not only file contents. Ask the AI to check its own output against a named standard; it found real defects when asked.
 
+### 2026-11-09 — UI mockups of the app screens (D12, task [0003](odd/tasks/0003-ui-mockups.md))
+
+- **Author:** Valentina Maza
+- **Tool / model:** Claude (claude.ai agent session, Claude Opus 5.5) with access to Valentina's computer to read the team workspace and write the files; mockups rendered to PNG with headless Chrome in the agent's workspace.
+- **Task:** Set up Valentina's machine for the project, take issue #34 (D12) and produce the high-fidelity mockups of every screen: style guide, home, game select, level select, game template, the four game screens, victory, defeat and settings (FR-01 to FR-10, C-28, NFR-04).
+- **Prompts (faithful paraphrase; originals in Spanish):**
+  - "Analyze the whole organization's repositories against the assignment; the professor stresses SOLID and that a change such as the database or the cell shape must be just adding a class."
+  - "Eduard asked us to take a task from the workspace and approve the requirement PRs; how do I do it?" (followed by step-by-step help to install `gh`, clone the repositories and fix a push rejected for the wrong GitHub account).
+  - "Let's do D12." Then five closed design questions, answered with the recommended option: dark arcade neon style; portrait phone only; one shared game template with fixed zones and one mockup per variant; high fidelity; editable source plus PNG.
+  - "Approve the task document as is, and keep a report of what we did today for my teammates."
+  - "Continue with T2", "continue with T3", "continue" (T4 and T5).
+- **Result:** Task document `odd/tasks/0003-ui-mockups.md` (11 specs linked to requirements); `docs/ui/` with shared design tokens (`tokens.css`), phone frame (`screens.css`), game template zones (`game.css`) and a board-drawing helper (`hexgrid.js`), 11 screen sources with their PNG exports at 2×, a style guide and an index README with the English strings of each screen; font and algorithm credits in `THIRD_PARTY_NOTICES.md`.
+- **Team modifications:** Valentina chose the five design options and approved the task document; she reviewed each batch of screens before committing them and asked for the work to continue screen by screen.
+- **Errors and corrections:**
+  - The first commit used the scope `ui`, which the repository does not allow — detected by the commitlint hook; changed to `docs`.
+  - The first push was rejected (403) because git used an old GitHub account stored on the computer — detected from the error; the stored credential was removed and git now uses the `gh` login.
+  - The six swipe arrows of Hexa Merge were drawn as near-equilateral triangles, so the diagonal ones seemed to point sideways — detected when reviewing the rendered PNG at full size; replaced by chevrons.
+  - The first Hexa Sort board had two neighboring stacks with the same top color, a state the cascade rule (SORT-3) never leaves — detected by checking the board by hand against `docs/game-rules.md`; two stacks changed.
+  - The first Hexa Lines defeat board left full rows that would have been cleared (LINES-2) — detected by the same check; the free cells were chosen with a small search so that every row of the three axes has one free cell and no two free cells touch.
+  - Smaller visual defects found on review of each render: two yellow tiles side by side in the logo, a misaligned status bar, result chips wrapping to two lines, a squeezed icon, a faded "game over" stamp.
+- **Lessons:** Render and look at every mockup at full size; diagrams that look right in code can read wrong on screen. Check example game states against the written rules, not only the visual style. Shared tokens and one template made each later screen faster and kept the four games consistent.
+
 ## Critical evaluation
 
 - **Approximate share of code with AI assistance:** TODO (updated at the end of the project).

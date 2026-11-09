@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>11 · Ajustes</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<script src="hexgrid.js"></script>
+<style>
+  .group { margin-top: 18px; }
+  .group > .t-label { margin: 0 0 10px 4px; }
+  .list { padding: 4px 16px; }
+  .item { display: flex; align-items: center; gap: 14px; min-height: 64px; border-bottom: 1.5px solid rgba(52,64,138,0.6); }
+  .item:last-child { border-bottom: 0; }
+  .item .ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex: none; }
+  .item .ic span { width: 22px; height: 22px; display: inline-flex; }
+  .item .txt { flex: 1; }
+  .item .hint { font-size: 13px; color: var(--text-muted); }
+  .chev { width: 20px; height: 20px; color: var(--text-muted); display: inline-flex; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="nav">
+    <span class="icon-btn" data-icon="back"></span>
+    <div class="title t-h1" style="font-size:26px">Ajustes</div>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="group">
+    <div class="t-label">Sonido</div>
+    <div class="card list">
+      <div class="item">
+        <span class="ic" style="background:rgba(180,124,255,0.18); color:var(--tile-violet)"><span data-icon="music"></span></span>
+        <div class="txt"><div class="t-body">Música</div><div class="hint">Música de fondo</div></div>
+        <span class="toggle on"></span>
+      </div>
+      <div class="item">
+        <span class="ic" style="background:rgba(63,200,255,0.18); color:var(--tile-cyan)"><span data-icon="sound"></span></span>
+        <div class="txt"><div class="t-body">Efectos de sonido</div><div class="hint">Colocar, completar, fusionar</div></div>
+        <span class="toggle"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="t-label">Idioma</div>
+    <div class="card list">
+      <div class="item">
+        <span class="ic" style="background:rgba(59,224,139,0.18); color:var(--success)"><span data-icon="globe"></span></span>
+        <div class="txt"><div class="t-body">Idioma</div><div class="hint">Language</div></div>
+        <span class="segmented"><span class="active">Español</span><span>English</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="t-label">Acerca de</div>
+    <div class="card list">
+      <div class="item">
+        <div class="txt"><div class="t-body">Créditos y licencias</div><div class="hint">Fuentes, sonidos y referencias</div></div>
+        <span class="chev" data-icon="next"></span>
+      </div>
+      <div class="item">
+        <div class="txt"><div class="t-body">Versión</div></div>
+        <span class="t-body" style="color:var(--text-muted)">1.0.0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="t-label" style="text-align:center; margin-top:auto; padding-bottom:10px">HexaBlock Suite · UCAB 2026-2</div>
+</div>
+<div class="home-indicator"></div>
+</body>
+</html>
