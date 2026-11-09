@@ -2,7 +2,7 @@
 
 - **Status:** Verifying — accepted by Eduard on 2026-11-08; ready to ship (Done after the PR merges)
 - **Owner:** Eduard Velasco
-- **Branch / PR:** `docs/game-rules` · #
+- **Branch / PR:** `docs/game-rules` · #13
 - **Requirements:** C-33 (pending in PR #12), FR-05, FR-22, FR-33, FR-34, FR-44, FR-52, FR-53, FR-54, FR-65 (also FR-06, FR-08, FR-13, FR-40 to FR-43, FR-45, NFR-05, C-19e, C-23b)
 - **ADRs:** 0004 (grid topology, Proposed), 0006 (board and level builder, Proposed). No ADR is Accepted, so the rules speak of "the topology's axes and neighbors", not of hexagons, wherever the rule allows it.
 
@@ -150,3 +150,4 @@ Ship with the `ship` skill (run `ci-local` first), and add the README summary of
 - 2026-11-08 — Claude Code (edit, no question asked): S7 now names the colors in play and the stack size range, and leaves to D3 whether the level stores the seed; SORT-4 states that it also applies to a stack arriving from the tray with a top block of 10 or more; the SORT-3 example states why no pair remains. These two points follow from decisions 5 and 7 and are not new rules, but the user should confirm them.
 - 2026-11-08 — Eduard Velasco (prompt): "okey estoy de acuerdo"
 - 2026-11-08 — Claude Code (log): `AI_USAGE.md` entry added (T8). T7: no README, `docs/EXTENSIBILITY.md` or diagram change is needed; the README summary of the rules stays as a follow-up after PR #12.
+- 2026-11-08 — Claude Code (PR): opened PR #13 (https://github.com/hexablock-ucab/hexablock-app/pull/13); PR number and Claude Code version 2.1.312 filled in `AI_USAGE.md`.

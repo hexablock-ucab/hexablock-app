@@ -50,10 +50,10 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
   - Dependabot commits failed commitlint — detected in CI; commitlint now ignores Dependabot's sign-off line and updates are grouped.
 - **Lessons:** Let the AI prepare infrastructure and drafts, but keep design decisions explicit, reviewed and recorded in ADRs. Review commit metadata, not only file contents. Ask the AI to check its own output against a named standard; it found real defects when asked.
 
-### 2026-11-08 — Document the game rules the assignment leaves open (odd/tasks/0002-game-rules.md, PR TODO(team))
+### 2026-11-08 — Document the game rules the assignment leaves open (odd/tasks/0002-game-rules.md, PR #13)
 
 - **Author:** Eduard Velasco
-- **Tool / model:** Claude Code (version TODO(team)) — Sonnet 5.5 for the main session, `odd-explore` and `odd-verify`; Opus for `odd-worker` (models pinned in `.claude/agents/`).
+- **Tool / model:** Claude Code 2.1.312 — Sonnet 5.5 for the main session, `odd-explore` and `odd-verify`; Opus for `odd-worker` (models pinned in `.claude/agents/`).
 - **Task:** Design task D2: decide and document the Hexa Sort cascade, what a Hexa Lines line is, the Hexa Fit figure, the score and stars of each variant, and the leaderboard order and tie-breaks. Output: `docs/game-rules.md`. Requirements: C-33 (pending in PR #12), FR-05, FR-22, FR-33, FR-34, FR-44, FR-52 to FR-54, FR-65.
 - **Prompts (originals in Spanish):**
   - "Tarea de diseño D2 … reglas de juego que el enunciado deja abiertas … Es documentación, no código. … Sigue ODD: crea la rama con ship, explora con odd-explore y hazme las preguntas que falten una por una, cerradas, con tu recomendación y las alternativas. No decidas reglas sin preguntarme. Después crea el documento de la tarea en odd/tasks/ con specs ligadas a requisitos y espera mi aprobación antes de escribir docs/game-rules.md." (full text in the task log)
