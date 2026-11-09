@@ -12,7 +12,7 @@ It is the semester project of *Desarrollo de Software* (UCAB, 2026-2).
 **The goal is one generic engine, not four games.**
 The four variants are instantiations of the same engine.
 A fifth variant must need new classes or configuration only. It must never need an edit in the engine.
-The jury will ask for a small rule change live during the defense.
+In the defense the team describes, live, how it would add a fifth variant, and a change in a low-level detail may be requested the day before (C-31).
 
 The backend lives in a separate repository: `hexablock-ucab/hexablock-api`.
 This app talks to it only through ports and adapters, so the backend can be replaced without touching the engine or the use cases.
@@ -69,14 +69,14 @@ Binding rules (C-05, C-19 to C-22, NFR-02 to NFR-05):
 - Rendering, persistence and the remote API are replaceable details behind ports (NFR-02). Grid geometry as an extension point is proposed in ADR-0004. Do not hard-code a widget or an HTTP detail inside the domain.
 - **Do not over-engineer.** Add an abstraction only when a requirement, an ADR or a second real implementation needs it. Abstractions declared in an ADR are requirements, not speculation.
 
-The professor's guidance (class, and the team's meeting with him on 2026-11-05): the day before the defense he may ask for a change in a low-level detail (the database, the board shape such as square cells instead of hexagons, the user interface or the levels; never the architecture), and the design must absorb it without rewriting the project (C-31, NFR-02). Hard-coded low-level details are the main thing he penalizes.
+Low-level details are replaceable: the database, the board shape (for example square cells instead of hexagons), the user interface and the levels may change shortly before the defense, never the architecture, and the design must absorb that change without rewriting the project (C-31, NFR-02). A hard-coded low-level detail is the main design flaw to avoid.
 
 ## 4. Code conventions
 
 - Everything in the repository is **English**: code, identifiers, comments, docs, commit messages, PR text. Team chat and `odd/tasks` logs may be Spanish.
 - Names say what a thing is in the domain: `HexCoord`, `ColorStack`, `LineClearRule`. No `Manager`, `Helper`, `Util` or `Data` suffix without a real reason.
-- **No primitive obsession** (professor's guidance in class and on 2026-11-05): the domain and the use cases model their concepts as value objects, not as bare numbers or strings: coordinates, identifiers, scores, colors, tile values, `gameId`. Booleans are acceptable, and so is an integer the team justifies as needing no value object of its own (C-32). Primitives appear only at the boundaries (DTOs, persistence, UI) and the mappers in layer 3 convert them. A value object validates itself when created and compares by value.
-- **Names say the role and the layer** (professor's guidance): input ports are interfaces named after the use case (`StartGameUseCase`, `ApplyMoveUseCase`); the application class that implements them is a service (`GameSessionService`); output ports name what the inner layer needs (`ProgressRepository`, `PieceSource`, `Clock`); adapters name the technology and the role (`SqliteProgressRepository`, `HttpLeaderboardGateway`); presentation classes name their screen (`GameViewModel`). Repositories, factories, builders and value objects carry those names too.
+- **No primitive obsession** (C-32): the domain and the use cases model their concepts as value objects, not as bare numbers or strings: coordinates, identifiers, scores, colors, tile values, `gameId`. Booleans are acceptable, and so is an integer the team justifies as needing no value object of its own (C-32). Primitives appear only at the boundaries (DTOs, persistence, UI) and the mappers in layer 3 convert them. A value object validates itself when created and compares by value.
+- **Names say the role and the layer** (course convention): input ports are interfaces named after the use case (`StartGameUseCase`, `ApplyMoveUseCase`); the application class that implements them is a service (`GameSessionService`); output ports name what the inner layer needs (`ProgressRepository`, `PieceSource`, `Clock`); adapters name the technology and the role (`SqliteProgressRepository`, `HttpLeaderboardGateway`); presentation classes name their screen (`GameViewModel`). Repositories, factories, builders and value objects carry those names too.
 - One reason to change per class (SRP). Small interfaces (ISP). Depend on abstractions (DIP).
 - Use bounded generics when the engine needs a capability of the cell content (for example `TCell extends Mergeable<TCell>`). Document each bound in the README *Generic Engine* section.
 - Prefer composition over inheritance. Use inheritance only for a real *is-a* relation or a Template Method.

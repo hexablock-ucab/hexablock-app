@@ -28,4 +28,4 @@ Use Flutter (stable channel) and Dart 3 for the client.
 - `flutter_test` gives unit and widget tests out of the box; `integration_test` covers navigation.
 - The board is drawn with `CustomPainter`; no game engine (such as Flame) is needed for turn-based puzzles, which keeps dependencies few.
 - The official `dart-flutter` Claude Code plugin and the Dart MCP server support AI-assisted work.
-- The app must also be installable on iOS (C-30, professor's answer on 2026-11-05). An iOS build needs a Mac with Xcode; two team members have one. Distribution through TestFlight needs a paid Apple Developer Program membership; direct installation from a Mac works with a free account but must be repeated after a few days. The team chooses the route in a follow-up ADR.
+- The app must also be installable on iOS (C-30). An iOS build needs a Mac with Xcode; two team members have one. Distribution through TestFlight needs a paid Apple Developer Program membership; direct installation from a Mac works with a free account but must be repeated after a few days. The team chooses the route in a follow-up ADR.

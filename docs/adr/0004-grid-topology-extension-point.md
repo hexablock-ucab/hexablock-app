@@ -8,7 +8,7 @@
 
 ## Context
 
-All four variants share the hexagonal board, its geometry (axial coordinates, neighbors, rotation), rendering, navigation and persistence (§1.5). The professor said in class that, shortly before the defense, he may ask for a change in a low-level detail, for example square cells instead of hexagons or a 3D board, and that the design must absorb it without rewriting the project (NFR-02). In the team's meeting with him on 2026-11-05 he confirmed that a square board is a possible request, announced the day before the defense (C-31). If rules speak in terms of hexagons, every such change touches every variant.
+All four variants share the hexagonal board, its geometry (axial coordinates, neighbors, rotation), rendering, navigation and persistence (§1.5). Shortly before the defense, a change in a low-level detail may be requested, for example square cells instead of hexagons (C-31), and the design must absorb it without rewriting the project (NFR-02). If rules speak in terms of hexagons, every such change touches every variant.
 
 ## Decision
 
