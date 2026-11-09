@@ -3,7 +3,7 @@
 The assignment fixes the shape of the four games but leaves many details open.
 This document records one decision for each open rule, so the engine, the rule tests and the level files all follow the same rules.
 
-- **Who decides:** the team decides and documents these rules (C-33, pending in PR #12; the ID is not yet in `docs/requirements.md`).
+- **Who decides:** the team decides and documents these rules (C-33).
 - **Format of each rule:** the decision, the reason (an assignment section, the team's logic or a requirement ID) and a worked example.
   Each example is written so that a rule test can reuse it as its Arrange – Act – Assert data (C-23b).
 - **Topology:** the rules speak of "the topology's axes and neighbors", not of hexagons, because the grid geometry may change (ADR-0004, Proposed).
@@ -263,10 +263,10 @@ The leaderboard exists per `gameId` and, for level-based variants (Hexa Fit and 
 | RANK-1 | Order | FR-22, FR-13 |
 | RANK-2 | One entry per user | FR-22, FR-13 |
 
-Every rule also traces to C-33 (pending in PR #12) and C-23b (its example is a rule test).
+Every rule also traces to C-33 and C-23b (its example is a rule test).
 
 ## Out of scope
 
 - The level file format (design task D3). This document only names what the files must provide.
 - The API contract, including how the user id and the leaderboard are exposed (design task D5).
-- The README summary of these rules that C-33 asks for. It follows after PR #12 merges.
+- The README summary of these rules that C-33 asks for. It follows in a separate change.

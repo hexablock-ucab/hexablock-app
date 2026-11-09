@@ -3,7 +3,7 @@
 - **Status:** Verifying — accepted by Eduard on 2026-11-08; ready to ship (Done after the PR merges)
 - **Owner:** Eduard Velasco
 - **Branch / PR:** `docs/game-rules` · #13
-- **Requirements:** C-33 (pending in PR #12), FR-05, FR-22, FR-33, FR-34, FR-44, FR-52, FR-53, FR-54, FR-65 (also FR-06, FR-08, FR-13, FR-40 to FR-43, FR-45, NFR-05, C-19e, C-23b)
+- **Requirements:** C-33, FR-05, FR-22, FR-33, FR-34, FR-44, FR-52, FR-53, FR-54, FR-65 (also FR-06, FR-08, FR-13, FR-40 to FR-43, FR-45, NFR-05, C-19e, C-23b)
 - **ADRs:** 0004 (grid topology, Proposed), 0006 (board and level builder, Proposed). No ADR is Accepted, so the rules speak of "the topology's axes and neighbors", not of hexagons, wherever the rule allows it.
 
 Plan reference: design task D2 of the workspace plan. D3 (level format) depends on this task.
@@ -19,7 +19,7 @@ The assignment fixes the shape of the four games but not their details: how the 
 ## Scope
 
 - In scope: one new file, `docs/game-rules.md`, with one section per topic: Hexa Sort cascade and end of game, Hexa Lines lines and score, Hexa Fit figure and stars, Hexa Sort and Hexa Merge score, leaderboard order.
-- Out of scope: code; the level file format (D3); the README summary that C-33 also asks for (follow-up after PR #12 merges); the API contract (D5); numeric level data (par values, goal counts).
+- Out of scope: code; the level file format (D3); the README summary that C-33 also asks for (follow-up change); the API contract (D5); numeric level data (par values, goal counts).
 
 ## Decisions taken with the user (2026-11-08)
 
