@@ -17,6 +17,6 @@
 - [ ] Tests written first where applicable; all pass locally and in CI (quality gates: architecture, test names, analyze, format, coverage).
 - [ ] No inner layer depends on an outer one; no variant-specific condition in the engine.
 - [ ] README / `docs/EXTENSIBILITY.md` / diagrams updated if affected.
-- [ ] `AI_USAGE.md` entry added for significant AI-assisted work.
+- [ ] `AI_USAGE.md` entry added and complete (no pending fields) for significant AI-assisted work.
 - [ ] Third-party code or assets cited in code and in `THIRD_PARTY_NOTICES.md`.
 - [ ] PR title follows Conventional Commits (it becomes the squash commit).
