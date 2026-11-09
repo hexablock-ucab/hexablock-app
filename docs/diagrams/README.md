@@ -8,9 +8,9 @@ Mandatory diagrams (assignment §4, requirement C-11). Each one is kept as an **
 | Clean Architecture layers | The four concentric layers with their main components, dependency arrows pointing to the center, a color legend, and the ports and adapters between layers. | `clean-architecture.drawio` | `clean-architecture.png` |
 | Extensibility | The generic engine in the center, the variants as extensions, and the extension points a fifth variant would implement (see [EXTENSIBILITY.md](../EXTENSIBILITY.md)). | `extensibility.puml` | `extensibility.png` |
 
-## Legend (the professor's convention in class)
+## Legend (the course convention)
 
-Every class in the class diagram shows its layer with a color and a shape, as the professor draws them:
+Every class in the class diagram shows its layer with a color and a shape, following the convention used in the course:
 
 | Layer | Color | Mark | Contents |
 |---|---|---|---|

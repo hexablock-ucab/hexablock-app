@@ -4,7 +4,7 @@
 - **Date:** 2026-10-28
 - **Proposed by:** Eduard Velasco
 - **Deciders:** —
-- **Requirements:** C-01, C-02, C-16d, C-19, C-25
+- **Requirements:** C-01, C-02, C-16d, C-19, C-25, C-30
 
 ## Context
 
@@ -28,4 +28,4 @@ Use Flutter (stable channel) and Dart 3 for the client.
 - `flutter_test` gives unit and widget tests out of the box; `integration_test` covers navigation.
 - The board is drawn with `CustomPainter`; no game engine (such as Flame) is needed for turn-based puzzles, which keeps dependencies few.
 - The official `dart-flutter` Claude Code plugin and the Dart MCP server support AI-assisted work.
-- An iOS build needs a Mac with Xcode; the delivery targets Android (C-16d allows either).
+- The app must also be installable on iOS (C-30). An iOS build needs a Mac with Xcode; two team members have one. Distribution through TestFlight needs a paid Apple Developer Program membership; direct installation from a Mac works with a free account but must be repeated after a few days. The team chooses the route in a follow-up ADR.
