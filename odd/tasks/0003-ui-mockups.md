@@ -2,7 +2,7 @@
 
 - **Status:** Verifying
 - **Owner:** Valentina Maza
-- **Branch / PR:** `docs/ui-mockups` · #
+- **Branch / PR:** `docs/ui-mockups` · #14
 - **Issue:** hexablock-ucab/hexablock-workspace#34 (D12)
 - **Requirements:** FR-01, FR-02, FR-03, FR-05, FR-06, FR-07, FR-09, FR-10, FR-37, FR-45, FR-56, FR-66, C-28, NFR-04
 - **ADRs:** 0002 (Flutter and Dart), 0004 (grid topology and `BoardRenderer`)
@@ -87,13 +87,15 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 
 ## Next step
 
-Open the pull request (link issue hexablock-ucab/hexablock-workspace#34) and ask the team for review.
+A teammate reviews PR #14 (specs and mockups); then merge and mark Done.
 
 ## Log
 
+- 2026-11-09 — Valentina Maza (request, verbatim): "ok esta bien hagamso d12". Answers to Q1–Q5, verbatim: "A", "A", "A", "A", "A".
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): task drafted after five closed design questions (Q1–Q5); all five recommended options accepted.
-- 2026-11-09 — Valentina Maza: document approved without changes.
+- 2026-11-09 — Valentina Maza: "apruebalo asi perfecto" — specs approved by the owner without changes. Teammate approval of the specs (`odd/README.md` life cycle) is requested in PR #14.
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T1 done. Shared tokens in `docs/ui/src/tokens.css` (palette, type, components) so every mockup reuses them; fonts Fredoka and Nunito (OFL 1.1) bundled and credited in `THIRD_PARTY_NOTICES.md`; PNG rendered with headless Chrome.
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T2 done. Added `screens.css` (phone frame 390 × 844) and `hexgrid.js` (draws hexagonal boards from axial coordinates, adapted from Red Blob Games) so every screen and every game reuses one board drawing. Home adds a "Continue" shortcut to the last level; game select shows each variant's best result; level select is one screen for both level-based variants.
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T3 done. `game.css` defines the three zones once; each game only fills them. Zone 3 holds pieces (Lines, Fit), one stack (Sort, as in SORT-6) or the six swipe directions (Merge). The Hexa Sort board was checked by hand so that no two neighboring stacks share a top color (the state after a cascade, SORT-3). Undo appears only in Fit (undo and redo) and Merge (one move).
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T4, T5 and T6 done. Victory (Hexa Fit), defeat (Hexa Lines) and settings; `docs/ui/README.md` indexes every screen with its requirements and English strings; `AI_USAGE.md` entry added. All specs await team review in the pull request.
+- 2026-11-09 — Valentina Maza: PR #14 opened. Self-check against `AGENTS.md`, `CLAUDE.md` and the `ship`, `odd-task` and `log-ai-usage` skills: PR body rewritten on the project template, verbatim prompts added to this log, page titles of the mockups switched to English.

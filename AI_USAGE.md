@@ -50,7 +50,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
   - Dependabot commits failed commitlint — detected in CI; commitlint now ignores Dependabot's sign-off line and updates are grouped.
 - **Lessons:** Let the AI prepare infrastructure and drafts, but keep design decisions explicit, reviewed and recorded in ADRs. Review commit metadata, not only file contents. Ask the AI to check its own output against a named standard; it found real defects when asked.
 
-### 2026-11-09 — UI mockups of the app screens (D12, task [0003](odd/tasks/0003-ui-mockups.md))
+### 2026-11-09 — UI mockups of the app screens (D12, [odd/tasks/0003-ui-mockups.md](odd/tasks/0003-ui-mockups.md), PR #14)
 
 - **Author:** Valentina Maza
 - **Tool / model:** Claude (claude.ai agent session, Claude Opus 5.5) with access to Valentina's computer to read the team workspace and write the files; mockups rendered to PNG with headless Chrome in the agent's workspace.
