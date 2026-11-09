@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>06 · Partida · Hexa Fit</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="game.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--variant-fit); }
+  .rotate { position: absolute; bottom: -14px; right: -14px; width: 44px; height: 44px; border-radius: 50%; background: var(--secondary); color: var(--bg);
+    display: flex; align-items: center; justify-content: center; box-shadow: var(--glow-cyan); }
+  .rotate svg { width: 24px; height: 24px; }
+</style>
+</head>
+<body>
+<div class="screen game-screen">
+  <!-- Zone 1: top bar (Hexa Fit adds undo and redo) -->
+  <div class="z-top">
+    <div class="bar">
+      <span class="icon-btn" data-icon="pause"></span>
+      <div class="stats">
+        <div class="stat"><span class="t-label">Movimientos</span><span class="t-number">5</span></div>
+        <div class="stat"><span class="t-label">Tiempo</span><span class="t-number">0:42</span></div>
+      </div>
+      <div class="actions">
+        <span class="icon-btn" data-icon="undo"></span>
+        <span class="icon-btn is-off" data-icon="redo"></span>
+      </div>
+    </div>
+    <div class="sub-row">
+      <span class="pill">Nivel 7</span>
+      <span class="pill"><span class="k">3★ con</span>≤ 8 mov. · ≤ 1:00</span>
+    </div>
+  </div>
+
+  <!-- Zone 2: board = the level's figure (14 cells) -->
+  <div class="z-board"><div data-render="board"></div></div>
+
+  <!-- Zone 3: tray with the level's remaining pieces -->
+  <div class="z-tray">
+    <span class="t-label tray-label">Piezas · 3 de 5</span>
+    <div class="slot selected" data-render="pC"><span class="rotate" data-icon="rotate"></span></div>
+    <div class="slot" data-render="pD"></div>
+    <div class="slot" data-render="pE"></div>
+  </div>
+</div>
+<div class="home-indicator"></div>
+
+<script>
+  // Figure of the level: a radius-1 hexagon plus 7 cells around it.
+  const FIGURE = [[0,0],[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1],[2,-1],[2,0],[-2,1],[-2,2],[-1,2],[0,-2],[1,-2]];
+  // Placed pieces (each piece keeps its own color), and the piece being dragged (ghost).
+  const PLACED = { "0,0": "var(--tile-violet)", "1,0": "var(--tile-violet)", "0,1": "var(--tile-violet)",
+                   "-1,1": "var(--tile-green)", "-2,1": "var(--tile-green)", "-2,2": "var(--tile-green)", "-1,2": "var(--tile-green)" };
+  const GHOST = new Set(["0,-1", "0,-2", "1,-2"]);
+  function board() {
+    return HB.board({ cells: FIGURE, size: 37, gap: 3, fill: (q, r) => GHOST.has(q + "," + r) ? "ghost" : PLACED[q + "," + r] || null });
+  }
+  function pC() { return HB.piece([[0,0],[0,-1],[1,-1]], 15, "var(--tile-cyan)") + document.querySelector('[data-render="pC"]').innerHTML; }
+  function pD() { return HB.piece([[0,0],[1,0],[1,1]], 15, "var(--tile-orange)"); }
+  function pE() { return HB.piece([[0,0]], 15, "var(--tile-red)"); }
+</script>
+</body>
+</html>

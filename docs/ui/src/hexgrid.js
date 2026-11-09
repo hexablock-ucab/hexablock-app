@@ -98,6 +98,25 @@
     return board({ cells, size, gap: 2, fill: () => color, emptyless: true }).replace(/<use href="#hx-empty"[^>]*\/>/g, "");
   }
 
+  // Icons shared by every screen (24 x 24, stroke icons use currentColor).
+  const S = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"';
+  const ICONS = {
+    back: `<svg ${S}><path d="M15 5 8 12l7 7"/></svg>`,
+    pause: `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.5" height="14" rx="1.5"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.5"/></svg>`,
+    undo: `<svg ${S}><path d="M9 5 4 10l5 5"/><path d="M4 10h10a6 6 0 0 1 0 12h-4"/></svg>`,
+    redo: `<svg ${S}><path d="m15 5 5 5-5 5"/><path d="M20 10H10a6 6 0 0 0 0 12h4"/></svg>`,
+    rotate: `<svg ${S}><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 3v5h-5"/></svg>`,
+    settings: `<svg ${S}><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.4" fill="var(--surface-2)"/><circle cx="15" cy="17" r="2.4" fill="var(--surface-2)"/></svg>`,
+    home: `<svg ${S}><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg>`,
+    play: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>`,
+    retry: `<svg ${S}><path d="M4 12a8 8 0 1 0 2.34-5.66"/><path d="M4 3v5h5"/></svg>`,
+    sound: `<svg ${S} stroke-width="2.4"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg>`,
+    music: `<svg ${S} stroke-width="2.4"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="17" cy="16" r="3" fill="currentColor"/></svg>`,
+    globe: `<svg ${S} stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>`,
+    lock: `<svg ${S} stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`,
+    next: `<svg ${S}><path d="m9 5 7 7-7 7"/></svg>`,
+  };
+
   // Phone status bar (time, signal, wifi, battery), shared by every screen.
   const STATUS = `<div class="status"><span>9:41</span><span class="icons">
   <svg width="18" height="12" viewBox="0 0 18 12" fill="#F2F4FF"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
@@ -105,9 +124,10 @@
   <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0.8" y="0.8" width="22" height="11.4" rx="3.5" fill="none" stroke="rgba(242,244,255,0.5)" stroke-width="1.4"/><rect x="2.6" y="2.6" width="16" height="7.8" rx="2" fill="#F2F4FF"/><rect x="24" y="4.3" width="2" height="4.4" rx="1" fill="rgba(242,244,255,0.5)"/></svg>
 </span></div>`;
 
-  window.HB = { DEFS, STATUS, hexagon, board, piece, toPixel };
+  window.HB = { DEFS, STATUS, ICONS, hexagon, board, piece, toPixel };
   document.addEventListener("DOMContentLoaded", () => {
     document.body.insertAdjacentHTML("afterbegin", DEFS + STATUS);
+    document.querySelectorAll("[data-icon]").forEach(el => { el.innerHTML = ICONS[el.dataset.icon]; });
     document.querySelectorAll("[data-render]").forEach(el => { el.innerHTML = window[el.dataset.render](); });
   });
 })();

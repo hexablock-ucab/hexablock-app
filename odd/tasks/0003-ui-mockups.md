@@ -59,7 +59,7 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 
 - [x] **T1** (S1) Style guide.
 - [x] **T2** (S2, S3, S4) Home, game select and level select.
-- [ ] **T3** (S5, S6) Game template and the four game mockups.
+- [x] **T3** (S5, S6) Game template and the four game mockups.
 - [ ] **T4** (S7, S8, S9) Victory, defeat and settings.
 - [ ] **T5** (S10, S11) PNG exports and `docs/ui/README.md`.
 - [ ] **T6** `log-ai-usage` entry.
@@ -72,8 +72,8 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 | S2 | `docs/ui/png/01-home.png` (source `docs/ui/src/01-home.html`) | Pending team review |
 | S3 | `docs/ui/png/02-game-select.png` (source `docs/ui/src/02-game-select.html`) | Pending team review |
 | S4 | `docs/ui/png/03-level-select.png` (source `docs/ui/src/03-level-select.html`); drawn for Hexa Fit, Hexa Sort reuses it with its accent and data | Pending team review |
-| S5 | | |
-| S6 | | |
+| S5 | `docs/ui/png/04-game-template.png`; zones defined once in `docs/ui/src/game.css` | Pending team review |
+| S6 | `docs/ui/png/05-hexa-lines.png`, `06-hexa-fit.png`, `07-hexa-sort.png`, `08-hexa-merge.png`, all on `game.css` and `hexgrid.js` | Pending team review |
 | S7 | | |
 | S8 | | |
 | S9 | | |
@@ -87,7 +87,7 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 
 ## Next step
 
-T3: the game template and the four game mockups, reusing `docs/ui/src/hexgrid.js` for every board.
+T4: victory, defeat and settings.
 
 ## Log
 
@@ -95,3 +95,4 @@ T3: the game template and the four game mockups, reusing `docs/ui/src/hexgrid.js
 - 2026-11-09 — Valentina Maza: document approved without changes.
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T1 done. Shared tokens in `docs/ui/src/tokens.css` (palette, type, components) so every mockup reuses them; fonts Fredoka and Nunito (OFL 1.1) bundled and credited in `THIRD_PARTY_NOTICES.md`; PNG rendered with headless Chrome.
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T2 done. Added `screens.css` (phone frame 390 × 844) and `hexgrid.js` (draws hexagonal boards from axial coordinates, adapted from Red Blob Games) so every screen and every game reuses one board drawing. Home adds a "Continue" shortcut to the last level; game select shows each variant's best result; level select is one screen for both level-based variants.
+- 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T3 done. `game.css` defines the three zones once; each game only fills them. Zone 3 holds pieces (Lines, Fit), one stack (Sort, as in SORT-6) or the six swipe directions (Merge). The Hexa Sort board was checked by hand so that no two neighboring stacks share a top color (the state after a cascade, SORT-3). Undo appears only in Fit (undo and redo) and Merge (one move).

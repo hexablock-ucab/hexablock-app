@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>08 · Partida · Hexa Merge</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="game.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--variant-merge); }
+  .dirs { position: relative; width: 120px; height: 120px; }
+  .dirs .hub { position: absolute; left: 41px; top: 38px; }
+  .dirs .arrow { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; color: var(--secondary); }
+  .goal { display: flex; flex-direction: column; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="screen game-screen">
+  <!-- Zone 1: top bar (Hexa Merge undoes one move) -->
+  <div class="z-top">
+    <div class="bar">
+      <span class="icon-btn" data-icon="pause"></span>
+      <div class="stats">
+        <div class="stat"><span class="t-label">Puntaje</span><span class="t-number">12 480</span></div>
+        <div class="stat"><span class="t-label">Mejor</span><span class="t-number sub">21 304</span></div>
+      </div>
+      <div class="actions"><span class="icon-btn" data-icon="undo"></span></div>
+    </div>
+    <div class="sub-row">
+      <span class="pill">Hexa Merge</span>
+      <span class="pill accent"><span class="k" style="color:inherit">Deshacer</span>1</span>
+    </div>
+  </div>
+
+  <!-- Zone 2: board (radius 2) with numeric tiles -->
+  <div class="z-board">
+    <div data-render="board"></div>
+    <span class="toast" style="top:26px; right:10px">+128</span>
+  </div>
+
+  <!-- Zone 3: controls instead of pieces: swipe in 6 directions -->
+  <div class="z-tray">
+    <span class="t-label tray-label">Desliza</span>
+    <div class="dirs" id="dirs"></div>
+    <div class="goal">
+      <span class="t-label">Objetivo</span>
+      <div data-render="target"></div>
+      <span class="t-body" style="font-size:13px; color:var(--text-muted); max-width:150px">Fichas iguales que chocan se suman.</span>
+    </div>
+  </div>
+</div>
+<div class="home-indicator"></div>
+
+<script>
+  const V = { "0,0": 128, "1,-1": 64, "1,0": 8, "-1,0": 4, "0,-1": 32, "2,-2": 16, "-1,2": 2, "-2,1": 2, "0,2": 4, "2,0": 2, "-1,-1": 8, "1,1": 16 };
+  const col = n => `var(--merge-${n})`;
+  const ink = n => [8, 16, 32].includes(n) ? "#0B1026" : [64, 128].includes(n) ? "#1A1300" : "#F2F4FF";
+  function board() {
+    return HB.board({ cells: HB.hexagon(2), size: 38, gap: 3,
+      fill: (q, r) => V[q + "," + r] ? col(V[q + "," + r]) : null,
+      label: (q, r) => { const n = V[q + "," + r]; return n ? { text: n, color: ink(n), size: n >= 100 ? 24 : 28 } : null; } });
+  }
+  function target() {
+    return HB.board({ cells: [[0,0]], size: 22, gap: 0, fill: () => col(2048), label: () => ({ text: "2048", color: "#F2F4FF", size: 12 }) }).replace(/<use href="#hx-empty"[^>]*\/>/g, "");
+  }
+  // Six arrows around a small hexagon: the six neighbor directions of the topology.
+  document.addEventListener("DOMContentLoaded", () => {
+    const d = document.getElementById("dirs");
+    d.innerHTML = `<div class="hub">${HB.board({ cells: [[0,0]], size: 22, gap: 0, fill: () => "var(--surface-2)" })}</div>`;
+    // Draw the six arrows in one SVG, one per neighbor direction of the topology.
+    let tri = "";
+    for (let i = 0; i < 6; i++) {
+      const a = (i * 60) * Math.PI / 180, cx = 60 + Math.cos(a) * 46, cy = 60 + Math.sin(a) * 46;
+      const ux = Math.cos(a), uy = Math.sin(a), px = -uy, py = ux;   // direction and its perpendicular
+      // A chevron (">") pointing away from the center: clearer than a triangle at any angle.
+      const tip = [cx + ux * 7, cy + uy * 7];
+      const l = [cx - ux * 5 + px * 8, cy - uy * 5 + py * 8], r = [cx - ux * 5 - px * 8, cy - uy * 5 - py * 8];
+      tri += `<polyline points="${l.join(",")} ${tip.join(",")} ${r.join(",")}" fill="none" stroke="var(--secondary)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+    d.insertAdjacentHTML("beforeend", `<svg style="position:absolute; inset:0" width="120" height="120">${tri}</svg>`);
+  });
+</script>
+</body>
+</html>

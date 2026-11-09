@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>05 · Partida · Hexa Lines</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="game.css">
+<script src="hexgrid.js"></script>
+<style> body { --accent: var(--variant-lines); } </style>
+</head>
+<body>
+<div class="screen game-screen">
+  <!-- Zone 1: top bar -->
+  <div class="z-top">
+    <div class="bar">
+      <span class="icon-btn" data-icon="pause"></span>
+      <div class="stats">
+        <div class="stat"><span class="t-label">Puntaje</span><span class="t-number">1 248</span></div>
+        <div class="stat"><span class="t-label">Mejor</span><span class="t-number sub">3 960</span></div>
+      </div>
+      <span class="spacer" style="width:48px"></span>
+    </div>
+    <div class="sub-row">
+      <span class="pill">Hexa Lines</span>
+      <span class="pill accent"><span class="k" style="color:inherit">Racha</span>x2</span>
+    </div>
+  </div>
+
+  <!-- Zone 2: board (radius 4, 61 cells) -->
+  <div class="z-board">
+    <div data-render="board"></div>
+    <span class="toast" style="top:22px; right:6px">¡Completa la línea!</span>
+  </div>
+
+  <!-- Zone 3: tray with 3 pieces -->
+  <div class="z-tray">
+    <span class="t-label tray-label">Piezas</span>
+    <div class="slot selected" data-render="p1"></div>
+    <div class="slot" data-render="p2"></div>
+    <div class="slot used" data-render="p3"></div>
+  </div>
+</div>
+<div class="home-indicator"></div>
+
+<script>
+  const C = ["var(--tile-red)", "var(--tile-orange)", "var(--tile-yellow)", "var(--tile-green)", "var(--tile-violet)"];
+  // The selected piece (3 cells in a row) fits at q = 0..2 on row r = 0, which completes that row.
+  const GHOST = new Set(["0,0", "1,0", "2,0"]);
+  function board() {
+    return HB.board({ cells: HB.hexagon(4), size: 21.5, gap: 2.2, fill: (q, r) => {
+      const k = q + "," + r;
+      if (GHOST.has(k)) return "ghost";
+      if (r === 0) return C[(q + 8) % 5];                 // the almost-complete row
+      const h = Math.abs((q * 73856093) ^ (r * 19349663)) % 100;  // fixed pseudo-random fill for the mockup
+      return h < 38 ? C[h % 5] : null;
+    }});
+  }
+  function p1() { return HB.piece([[0,0],[1,0],[2,0]], 15, "var(--tile-cyan)"); }
+  function p2() { return HB.piece([[0,0],[1,0],[0,1],[-1,1]], 15, "var(--tile-red)"); }
+  function p3() { return HB.piece([[0,0],[1,-1]], 15, "var(--tile-yellow)"); }
+</script>
+</body>
+</html>

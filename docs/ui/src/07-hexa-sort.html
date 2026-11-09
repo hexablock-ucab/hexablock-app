@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>07 · Partida · Hexa Sort</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="game.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--variant-sort); }
+  .goal { display: flex; gap: 6px; align-items: center; }
+  .goal i { width: 16px; height: 18px; display: inline-block; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: #3A4580; }
+  .goal i.on { background: var(--variant-sort); box-shadow: 0 0 10px var(--variant-sort); }
+  .next { display: flex; align-items: center; gap: 22px; }
+  .next .info { display: flex; flex-direction: column; gap: 6px; }
+</style>
+</head>
+<body>
+<div class="screen game-screen">
+  <!-- Zone 1: top bar (no undo in Hexa Sort) -->
+  <div class="z-top">
+    <div class="bar">
+      <span class="icon-btn" data-icon="pause"></span>
+      <div class="stats">
+        <div class="stat"><span class="t-label">Metas</span><span class="t-number">2<span style="color:var(--text-muted); font-size:20px"> / 3</span></span></div>
+        <div class="stat"><span class="t-label">Puntaje</span><span class="t-number sub">230</span></div>
+      </div>
+      <span class="spacer" style="width:48px"></span>
+    </div>
+    <div class="sub-row">
+      <span class="pill">Nivel 4</span>
+      <span class="pill"><span class="k">Mov.</span>18</span>
+      <span class="pill goal"><i class="on"></i><i class="on"></i><i></i></span>
+    </div>
+  </div>
+
+  <!-- Zone 2: board (radius 2, 19 cells) with color stacks -->
+  <div class="z-board">
+    <div data-render="board"></div>
+    <span class="toast" style="bottom:18px; left:14px; background:var(--variant-sort)">Cascada · ¡+3 naranjas!</span>
+  </div>
+
+  <!-- Zone 3: the stack the tray offers now -->
+  <div class="z-tray">
+    <span class="t-label tray-label">Siguiente pila</span>
+    <div class="next">
+      <div class="slot selected" style="width:110px; height:118px" data-render="nextStack"></div>
+      <div class="info">
+        <span class="t-h2" style="font-size:19px">Toca una celda vacía</span>
+        <span class="t-body" style="font-size:14px; color:var(--text-muted); max-width:170px">10 fichas del mismo color forman una meta.</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="home-indicator"></div>
+
+<script>
+  const R = "var(--tile-red)", O = "var(--tile-orange)", Y = "var(--tile-yellow)", G = "var(--tile-green)", C = "var(--tile-cyan)", V = "var(--tile-violet)";
+  // Stacks bottom to top. The number on each stack is its top block of one color.
+  const S = {
+    "0,0": [C, O, O, O, O], "1,-1": [O, G], "-1,0": [V, V, R],
+    "0,-2": [Y, Y], "1,-2": [C], "2,-2": [G, R, R], "-1,-1": [G, G, G],
+    "-2,1": [Y, C, C], "0,1": [V, Y], "2,0": [C, C], "-1,2": [R], "1,1": [O, V, V, V],
+    "-2,2": [G, Y],
+  };
+  function board() { return HB.board({ cells: HB.hexagon(2), size: 36, gap: 3, stack: (q, r) => S[q + "," + r] || null }); }
+  function nextStack() { return HB.board({ cells: [[0,0]], size: 28, gap: 0, stack: () => [R, G, G, O] }).replace(/<use href="#hx-empty"[^>]*\/>/g, ""); }
+</script>
+</body>
+</html>
