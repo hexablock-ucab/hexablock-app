@@ -53,11 +53,12 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 - `docs/ui/**`
 - `odd/tasks/0003-ui-mockups.md`
 - `AI_USAGE.md` (one entry for this task)
+- `THIRD_PARTY_NOTICES.md` (credits for fonts or other assets used by the mockups, C-14)
 
 ## Tasks
 
-- [ ] **T1** (S1) Style guide.
-- [ ] **T2** (S2, S3, S4) Home, game select and level select.
+- [x] **T1** (S1) Style guide.
+- [x] **T2** (S2, S3, S4) Home, game select and level select.
 - [ ] **T3** (S5, S6) Game template and the four game mockups.
 - [ ] **T4** (S7, S8, S9) Victory, defeat and settings.
 - [ ] **T5** (S10, S11) PNG exports and `docs/ui/README.md`.
@@ -67,10 +68,10 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 
 | Spec | Evidence | Verdict |
 |---|---|---|
-| S1 | | |
-| S2 | | |
-| S3 | | |
-| S4 | | |
+| S1 | `docs/ui/png/style-guide.png`, sources `docs/ui/src/style-guide.html` and `docs/ui/src/tokens.css` | Pending team review |
+| S2 | `docs/ui/png/01-home.png` (source `docs/ui/src/01-home.html`) | Pending team review |
+| S3 | `docs/ui/png/02-game-select.png` (source `docs/ui/src/02-game-select.html`) | Pending team review |
+| S4 | `docs/ui/png/03-level-select.png` (source `docs/ui/src/03-level-select.html`); drawn for Hexa Fit, Hexa Sort reuses it with its accent and data | Pending team review |
 | S5 | | |
 | S6 | | |
 | S7 | | |
@@ -86,9 +87,11 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 
 ## Next step
 
-T1 (style guide) starts on the next working session.
+T3: the game template and the four game mockups, reusing `docs/ui/src/hexgrid.js` for every board.
 
 ## Log
 
 - 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): task drafted after five closed design questions (Q1–Q5); all five recommended options accepted.
 - 2026-11-09 — Valentina Maza: document approved without changes.
+- 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T1 done. Shared tokens in `docs/ui/src/tokens.css` (palette, type, components) so every mockup reuses them; fonts Fredoka and Nunito (OFL 1.1) bundled and credited in `THIRD_PARTY_NOTICES.md`; PNG rendered with headless Chrome.
+- 2026-11-09 — Valentina Maza with Claude (Opus 5.5, claude.ai): T2 done. Added `screens.css` (phone frame 390 × 844) and `hexgrid.js` (draws hexagonal boards from axial coordinates, adapted from Red Blob Games) so every screen and every game reuses one board drawing. Home adds a "Continue" shortcut to the last level; game select shows each variant's best result; level select is one screen for both level-based variants.

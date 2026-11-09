@@ -1,0 +1,22 @@
+/*
+ * HexaBlock Suite — phone frame shared by every screen mockup (D12).
+ * Portrait phone, 390 x 844 (iPhone 14/15), safe areas 47 top and 34 bottom.
+ */
+html, body { width: 390px; height: 844px; overflow: hidden; }
+body {
+  position: relative;
+  background:
+    radial-gradient(520px 360px at 110% -5%, rgba(180,124,255,0.22), transparent 65%),
+    radial-gradient(420px 320px at -20% 45%, rgba(63,200,255,0.14), transparent 65%),
+    radial-gradient(500px 300px at 50% 115%, rgba(255,210,60,0.10), transparent 65%),
+    var(--bg);
+}
+.status { height: 47px; padding: 12px 28px 0; display: flex; align-items: center; justify-content: space-between; font: 700 16px/1 var(--font-body); }
+.status .icons { display: flex; gap: 6px; align-items: center; }
+.home-indicator { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: rgba(242,244,255,0.85); }
+.screen { position: absolute; top: 47px; bottom: 34px; left: 0; right: 0; padding: 0 20px; display: flex; flex-direction: column; }
+.nav { display: flex; align-items: center; gap: 12px; height: 64px; }
+.nav .title { flex: 1; text-align: center; }
+.nav .spacer { width: 48px; }
+/* Decorative floating hexes for backgrounds */
+.deco { position: absolute; opacity: 0.18; pointer-events: none; }
