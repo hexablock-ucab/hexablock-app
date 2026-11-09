@@ -1,0 +1,32 @@
+/*
+ * HexaBlock Suite — game screen template (D12, spec S5).
+ * Three fixed zones shared by every variant; each variant only fills them:
+ *   zone 1 .z-top   — top bar: left action, the variant's result, optional actions
+ *   zone 2 .z-board — the board, drawn from the grid topology (any cell shape)
+ *   zone 3 .z-tray  — what the player plays next: pieces, a stack, or controls
+ */
+.game-screen { gap: 0; }
+.z-top { padding-top: 8px; }
+.z-top .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.z-top .stats { flex: 1; display: flex; justify-content: center; gap: 22px; }
+.z-top .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.z-top .stat .t-number { font-size: 28px; }
+.z-top .stat .sub { font-size: 18px; color: var(--primary); }
+.z-top .actions { display: flex; gap: 8px; }
+.z-top .sub-row { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px;
+  background: rgba(10,14,40,0.6); border: 1.5px solid var(--line); font: 600 14px/1 var(--font-display); }
+.pill .k { font: 800 10px/1 var(--font-body); letter-spacing: 1.2px; color: var(--text-muted); text-transform: uppercase; }
+.pill.accent { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent); }
+
+.z-board { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+.z-tray { height: 150px; margin-bottom: 8px; border-radius: var(--radius-m); background: rgba(10,14,40,0.6);
+  border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: space-around; padding: 0 12px; position: relative; }
+.z-tray .slot { width: 96px; height: 104px; border-radius: 18px; background: var(--surface); display: flex; align-items: center; justify-content: center; position: relative; }
+.z-tray .slot.selected { outline: 3px solid var(--secondary); box-shadow: var(--glow-cyan); }
+.z-tray .slot.used { opacity: 0.3; }
+.z-tray .tray-label { position: absolute; top: -10px; left: 16px; padding: 2px 8px; border-radius: 999px; background: var(--bg); }
+
+/* Floating feedback (combo, merge) */
+.toast { position: absolute; padding: 8px 14px; border-radius: 999px; font: 700 18px/1 var(--font-display);
+  background: var(--primary); color: var(--text-on-accent); box-shadow: var(--glow-primary); transform: rotate(-4deg); }

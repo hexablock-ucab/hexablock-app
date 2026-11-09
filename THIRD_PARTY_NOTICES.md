@@ -23,4 +23,6 @@ The team cites every source of code, algorithms, assets and tools that it did no
 
 | Asset | Author | License | Where |
 |---|---|---|---|
-| TODO (sounds, music, fonts, icons) | | | |
+| [Fredoka](https://fonts.google.com/specimen/Fredoka) (latin subset, weights 500–700, via [Fontsource](https://fontsource.org)) | The Fredoka Project Authors | SIL Open Font License 1.1 | `docs/ui/src/fonts/` (UI mockups) |
+| [Nunito](https://fonts.google.com/specimen/Nunito) (latin subset, weights 600–800, via [Fontsource](https://fontsource.org)) | The Nunito Project Authors | SIL Open Font License 1.1 | `docs/ui/src/fonts/` (UI mockups) |
+| TODO (sounds, music, icons) | | | |
