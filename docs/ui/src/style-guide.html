@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>HexaBlock Suite — Guía de estilo</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  body { width: 1440px; padding: 56px 64px 64px; background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(180,124,255,0.18), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(63,200,255,0.12), transparent 60%), var(--bg); }
+  header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+  header .logo { display: flex; align-items: center; gap: 18px; }
+  section { margin-top: 44px; }
+  section > h2 { margin: 0 0 18px; }
+  .grid { display: grid; gap: 20px; }
+  .swatch { border-radius: var(--radius-s); overflow: hidden; border: 1.5px solid var(--line); background: var(--surface); }
+  .swatch .chip { height: 84px; }
+  .swatch .meta { padding: 10px 12px; }
+  .swatch .meta b { display: block; font: 700 15px/1.2 var(--font-display); }
+  .swatch .meta code { font: 700 12px/1.4 ui-monospace, monospace; color: var(--text-muted); }
+  .row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .panel { padding: 24px; }
+  .caption { margin-top: 10px; }
+  .variant { padding: 22px; display: flex; gap: 16px; align-items: center; }
+  .variant .bar { width: 6px; align-self: stretch; border-radius: 6px; }
+  .merge { position: relative; width: 74px; height: 85px; }
+  .merge span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 22px/1 var(--font-display); }
+  .level { width: 92px; height: 106px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .level svg.bg { position: absolute; inset: 0; width: 92px; height: 106px; }
+  .level .n { position: relative; font: 700 28px/1 var(--font-display); }
+  .level .stars { position: relative; display: flex; gap: 2px; margin-top: 6px; }
+  .stars svg { width: 16px; height: 16px; }
+  .tray { display: flex; gap: 16px; padding: 16px; border-radius: var(--radius-m); background: rgba(10,14,40,0.6); border: 1.5px dashed var(--line); }
+  .slot { width: 120px; height: 120px; border-radius: 18px; background: var(--surface); display: flex; align-items: center; justify-content: center; }
+  .slot.selected { outline: 3px solid var(--secondary); box-shadow: var(--glow-cyan); }
+  .slot.used { opacity: 0.35; }
+  .spec { display: grid; grid-template-columns: 210px 1fr; gap: 10px 20px; align-items: baseline; }
+  .footer { margin-top: 48px; padding-top: 20px; border-top: 1.5px solid var(--line); display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- Shared shapes: a pointy-top hexagon with a shine overlay. fill comes from the <use>. -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.25"/>
+    </linearGradient>
+    <symbol id="hx" viewBox="-4 -4 108 123.47">
+      <polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" stroke="rgba(255,255,255,0.35)" stroke-width="3" stroke-linejoin="round"/>
+      <polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="url(#shine)"/>
+    </symbol>
+    <symbol id="hx-empty" viewBox="-4 -4 108 123.47">
+      <polygon class="hex-empty" points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="hx-ghost" viewBox="-4 -4 108 123.47">
+      <polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="rgba(63,224,224,0.18)" stroke="#3FE0E0" stroke-width="4" stroke-dasharray="10 7" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="star" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9.3 16.5,14 18.4,21.5 12,17.3 5.6,21.5 7.5,14 2,9.3 9,9"/></symbol>
+  </defs>
+</svg>
+
+<header>
+  <div class="logo">
+    <svg width="78" height="78" viewBox="0 0 120 120">
+      <use href="#hx" x="30" y="2"  width="40" height="46" fill="var(--variant-lines)"/>
+      <use href="#hx" x="50" y="36" width="40" height="46" fill="var(--variant-merge)"/>
+      <use href="#hx" x="10" y="36" width="40" height="46" fill="var(--variant-fit)"/>
+      <use href="#hx" x="30" y="70" width="40" height="46" fill="var(--variant-sort)"/>
+    </svg>
+    <div>
+      <div class="t-display">HexaBlock Suite</div>
+      <div class="t-h2" style="color:var(--text-muted)">Guía de estilo · Arcade oscuro neón</div>
+    </div>
+  </div>
+  <div style="text-align:right">
+    <div class="t-label">D12 · Tarea 0003 · S1</div>
+    <div class="t-body" style="color:var(--text-muted)">v0.1 · 9-nov-2026 · Teléfono vertical 390 × 844</div>
+  </div>
+</header>
+
+<!-- 1. Palette -->
+<section>
+  <h2 class="t-h1">1. Paleta</h2>
+  <div class="t-label" style="margin-bottom:12px">Base</div>
+  <div class="grid" style="grid-template-columns: repeat(7, 1fr)">
+    <div class="swatch"><div class="chip" style="background:var(--bg)"></div><div class="meta"><b>Fondo</b><code>--bg #0B1026</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--bg-2)"></div><div class="meta"><b>Fondo 2 / celda</b><code>--bg-2 #121A40</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--surface)"></div><div class="meta"><b>Superficie</b><code>--surface #19214F</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--surface-2)"></div><div class="meta"><b>Superficie 2</b><code>--surface-2 #232D68</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--line)"></div><div class="meta"><b>Línea</b><code>--line #34408A</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--text)"></div><div class="meta"><b>Texto</b><code>--text #F2F4FF</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--text-muted)"></div><div class="meta"><b>Texto suave</b><code>--text-muted #A3ABD9</code></div></div>
+  </div>
+
+  <div class="t-label" style="margin:22px 0 12px">Acentos y estados</div>
+  <div class="grid" style="grid-template-columns: repeat(7, 1fr)">
+    <div class="swatch"><div class="chip" style="background:var(--primary)"></div><div class="meta"><b>Primario</b><code>--primary #FFD23C</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--secondary)"></div><div class="meta"><b>Secundario</b><code>--secondary #3FE0E0</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--success)"></div><div class="meta"><b>Éxito</b><code>--success #3BE08B</code></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--danger)"></div><div class="meta"><b>Peligro</b><code>--danger #FF4D6D</code></div></div>
+  </div>
+
+  <div class="t-label" style="margin:22px 0 12px">Fichas de color (Hexa Lines y Hexa Sort)</div>
+  <div class="row">
+    <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-red)"/></svg><div class="t-label">red</div></div>
+    <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-orange)"/></svg><div class="t-label">orange</div></div>
+    <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-yellow)"/></svg><div class="t-label">yellow</div></div>
+    <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-green)"/></svg><div class="t-label">green</div></div>
+    <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-cyan)"/></svg><div class="t-label">cyan</div></div>
+    <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-violet)"/></svg><div class="t-label">violet</div></div>
+    <div class="t-body" style="color:var(--text-muted); max-width:420px; margin-left:16px">Seis colores muy distintos entre sí. Cada ficha lleva brillo arriba y sombra abajo para leerse como "bloque". Para daltonismo, Hexa Sort puede sumar un símbolo por color (pendiente de D1).</div>
+  </div>
+
+  <div class="t-label" style="margin:22px 0 12px">Rampa de valores (Hexa Merge)</div>
+  <div class="row" style="gap:12px">
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-2)"/></svg><span>2</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-4)"/></svg><span>4</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-8)"/></svg><span style="color:var(--bg)">8</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-16)"/></svg><span style="color:var(--bg)">16</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-32)"/></svg><span style="color:var(--bg)">32</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-64)"/></svg><span style="color:var(--text-on-accent)">64</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-128)"/></svg><span style="color:var(--text-on-accent); font-size:19px">128</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-256)"/></svg><span style="font-size:19px">256</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-512)"/></svg><span style="font-size:19px">512</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-1024)"/></svg><span style="font-size:16px">1024</span></div>
+    <div class="merge" style="filter: drop-shadow(0 0 14px rgba(180,124,255,0.8))"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-2048)"/></svg><span style="font-size:16px">2048</span></div>
+  </div>
+</section>
+
+<!-- 2. Variant identity -->
+<section>
+  <h2 class="t-h1">2. Identidad de cada juego</h2>
+  <div class="grid" style="grid-template-columns: repeat(4, 1fr)">
+    <div class="card variant"><div class="bar" style="background:var(--variant-lines)"></div>
+      <svg width="56" height="56" viewBox="0 0 100 100"><use href="#hx" x="0" y="25" width="34" height="39" fill="var(--variant-lines)"/><use href="#hx" x="33" y="25" width="34" height="39" fill="var(--variant-lines)"/><use href="#hx" x="66" y="25" width="34" height="39" fill="var(--variant-lines)"/></svg>
+      <div><div class="t-h2">Hexa Lines</div><div class="t-body" style="color:var(--text-muted)">Cian · partida sin fin</div></div></div>
+    <div class="card variant"><div class="bar" style="background:var(--variant-fit)"></div>
+      <svg width="56" height="56" viewBox="0 0 100 100"><use href="#hx-ghost" x="16" y="0" width="34" height="39"/><use href="#hx" x="50" y="0" width="34" height="39" fill="var(--variant-fit)"/><use href="#hx" x="0" y="29" width="34" height="39" fill="var(--variant-fit)"/><use href="#hx" x="33" y="29" width="34" height="39" fill="var(--variant-fit)"/><use href="#hx" x="66" y="29" width="34" height="39" fill="var(--variant-fit)"/></svg>
+      <div><div class="t-h2">Hexa Fit</div><div class="t-body" style="color:var(--text-muted)">Violeta · niveles con estrellas</div></div></div>
+    <div class="card variant"><div class="bar" style="background:var(--variant-sort)"></div>
+      <svg width="56" height="56" viewBox="0 0 100 100"><use href="#hx" x="30" y="56" width="40" height="46" fill="var(--tile-cyan)"/><use href="#hx" x="30" y="44" width="40" height="46" fill="var(--variant-sort)"/><use href="#hx" x="30" y="32" width="40" height="46" fill="var(--variant-sort)"/><use href="#hx" x="30" y="20" width="40" height="46" fill="var(--variant-sort)"/></svg>
+      <div><div class="t-h2">Hexa Sort</div><div class="t-body" style="color:var(--text-muted)">Naranja · niveles por metas</div></div></div>
+    <div class="card variant"><div class="bar" style="background:var(--variant-merge)"></div>
+      <svg width="56" height="56" viewBox="0 0 100 100"><use href="#hx" x="22" y="18" width="56" height="64" fill="var(--variant-merge)"/><text x="50" y="58" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="22" fill="#1A1300">2048</text></svg>
+      <div><div class="t-h2">Hexa Merge</div><div class="t-body" style="color:var(--text-muted)">Amarillo · partida sin fin</div></div></div>
+  </div>
+</section>
+
+<!-- 3. Type -->
+<section>
+  <h2 class="t-h1">3. Tipografía</h2>
+  <div class="card panel spec">
+    <div class="t-label">Display · Fredoka 700 · 44</div><div class="t-display">¡Nivel completado!</div>
+    <div class="t-label">Título · Fredoka 700 · 30</div><div class="t-h1">Elige tu juego</div>
+    <div class="t-label">Subtítulo · Fredoka 600 · 22</div><div class="t-h2">Hexa Sort · Nivel 4</div>
+    <div class="t-label">Texto · Nunito 600 · 16</div><div class="t-body">Coloca la pila en una celda vacía. Las fichas del mismo color se juntan en cascada.</div>
+    <div class="t-label">Etiqueta · Nunito 800 · 12</div><div class="t-label" style="color:var(--text)">Puntaje · Mejor · Movimientos</div>
+    <div class="t-label">Número · Fredoka 600 · 32</div><div class="t-number">12 480</div>
+  </div>
+  <div class="t-body caption" style="color:var(--text-muted)">Fredoka (redondeada, de juego) para títulos y números; Nunito para lectura. Ambas con licencia SIL OFL 1.1 y disponibles en <code>google_fonts</code> para Flutter.</div>
+</section>
+
+<!-- 4. Components -->
+<section>
+  <h2 class="t-h1">4. Componentes</h2>
+  <div class="grid" style="grid-template-columns: 1.15fr 1fr">
+
+    <div class="card panel">
+      <div class="t-label" style="margin-bottom:14px">Botones</div>
+      <div class="row">
+        <span class="btn btn-primary">Jugar</span>
+        <span class="btn btn-secondary">Reintentar</span>
+        <span class="btn btn-ghost">Inicio</span>
+        <span class="btn btn-disabled">Bloqueado</span>
+      </div>
+      <div class="t-label" style="margin:22px 0 14px">Botones de icono · 48 × 48</div>
+      <div class="row" style="gap:14px">
+        <span class="icon-btn" title="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg></span>
+        <span class="icon-btn" title="Pausa"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.5" height="14" rx="1.5"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.5"/></svg></span>
+        <span class="icon-btn" title="Deshacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5 4 10l5 5"/><path d="M4 10h10a6 6 0 0 1 0 12h-4"/></svg></span>
+        <span class="icon-btn" title="Rehacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5 5 5-5 5"/><path d="M20 10H10a6 6 0 0 0 0 12h4"/></svg></span>
+        <span class="icon-btn is-off" title="Rehacer (sin acciones)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5 5 5-5 5"/><path d="M20 10H10a6 6 0 0 0 0 12h4"/></svg></span>
+        <span class="icon-btn" title="Girar 60°"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 3v5h-5"/></svg></span>
+        <span class="icon-btn" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.4" fill="var(--surface-2)"/><circle cx="15" cy="17" r="2.4" fill="var(--surface-2)"/></svg></span>
+        <span class="icon-btn" title="Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg></span>
+        <span class="icon-btn" title="Sonido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg></span>
+      </div>
+
+      <div class="t-label" style="margin:22px 0 14px">Barra superior de partida (zona 1 de la plantilla)</div>
+      <div class="topbar" style="padding:14px 16px; border-radius:var(--radius-m); background:rgba(10,14,40,0.6); border:1.5px solid var(--line)">
+        <span class="icon-btn"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.5" height="14" rx="1.5"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.5"/></svg></span>
+        <div class="stat"><span class="t-label">Puntaje</span><span class="t-number">1 248</span></div>
+        <div class="stat"><span class="t-label">Mejor</span><span class="t-number" style="font-size:22px; color:var(--primary)">3 960</span></div>
+        <span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5 4 10l5 5"/><path d="M4 10h10a6 6 0 0 1 0 12h-4"/></svg></span>
+      </div>
+      <div class="t-body caption" style="color:var(--text-muted)">Las acciones de la derecha dependen del juego: deshacer solo en Fit y Merge (FR-37, FR-45, FR-56, FR-66).</div>
+    </div>
+
+    <div class="card panel">
+      <div class="t-label" style="margin-bottom:14px">Celdas del tablero</div>
+      <div class="row" style="gap:26px; align-items:flex-start">
+        <div style="text-align:center"><svg width="70" height="80"><use href="#hx-empty" width="70" height="80"/></svg><div class="t-label">Vacía</div></div>
+        <div style="text-align:center"><svg width="70" height="80"><use href="#hx" width="70" height="80" fill="var(--tile-green)"/></svg><div class="t-label">Ocupada</div></div>
+        <div style="text-align:center"><svg width="70" height="80"><use href="#hx-ghost" width="70" height="80"/></svg><div class="t-label">Encaja aquí</div></div>
+        <div style="text-align:center"><svg width="70" height="80"><use href="#hx-empty" width="70" height="80"/><polygon transform="translate(2.6,2.6) scale(0.62)" points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="none" stroke="var(--danger)" stroke-width="7" stroke-dasharray="10 7"/></svg><div class="t-label">No encaja</div></div>
+        <div style="text-align:center"><svg width="70" height="96" viewBox="0 0 70 96">
+            <use href="#hx" x="0" y="24" width="70" height="72" fill="var(--tile-violet)"/>
+            <use href="#hx" x="0" y="16" width="70" height="72" fill="var(--tile-cyan)"/>
+            <use href="#hx" x="0" y="8"  width="70" height="72" fill="var(--tile-orange)"/>
+            <use href="#hx" x="0" y="0"  width="70" height="72" fill="var(--tile-orange)"/>
+            <text x="35" y="42" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="18" fill="#1A1300">2</text></svg>
+          <div class="t-label">Pila (Sort)</div></div>
+      </div>
+      <div class="t-body caption" style="color:var(--text-muted)">La forma de la celda sale de la topología (ADR-0004): si el profe pide cuadrados, cambia este dibujo, no los colores ni los componentes.</div>
+
+      <div class="t-label" style="margin:22px 0 14px">Bandeja de piezas (zona 3 de la plantilla)</div>
+      <div class="tray">
+        <div class="slot selected"><svg width="88" height="60" viewBox="0 0 88 60"><use href="#hx" x="0" y="8" width="30" height="34" fill="var(--tile-cyan)"/><use href="#hx" x="29" y="8" width="30" height="34" fill="var(--tile-cyan)"/><use href="#hx" x="58" y="8" width="30" height="34" fill="var(--tile-cyan)"/></svg></div>
+        <div class="slot"><svg width="72" height="72" viewBox="0 0 72 72"><use href="#hx" x="21" y="0" width="30" height="34" fill="var(--tile-red)"/><use href="#hx" x="6" y="25" width="30" height="34" fill="var(--tile-red)"/><use href="#hx" x="36" y="25" width="30" height="34" fill="var(--tile-red)"/></svg></div>
+        <div class="slot used"><svg width="40" height="46"><use href="#hx" width="40" height="46" fill="var(--tile-yellow)"/></svg></div>
+      </div>
+      <div class="t-body caption" style="color:var(--text-muted)">Seleccionada (borde cian) · disponible · ya usada (atenuada).</div>
+    </div>
+
+    <div class="card panel">
+      <div class="t-label" style="margin-bottom:14px">Nivel (selector de niveles)</div>
+      <div class="row" style="gap:18px">
+        <div class="level"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--surface-2)" stroke="var(--line)" stroke-width="3"/></svg>
+          <span class="n">1</span><span class="stars" style="fill:var(--primary)"><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg></span></div>
+        <div class="level"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--surface-2)" stroke="var(--line)" stroke-width="3"/></svg>
+          <span class="n">2</span><span class="stars"><svg style="fill:var(--primary)"><use href="#star"/></svg><svg style="fill:var(--primary)"><use href="#star"/></svg><svg style="fill:#3A4580"><use href="#star"/></svg></span></div>
+        <div class="level" style="filter: drop-shadow(0 0 14px rgba(255,210,60,0.6))"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--primary)" stroke="#FFE27A" stroke-width="3"/></svg>
+          <span class="n" style="color:var(--text-on-accent)">3</span><span class="t-label" style="position:relative; color:var(--text-on-accent); margin-top:6px">Jugar</span></div>
+        <div class="level"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--surface)" stroke="var(--line)" stroke-width="3" stroke-dasharray="8 6"/></svg>
+          <svg style="position:relative" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B75AD" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="#6B75AD"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+      </div>
+      <div class="t-body caption" style="color:var(--text-muted)">Completado (3★) · completado (2★) · siguiente (resaltado) · bloqueado.</div>
+    </div>
+
+    <div class="card panel">
+      <div class="t-label" style="margin-bottom:14px">Ajustes</div>
+      <div class="row" style="justify-content:space-between"><span class="t-body">Música</span><span class="toggle on"></span></div>
+      <div class="row" style="justify-content:space-between; margin-top:14px"><span class="t-body">Efectos de sonido</span><span class="toggle"></span></div>
+      <div class="row" style="justify-content:space-between; margin-top:14px"><span class="t-body">Idioma</span><span class="segmented"><span class="active">Español</span><span>English</span></span></div>
+      <div class="t-label" style="margin:22px 0 10px">Estrellas de resultado</div>
+      <div class="row" style="gap:6px"><svg width="44" height="44" style="fill:var(--primary); filter:drop-shadow(0 0 10px rgba(255,210,60,0.7))"><use href="#star"/></svg><svg width="44" height="44" style="fill:var(--primary); filter:drop-shadow(0 0 10px rgba(255,210,60,0.7))"><use href="#star"/></svg><svg width="44" height="44" style="fill:#3A4580"><use href="#star"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Shape and spacing -->
+<section>
+  <h2 class="t-h1">5. Forma y espaciado</h2>
+  <div class="card panel row" style="gap:48px; align-items:flex-start">
+    <div><div class="t-label" style="margin-bottom:12px">Radios</div>
+      <div class="row" style="gap:14px">
+        <div style="text-align:center"><div style="width:64px;height:64px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line)"></div><div class="t-label" style="margin-top:6px">s · 12</div></div>
+        <div style="text-align:center"><div style="width:64px;height:64px;border-radius:20px;background:var(--surface-2);border:1.5px solid var(--line)"></div><div class="t-label" style="margin-top:6px">m · 20</div></div>
+        <div style="text-align:center"><div style="width:96px;height:64px;border-radius:999px;background:var(--surface-2);border:1.5px solid var(--line)"></div><div class="t-label" style="margin-top:6px">pill</div></div>
+      </div></div>
+    <div><div class="t-label" style="margin-bottom:12px">Espaciado (múltiplos de 4)</div>
+      <div class="row" style="gap:14px; align-items:flex-end">
+        <div style="text-align:center"><div style="width:4px;height:4px;background:var(--secondary)"></div><div class="t-label" style="margin-top:6px">4</div></div>
+        <div style="text-align:center"><div style="width:8px;height:8px;background:var(--secondary)"></div><div class="t-label" style="margin-top:6px">8</div></div>
+        <div style="text-align:center"><div style="width:12px;height:12px;background:var(--secondary)"></div><div class="t-label" style="margin-top:6px">12</div></div>
+        <div style="text-align:center"><div style="width:16px;height:16px;background:var(--secondary)"></div><div class="t-label" style="margin-top:6px">16</div></div>
+        <div style="text-align:center"><div style="width:24px;height:24px;background:var(--secondary)"></div><div class="t-label" style="margin-top:6px">24</div></div>
+        <div style="text-align:center"><div style="width:32px;height:32px;background:var(--secondary)"></div><div class="t-label" style="margin-top:6px">32</div></div>
+      </div></div>
+    <div style="max-width:420px"><div class="t-label" style="margin-bottom:12px">Reglas</div>
+      <div class="t-body" style="color:var(--text-muted)">Margen lateral de pantalla: 20. Zona táctil mínima: 48 × 48. Brillo (glow) solo en lo que el jugador debe tocar o celebrar: botón primario, pieza seleccionada, siguiente nivel, estrellas.</div></div>
+  </div>
+</section>
+
+<div class="footer">
+  <div class="t-body" style="color:var(--text-muted)">Fuente: <code>docs/ui/src/tokens.css</code> + <code>style-guide.html</code> · Cada token corresponde a un valor del tema de Flutter.</div>
+  <div class="t-label">HexaBlock Suite · UCAB 2026-2</div>
+</div>
+</body>
+</html>

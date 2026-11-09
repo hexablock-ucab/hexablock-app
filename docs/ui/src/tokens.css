@@ -1,0 +1,112 @@
+/*
+ * HexaBlock Suite — design tokens and shared components for the UI mockups (D12).
+ * Every mockup in docs/ui/src imports this file, so a change of color, type or
+ * shape is made once here (the same "one engine" idea, applied to the UI).
+ * Token names are meant to map one to one to the Flutter ThemeData later.
+ * Fonts: Fredoka and Nunito, SIL Open Font License 1.1 (see fonts/OFL-*.txt).
+ */
+
+@font-face { font-family: "Fredoka"; font-weight: 500; src: url("fonts/fredoka-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fredoka"; font-weight: 600; src: url("fonts/fredoka-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fredoka"; font-weight: 700; src: url("fonts/fredoka-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 600; src: url("fonts/nunito-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 700; src: url("fonts/nunito-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 800; src: url("fonts/nunito-latin-800-normal.woff2") format("woff2"); }
+
+:root {
+  /* Base */
+  --bg: #0B1026;
+  --bg-2: #121A40;
+  --surface: #19214F;
+  --surface-2: #232D68;
+  --line: #34408A;
+  --text: #F2F4FF;
+  --text-muted: #A3ABD9;
+  --text-on-accent: #1A1300;
+
+  /* Accents */
+  --primary: #FFD23C;
+  --primary-deep: #E0A800;
+  --secondary: #3FE0E0;
+  --success: #3BE08B;
+  --danger: #FF4D6D;
+
+  /* Tile colors (Hexa Lines pieces, Hexa Sort stacks) */
+  --tile-red: #FF4D6D;
+  --tile-orange: #FF9F43;
+  --tile-yellow: #FFD23C;
+  --tile-green: #3BE08B;
+  --tile-cyan: #3FC8FF;
+  --tile-violet: #B47CFF;
+
+  /* Hexa Merge value ramp */
+  --merge-2: #3B4A8C;   --merge-4: #4F5FB8;   --merge-8: #3FC8FF;
+  --merge-16: #3BE08B;  --merge-32: #B6E84B;  --merge-64: #FFD23C;
+  --merge-128: #FF9F43; --merge-256: #FF6B4A; --merge-512: #FF4D6D;
+  --merge-1024: #FF6FD8; --merge-2048: #B47CFF;
+
+  /* Variant identity (accent of each game) */
+  --variant-lines: #3FC8FF;
+  --variant-fit: #B47CFF;
+  --variant-sort: #FF9F43;
+  --variant-merge: #FFD23C;
+
+  /* Type */
+  --font-display: "Fredoka", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+
+  /* Shape and spacing */
+  --radius-s: 12px;
+  --radius-m: 20px;
+  --radius-pill: 999px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;
+  --glow-primary: 0 0 24px rgba(255, 210, 60, 0.45);
+  --glow-cyan: 0 0 24px rgba(63, 200, 255, 0.45);
+  --shadow-card: 0 10px 30px rgba(3, 6, 20, 0.55);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-weight: 600; }
+
+/* ---- Type scale ---- */
+.t-display { font: 700 44px/1.05 var(--font-display); letter-spacing: 0.5px; }
+.t-h1      { font: 700 30px/1.15 var(--font-display); }
+.t-h2      { font: 600 22px/1.2 var(--font-display); }
+.t-body    { font: 600 16px/1.45 var(--font-body); }
+.t-label   { font: 800 12px/1.2 var(--font-body); letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); }
+.t-number  { font: 600 32px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+
+/* ---- Buttons ---- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 56px; padding: 0 28px;
+  border-radius: var(--radius-pill); font: 700 19px/1 var(--font-display); letter-spacing: 0.3px; border: 0; }
+.btn-primary { background: linear-gradient(180deg, #FFE27A 0%, var(--primary) 45%, var(--primary-deep) 100%);
+  color: var(--text-on-accent); box-shadow: var(--glow-primary), inset 0 -4px 0 rgba(0,0,0,0.18); }
+.btn-secondary { background: transparent; color: var(--text); border: 2px solid var(--secondary); box-shadow: var(--glow-cyan); }
+.btn-ghost { background: var(--surface); color: var(--text-muted); }
+.btn-disabled { background: var(--surface); color: #5C6596; box-shadow: none; }
+
+.icon-btn { width: 48px; height: 48px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid var(--line);
+  display: inline-flex; align-items: center; justify-content: center; color: var(--text); }
+.icon-btn svg { width: 24px; height: 24px; }
+.icon-btn.is-off { color: #5C6596; background: var(--surface); }
+
+/* ---- Cards and surfaces ---- */
+.card { background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1.5px solid var(--line);
+  border-radius: var(--radius-m); box-shadow: var(--shadow-card); }
+
+/* ---- Top bar (game template, zone 1) ---- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+/* ---- Toggle and segmented control (settings) ---- */
+.toggle { width: 56px; height: 32px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); position: relative; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #5C6596; }
+.toggle.on { background: var(--success); border-color: var(--success); box-shadow: 0 0 16px rgba(59,224,139,0.45); }
+.toggle.on::after { left: 27px; background: #fff; }
+.segmented { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); }
+.segmented span { padding: 8px 18px; border-radius: 999px; font: 700 15px/1 var(--font-display); color: var(--text-muted); }
+.segmented .active { background: var(--secondary); color: var(--bg); }
+
+/* ---- Hex cells ---- */
+.hex { filter: drop-shadow(0 0 6px rgba(0,0,0,0.4)); }
+.hex-empty { fill: var(--bg-2); stroke: var(--line); stroke-width: 3; }
