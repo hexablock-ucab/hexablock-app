@@ -21,6 +21,10 @@ Every class in the class diagram shows its layer with a color and a shape, follo
 
 The Clean layers diagram keeps the four rings the assignment requires (§3.4); the class diagram uses this legend, so blue covers both outer rings.
 
+## DDD stereotypes and UML style
+
+The class diagram marks each DDD building block with its stereotype (`«Value Object»`, `«Entity»`, `«Aggregate Root»`, `«Domain Service»`, `«Repository»`, `«Factory»`, `«Domain Event»`), names GoF patterns in notes, and follows the member and relation rules in [domain-modeling.md](../domain-modeling.md#4-class-diagram-conventions).
+
 ## Conventions
 
 - Text sources (PlantUML) are preferred where the diagram allows it: changes are reviewable in a pull request. draw.io is used where the layout matters, such as the concentric layers.
