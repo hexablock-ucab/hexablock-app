@@ -62,6 +62,26 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Errors and corrections:** The AI could not run speech recognition on the audio in its environment, so it corrected the existing transcription from context instead of producing a new one, and listed the passages a person must check by listening (for example, whether the AOP answer refers only to the aspect).
 - **Lessons:** Quote the professor's exact words next to each decision, and keep the AI's interpretation in a separate column, so the team can tell what was said from what was inferred.
 
+### 2026-11-08 — Document the game rules the assignment leaves open (odd/tasks/0002-game-rules.md, PR #13)
+
+- **Author:** Eduard Velasco
+- **Tool / model:** Claude Code 2.1.312 — Sonnet 5.5 for the main session, `odd-explore` and `odd-verify`; Opus for `odd-worker` (models pinned in `.claude/agents/`).
+- **Task:** Design task D2: decide and document the Hexa Sort cascade, what a Hexa Lines line is, the Hexa Fit figure, the score and stars of each variant, and the leaderboard order and tie-breaks. Output: `docs/game-rules.md`. Requirements: C-33 (pending in PR #12), FR-05, FR-22, FR-33, FR-34, FR-44, FR-52 to FR-54, FR-65.
+- **Prompts (originals in Spanish):**
+  - "Tarea de diseño D2 … reglas de juego que el enunciado deja abiertas … Es documentación, no código. … Sigue ODD: crea la rama con ship, explora con odd-explore y hazme las preguntas que falten una por una, cerradas, con tu recomendación y las alternativas. No decidas reglas sin preguntarme. Después crea el documento de la tarea en odd/tasks/ con specs ligadas a requisitos y espera mi aprobación antes de escribir docs/game-rules.md." (full text in the task log)
+  - "apruebo todo" — approval of the specs S1 to S16 and the proposals O1 to O5.
+  - "okey estoy de acuerdo" — acceptance of `docs/game-rules.md` after the verification.
+- **Result:** The AI asked 23 closed questions, each with a recommendation and alternatives. `odd-explore` mapped the sources. `odd-worker` wrote `docs/game-rules.md`. `odd-verify` gave a verdict per spec (15 PASS, 1 PARTIAL) and simulated the Hexa Sort cascade on 200,000 random boards to check that it terminates and is deterministic. Task document `odd/tasks/0002-game-rules.md` holds the decisions, specs and verdicts.
+- **Team modifications:** Eduard made every rule decision by answering the closed questions; he chose the recommended option each time. He also approved the specs before the document was written. No rule came from the AI without his answer, except the points listed under errors, which he accepted at the end.
+- **Errors and corrections:**
+  - The branch was cut from `main`, which lacks C-33 (it exists only in the open PR #12) — detected by `odd-explore`; C-33 is cited as pending.
+  - The first description of one option for Hexa Fit moves was self-contradictory (undo "neither adds nor subtracts" yet "follows the active timeline") — detected while reviewing the answer; a clarifying question was asked and the counter only grows.
+  - `odd-worker` made 11 detail choices the task document did not state (cascade pair order, rotation counted per step, truncation of seconds, user-id tie-break direction, and others) — it reported them; they are in the task log.
+  - `odd-verify` found the Sort tray parameters only as examples (S7), and left unclear the rotation count, whether a rotation starts the Fit clock, and the hole definition at the board edge — three were settled with new questions; the Sort parameters were named without a question.
+  - Two clarifications were added without asking (SORT-4 also applies to a stack arriving with a block of 10 or more; the SORT-3 example now says why no pair remains); they follow from earlier decisions.
+  - The four fixes made after the verdict were not re-run through `odd-verify`.
+- **Lessons:** Closed questions with a recommendation made the decisions fast, but the AI's option wording can hide a contradiction, so reread the options before answering. A verifier that simulates a rule finds more than one that only reads it. Details added by the worker need an explicit list for the team to confirm.
+
 ## Critical evaluation
 
 - **Approximate share of code with AI assistance:** TODO (updated at the end of the project).
