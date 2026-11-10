@@ -195,6 +195,16 @@ Hexa Lines is endless; its result is the score (RANK-1).
 
 Besides the figure and the pieces (FR-40), each Hexa Fit level must provide a move par and a time par (FIT-3). The format is for D3.
 
+## Hexa Merge
+
+### MERGE-1 — Target tile and end of game
+
+- **Decision:** Hexa Merge is an endless game. Reaching the target tile (2048) does not end it: the first time the tile appears in a game, the app tells the player that the target was reached, and play continues.
+  The game ends only when no move changes the board (FR-64). Its result is the score (SCORE-2), which updates the high score (FR-67).
+- **Reason:** assignment §1.4 names the target tile as the victory, while §1.5 (progress model: high score) and §5.1 item 4 ask for an endless game with a high score. Ending the game at the target would cap the score and contradict §1.5 and §5.1; marking the target as reached keeps the victory of §1.4 without ending the game.
+- **Example:** the score is 20 400 and the board has two 1024 tiles in line. A swipe merges them: a 2048 tile appears, the score becomes 22 448 (SCORE-2), the app shows that the target was reached, and the next swipe is accepted.
+  Later, no swipe in any of the six directions changes the board: the game ends with its current score.
+
 ## Scoring of Hexa Sort and Hexa Merge
 
 Hexa Lines scores in LINES-3 and Hexa Fit in FIT-3.
@@ -258,6 +268,7 @@ The leaderboard exists per `gameId` and, for level-based variants (Hexa Fit and 
 | FIT-3 | Stars | FR-44, FR-43, FR-05 |
 | FIT-4 | Counting moves | FR-44, FR-45 |
 | FIT-5 | Counting time | FR-44, NFR-05 |
+| MERGE-1 | Target tile and end of game | FR-64, FR-67 |
 | SCORE-1 | Hexa Sort score | FR-05, FR-06 |
 | SCORE-2 | Hexa Merge score | FR-65, FR-66, FR-67 |
 | RANK-1 | Order | FR-22, FR-13 |

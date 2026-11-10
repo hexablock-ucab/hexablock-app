@@ -151,3 +151,5 @@ Ship with the `ship` skill (run `ci-local` first), and add the README summary of
 - 2026-11-08 — Eduard Velasco (prompt): "okey estoy de acuerdo"
 - 2026-11-08 — Claude Code (log): `AI_USAGE.md` entry added (T8). T7: no README, `docs/EXTENSIBILITY.md` or diagram change is needed; the README summary of the rules stays as a follow-up after PR #12.
 - 2026-11-08 — Claude Code (PR): opened PR #13 (https://github.com/hexablock-ucab/hexablock-app/pull/13); PR number and Claude Code version 2.1.312 filled in `AI_USAGE.md`.
+- 2026-11-10 — Eduard Velasco (decision 24): Hexa Merge is endless; reaching 2048 does not end the game. Raised in the review of PR #14 (B2) because FR-64 (victory at the target tile) contradicts FR-67 (endless game).
+- 2026-11-10 — Claude Code (edit): added MERGE-1 to `docs/game-rules.md`: the first 2048 tile is announced as "target reached" and play continues; the game ends only when no move changes the board. The announcement is a proposal that keeps §1.4's victory; the user should confirm it. FR-64 still needs a wording change in `docs/requirements.md` of both repositories (separate pair of PRs).
