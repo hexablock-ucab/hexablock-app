@@ -21,6 +21,15 @@ Every class in the class diagram shows its layer with a color and a shape, follo
 
 The Clean layers diagram keeps the four rings the assignment requires (§3.4); the class diagram uses this legend, so blue covers both outer rings.
 
+## DDD stereotypes and UML style
+
+- **DDD building blocks** carry their stereotype: `«Value Object»`, `«Entity»`, `«Aggregate Root»`, `«Domain Service»`, `«Repository»`, `«Factory»`, `«Domain Event»`. A class may carry two (`«Entity» «Aggregate Root»`). The role comes from `docs/domain-model.md`.
+- **Other classes** keep their architectural role: `«interface»` for ports, and `«Use Case»`, `«Adapter»`, `«DTO»`, `«Mapper»` or `«ViewModel»` where the name does not make it obvious. They never carry a DDD stereotype.
+- **GoF patterns** are named in a note attached to the participating classes (pattern and role, for example "Strategy: concrete strategy"), so they do not mix with the DDD stereotypes.
+- **Members:** public attributes are shown directly. Getters, setters, `add` methods and constructors are not drawn, except the constructor signature that injects dependencies.
+- **Relations:** a dependency through a parameter, a return type or a local variable is a solid arrow labeled `«use»`; a dependency held in an attribute is an association, aggregation or composition.
+- **Minimal:** draw the classes that explain the design; list secondary ones in a note.
+
 ## Conventions
 
 - Text sources (PlantUML) are preferred where the diagram allows it: changes are reviewable in a pull request. draw.io is used where the layout matters, such as the concentric layers.

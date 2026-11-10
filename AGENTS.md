@@ -86,14 +86,16 @@ Low-level details are replaceable: the database, the board shape (for example sq
 
 ### Domain model (DDD tactical patterns)
 
-Sources: Evans (2003) as presented in the course's Clean Architecture class; Esposito, *Clean Architecture with .NET* (2024), chapters 6 and 7. `docs/domain-model.md` (deliverable D1) lists every domain class with its tactical role; update it in the same PR as the code.
+Sources: Evans, *Domain-Driven Design* (2003), Part II, as presented in the course; Evans, *Domain-Driven Design Reference* (2015, CC BY 4.0); Esposito, *Clean Architecture with .NET* (2024), chapters 6 and 7. `docs/domain-model.md` (deliverable D1) lists every domain class with its tactical role; update it in the same PR as the code.
 
+- **Ubiquitous language.** Every domain concept has one name, recorded in the glossary of `docs/domain-model.md` with its Spanish term. Code, tests, diagrams and documents use that name and no synonym; renaming a concept renames the code in the same PR.
 - **Rich model.** Behavior lives with the data it protects. Entities and aggregate roots expose **commands** named after the player's intent (`placePiece`, `clearCompletedLines`, `mergeTiles`, `undoLastMove`) and **queries** named after what a rule or the player asks (`isSolved`, `canPlace(piece, at)`, `remainingMoves`). Each command checks its invariants before it changes anything, and fields stay private or `final`. A Dart `get` is a derived domain query (`isGameOver`), never a mirror of a field so that another class can decide.
 - **Tell, don't ask.** When a use case reads a domain object's state, decides, and writes the result back, the decision belongs inside the domain object: move it there. Use cases orchestrate (load, call a command, save, notify) and hold no game rule. This is how the code avoids the *anemic domain model* the course warns against.
-- **Value objects** are immutable: an operation returns a new value (`score.add(points)`). They implement `==` and `hashCode`.
+- **Value objects** have no identity: their value is their identity. They are immutable (an operation returns a new value: `score.add(points)`), compare by value (`==` and `hashCode`), validate themselves when created, carry the behavior of their concept, and group values that only make sense together (the two axial components of a coordinate). No setters, and no getter that only mirrors a field.
+- **Entities** are defined by an identity that stays the same through their life cycle, modeled as a value object (`GameSessionId`) produced by an injected generator. They compare by identity, have a life cycle, change state only through commands, and use value objects for their attributes.
 - **Aggregates.** An aggregate is the consistency boundary of an invariant, and its root is the only entry point from outside. Other objects reference an aggregate by its identity (`LevelId`), not by holding it. One repository per aggregate root, and it saves and loads the whole aggregate. Create an aggregate only where an invariant spans several objects; a lone entity is its own root.
 - **Domain services** are stateless and named after a domain operation. Use one for a rule that spans several aggregates or fits none. The class that implements a use case is an *application* service (`GameSessionService`), not a domain service.
-- **Domain events** have past-tense names (`LinesCleared`, `LevelCompleted`). The aggregate raises them, and only when another part of the system reacts.
+- **Domain events** have past-tense names (`LinesCleared`, `LevelCompleted`). The aggregate raises them, and only when another part of the system reacts. They are immutable and carry the time (from the `Clock` port) and the identities involved. Domain events are not in Evans (2003); they come from his later *Reference* (2015).
 - **Label each class with the role it really plays**, in code names, docs and diagrams. Several of our classes are GoF patterns or Clean Architecture parts, not DDD patterns:
 
 | Class or kind | Role |
@@ -106,6 +108,8 @@ Sources: Evans (2003) as presented in the course's Clean Architecture class; Esp
 | `GameSessionService` | Application service: implements a use case |
 | `ProgressRepository` | DDD repository. The interface lives in layer 2, where it is used (section 3); in classic DDD it sits in the domain |
 | DTOs, mappers, view models, persistence records | Boundary types of layers 3 and 4; no DDD role |
+
+In the class diagram, each DDD building block carries its stereotype and every other class keeps its own role, as `docs/diagrams/README.md` states.
 
 ## 5. Tests
 
