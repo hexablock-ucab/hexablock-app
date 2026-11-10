@@ -84,6 +84,29 @@ Low-level details are replaceable: the database, the board shape (for example sq
 - Prefer the Dart and Flutter SDKs and already-installed packages. A new dependency needs a one-line justification in the PR and must be a mainstream, maintained package.
 - Run `dart format` and `flutter analyze --fatal-infos` before you finish; CI fails on any finding.
 
+### Domain model (DDD tactical patterns)
+
+Sources: Evans (2003) as presented in the course's Clean Architecture class; Esposito, *Clean Architecture with .NET* (2024), chapters 6 and 7. `docs/domain-model.md` (deliverable D1) lists every domain class with its tactical role; update it in the same PR as the code.
+
+- **Rich model.** Behavior lives with the data it protects. Entities and aggregate roots expose **commands** named after the player's intent (`placePiece`, `clearCompletedLines`, `mergeTiles`, `undoLastMove`) and **queries** named after what a rule or the player asks (`isSolved`, `canPlace(piece, at)`, `remainingMoves`). Each command checks its invariants before it changes anything, and fields stay private or `final`. A Dart `get` is a derived domain query (`isGameOver`), never a mirror of a field so that another class can decide.
+- **Tell, don't ask.** When a use case reads a domain object's state, decides, and writes the result back, the decision belongs inside the domain object: move it there. Use cases orchestrate (load, call a command, save, notify) and hold no game rule. This is how the code avoids the *anemic domain model* the course warns against.
+- **Value objects** are immutable: an operation returns a new value (`score.add(points)`). They implement `==` and `hashCode`.
+- **Aggregates.** An aggregate is the consistency boundary of an invariant, and its root is the only entry point from outside. Other objects reference an aggregate by its identity (`LevelId`), not by holding it. One repository per aggregate root, and it saves and loads the whole aggregate. Create an aggregate only where an invariant spans several objects; a lone entity is its own root.
+- **Domain services** are stateless and named after a domain operation. Use one for a rule that spans several aggregates or fits none. The class that implements a use case is an *application* service (`GameSessionService`), not a domain service.
+- **Domain events** have past-tense names (`LinesCleared`, `LevelCompleted`). The aggregate raises them, and only when another part of the system reacts.
+- **Label each class with the role it really plays**, in code names, docs and diagrams. Several of our classes are GoF patterns or Clean Architecture parts, not DDD patterns:
+
+| Class or kind | Role |
+|---|---|
+| `HexCoord`, `Score`, `GameId` | DDD value objects |
+| Board, game session | DDD entities; aggregate roots where D1 says so |
+| Factory per variant (ADR-0006) | GoF Abstract Factory: builds one variant's family of objects |
+| Board and level builder (ADR-0006) | GoF Builder; it also plays the DDD factory role when it returns a valid aggregate |
+| Rule per variant (`LineClearRule`) | GoF Strategy that holds a domain policy |
+| `GameSessionService` | Application service: implements a use case |
+| `ProgressRepository` | DDD repository. The interface lives in layer 2, where it is used (section 3); in classic DDD it sits in the domain |
+| DTOs, mappers, view models, persistence records | Boundary types of layers 3 and 4; no DDD role |
+
 ## 5. Tests
 
 - Test first when a deterministic, runnable test exists: RED, then GREEN, then REFACTOR.
