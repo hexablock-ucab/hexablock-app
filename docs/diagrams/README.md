@@ -26,9 +26,11 @@ The Clean layers diagram keeps the four rings the assignment requires (§3.4); t
 - **DDD building blocks** carry their stereotype: `«Value Object»`, `«Entity»`, `«Aggregate Root»`, `«Domain Service»`, `«Repository»`, `«Factory»`, `«Domain Event»`. A class may carry two (`«Entity» «Aggregate Root»`). The role comes from `docs/domain-model.md`.
 - **Other classes** keep their architectural role: `«interface»` for ports, and `«Use Case»`, `«Adapter»`, `«DTO»`, `«Mapper»` or `«ViewModel»` where the name does not make it obvious. They never carry a DDD stereotype.
 - **GoF patterns** are named in a note attached to the participating classes (pattern and role, for example "Strategy: concrete strategy"), so they do not mix with the DDD stereotypes.
-- **Members:** attributes keep their real visibility: `-` for internal state, and `+ name: Type {readOnly}` for state other classes may read (the final or `readonly` fields of value objects and entities). That read-only public attribute replaces a getter, so getters, setters, `add` methods and constructors are not drawn, except the constructor signature that injects dependencies. Every change of state appears as a command method.
-- **Relations:** a dependency through a parameter, a return type or a local variable is a solid arrow labeled `«use»`; a dependency held in an attribute is an association, aggregation or composition.
-- **Minimal:** draw the classes that explain the design; list secondary ones in a note.
+- **Notation:** standard UML 2.5 class diagram notation.
+- **Members:** each class shows its attributes with visibility (`+` public, `-` private, `#` protected) and type, and its operations with parameters and return type. A final (Dart) or `readonly` (TypeScript) field carries `{readOnly}`; a getter that computes a value is a derived attribute (`/name: Type`) or a query operation. Constructors and named or factory constructors are shown, with their parameters. Static members are underlined and abstract ones in italics.
+- **Generics:** a generic class shows its type parameters, with their bounds, in the dashed box at its top-right corner (`TCell > Mergeable<TCell>`), and each variant's binding uses a realization or `«bind»` with the concrete type.
+- **Relations:** generalization (solid line, hollow triangle), realization of an interface (dashed line, hollow triangle), association (solid line, with navigability, multiplicities and role names), aggregation (hollow diamond), composition (filled diamond), and dependency (dashed arrow) labeled with its kind, such as `«use»` or `«create»`, for a type used only as a parameter, a return type or a local variable.
+- **Completeness:** every class of the domain and application layers appears, with the main adapters; only UI widgets are left out (C-11). When one diagram gets too large, it is split by package or variant instead of omitting classes.
 
 ## Conventions
 
