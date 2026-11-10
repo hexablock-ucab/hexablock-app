@@ -136,7 +136,7 @@ Writing rules:
 | FR-61 | When the player swipes in one of the 6 directions, all tiles shall slide to the edge in that direction. | app | 1.4 |
 | FR-62 | When two tiles with the same value collide, they shall merge into one tile with double the value. | app | 1.4 |
 | FR-63 | After each valid move, the app shall add a new tile with value 2 or 4 in a random empty cell. | app | 1.4 |
-| FR-64 | When the target tile (for example 2048) appears, the player shall win. If no move changes the board, then the player shall lose. | app | 1.4 |
+| FR-64 | When the target tile (2048) appears for the first time in a game, the app shall tell the player that the target was reached, and the game shall continue. If no move changes the board, then the game shall end. | app | 1.4, 1.5, 5.1 |
 | FR-65 | The score shall be the sum of the values produced by every merge. | app | 1.4 |
 | FR-66 | The app shall let the player undo the last move. | app | 1.5, 5.1 |
 | FR-67 | Hexa Merge shall be an endless game that records the high score. | app | 1.5, 5.1 |
@@ -158,3 +158,4 @@ Writing rules:
 |---|---|
 | 2026-10-28 | First draft from the assignment and the clarifications received in class. |
 | 2026-11-08 | Clarifications of the assignment received on 2026-11-05: deployed backend and production-ready delivery (C-28), modular backend (C-29), iOS installation (C-30), scope of the change before the defense (C-31, NFR-02), value objects (C-32), open rules decided by the team (C-33), offline play with sync (FR-15) and levels bundled in the app (FR-04, FR-14). Updated C-05, C-06, C-08 (aspect required in the backend only), C-11, C-17 (delivery week of 2026-12-14), C-18 and C-27. |
+| 2026-11-10 | FR-64: reaching the target tile no longer ends Hexa Merge, so it no longer contradicts FR-67 (endless game). The assignment names the target tile as the victory in §1.4 and asks for an endless game with a high score in §1.5 and §5.1; the team keeps both by announcing the target and continuing. |
