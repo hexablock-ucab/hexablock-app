@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=1440">
 <title>HexaBlock Suite — Style guide</title>
 <link rel="stylesheet" href="tokens.css">
+<script>
+  // ?theme=light shows the light tokens; the swatch codes below are read from tokens.css, so both themes list their real values.
+  const theme = new URLSearchParams(location.search).get("theme");
+  if (theme) document.documentElement.dataset.theme = theme;
+</script>
 <style>
   body { width: 1440px; padding: 56px 64px 64px; background:
     radial-gradient(1200px 600px at 85% -10%, rgba(180,124,255,0.18), transparent 60%),
@@ -73,7 +78,7 @@
     </svg>
     <div>
       <div class="t-display">HexaBlock Suite</div>
-      <div class="t-h2" style="color:var(--text-muted)">Guía de estilo · Arcade oscuro neón</div>
+      <div class="t-h2" style="color:var(--text-muted)">Guía de estilo · <span id="theme-name">Tema oscuro (por defecto)</span></div>
     </div>
   </div>
   <div style="text-align:right">
@@ -281,5 +286,14 @@
   <div class="t-body" style="color:var(--text-muted)">Fuente: <code>docs/ui/src/tokens.css</code> + <code>style-guide.html</code> · Cada token corresponde a un valor del tema de Flutter.</div>
   <div class="t-label">HexaBlock Suite · UCAB 2026-2</div>
 </div>
+<script>
+  if (theme === "light") document.getElementById("theme-name").textContent = "Tema claro";
+  const css = getComputedStyle(document.documentElement);
+  document.querySelectorAll(".swatch code").forEach(code => {
+    const name = code.textContent.trim().split(/\s+/)[0];
+    const value = css.getPropertyValue(name).trim().toUpperCase();
+    if (value) code.textContent = name + " " + value;
+  });
+</script>
 </body>
 </html>

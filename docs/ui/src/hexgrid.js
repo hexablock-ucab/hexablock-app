@@ -155,6 +155,8 @@
     sound: `<svg ${S} stroke-width="2.4"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg>`,
     music: `<svg ${S} stroke-width="2.4"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="17" cy="16" r="3" fill="currentColor"/></svg>`,
     globe: `<svg ${S} stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>`,
+    theme: `<svg ${S} stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>`,
+    shapes: `<svg ${S} stroke-width="2.2"><circle cx="7.5" cy="7.5" r="4"/><path d="M16.5 3.5l4.5 8h-9z"/><rect x="4" y="14" width="7" height="7" rx="1"/><path d="M16.5 13.5l3.5 3.5-3.5 3.5-3.5-3.5z"/></svg>`,
     lock: `<svg ${S} stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`,
     next: `<svg ${S}><path d="m9 5 7 7-7 7"/></svg>`,
     levels: `<svg ${S} stroke-width="2.4"><path d="M7 3.5 11 6v4.5L7 13l-4-2.5V6zM17 3.5 21 6v4.5L17 13l-4-2.5V6zM12 11.5l4 2.5v4.5L12 21l-4-2.5V14z"/></svg>`,
@@ -179,6 +181,8 @@
   if (theme) document.documentElement.dataset.theme = theme;
 
   document.addEventListener("DOMContentLoaded", () => {
+    // A screen drawn behind a sheet (pause menu, leave confirmation) is an iframe: pass on ?theme and ?lang so it matches.
+    if (location.search) document.querySelectorAll("iframe[src]").forEach(f => { if (!f.getAttribute("src").includes("?")) f.src = f.getAttribute("src") + location.search; });
     document.querySelectorAll("[data-stars]").forEach(el => { const [e, t] = el.dataset.stars.split("/").map(Number); el.innerHTML = stars(e, t || 3, Number(el.dataset.size) || 16); });
     document.body.insertAdjacentHTML("afterbegin", DEFS + STATUS);
     document.querySelectorAll("[data-icon]").forEach(el => { el.innerHTML = ICONS[el.dataset.icon]; });

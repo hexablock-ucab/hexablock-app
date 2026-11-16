@@ -54,6 +54,7 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 - **S14** (WCAG 2.2 AA): Color is never the only signal (a glyph per Hexa Sort color; outlined missing stars); text contrast >= 4.5:1 and meaningful non-text contrast >= 3:1; touch targets >= 48 × 48; Hexa Lines accepts tap-then-tap besides drag.
 - **S15** (NFR-02, C-31): A **light theme** made only by redefining tokens; key screens exported in `docs/ui/png/light/`.
 - **S16** (FR-10): Two screens exported in English (`docs/ui/png/en/`), and every screen fits at 360 × 780 without horizontal overflow.
+- **S17** (FR-10, C-28): Every screen exists in the dark and the light theme (`docs/ui/png/` and `docs/ui/png/light/`, file for file); Settings lets the player choose dark, light or system and hide the color symbols; `docs/ui/tokens.json` has the tokens of both themes and `docs/ui/l10n/` the strings in Spanish and English.
 
 ## Allowed edit surfaces
 
@@ -71,6 +72,7 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 - [x] **T5** (S10, S11) PNG exports and `docs/ui/README.md`.
 - [x] **T6** `log-ai-usage` entry.
 - [x] **T7** (S2, S3, S7, S8, S12–S16) Changes after the review of PR #14 (Eduard: B1–B5, S1–S9, O1–O7; Ali: light theme).
+- [x] **T8** (S17) Light export of every screen, theme and symbol settings, `tokens.json` and the ARB files.
 
 ## Verification
 
@@ -90,8 +92,9 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 | S12 | `docs/ui/png/16-pause-menu.png`, `17-leave-confirm.png` | Pending team review |
 | S13 | `docs/ui/png/18-states.png`; sync status on `01-home.png` and `11-settings.png` | Pending team review |
 | S14 | Contrast computed from `tokens.css` with the WCAG formula (script in the review reply); glyphs on `07-hexa-sort.png`; targets in `tokens.css` and `06-hexa-fit.png` | Pending team review |
-| S15 | `docs/ui/png/light/` (6 screens); only `tokens.css` defines the theme | Pending team review |
+| S15 | `docs/ui/png/light/` (all 19 exports); only `tokens.css` defines the theme | Pending team review |
 | S16 | `docs/ui/png/en/` (home, Hexa Fit); every phone screen rendered at 360 × 780 with a script that reports elements outside the screen: none horizontally | Pending team review |
+| S17 | `docs/ui/png/light/` file for file with `docs/ui/png/`; `11-settings.png` in both themes; `docs/ui/tokens.json`; `docs/ui/l10n/app_es.arb` and `app_en.arb` (120 keys, same placeholders, ICU parsed) | Pending team review |
 
 ## Open questions
 
@@ -116,3 +119,5 @@ Eduard re-reviews PR #14 against his comments of 2026-11-09; then merge and mark
 - 2026-11-09 — Review of PR #14. Ali (AS18DC): approved; suggests trying a light background. Eduard (Eduardvs13): blocking B1–B5, should-fix S1–S9, optional O1–O7.
 - 2026-11-16 — Valentina Maza (verbatim): "ya voy a aprobar esto y continuamos avanzando lo mas posible". Decisions, verbatim: B1 "Exacto a." (selector on the home screen, game select removed); light theme "Dale perfect.". On saving endless games when leaving: "si me gusta la idea" (kept as a proposal for the team).
 - 2026-11-16 — Valentina Maza with Claude (Opus 5.5, claude.ai): T7 done. B2 victory for the last Sort level, defeats for Sort and Merge, target reached in Merge (rule from PR #13 and #18); B3 pause menu and leave confirmation; B4 glyph per Sort color; B5 dark text on Merge tiles from 8; S1 `--line-strong` and outlined stars; S2 48 px targets, rotate button moved off the tray; S3 tap-then-tap in Lines; S4 checked at 360 × 780 and fixed (icon buttons no longer shrink, tighter top bar); S5 `strings.js` and two English exports; S6/S7 states sheet and sync status; S8 next threshold in Sort; S9 Sort level select and a "Levels" action; O1–O6 applied; light theme. Each defeat board was checked with a script. FR-15 exists on `main` (merged with PR #12 after the review).
+- 2026-11-16 15:48 — Valentina Maza (verbatim): "q mas puedo adelantra? ir haciendo? acuerdate de hacer todo con sus verxipnes claras y oscuras y eso pues"
+- 2026-11-16 — Valentina Maza with Claude (Opus 5.5, claude.ai): T8 done. All 19 exports in `png/light/` (13 new); sheets behind the pause menu and leave confirmation now take the page's theme and language (`hexgrid.js`); the style guide reads its swatch values from the active theme; Settings gains *Tema* (dark, light, system) and *Símbolos en las fichas* (B4); `tokens.json` exported from `tokens.css`; `l10n/app_es.arb` and `l10n/app_en.arb` with 120 keys, same keys and placeholders, every ICU message parsed. Settings now scrolls at 360 × 780 (vertical only; no horizontal overflow).

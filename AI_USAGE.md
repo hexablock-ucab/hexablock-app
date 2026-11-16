@@ -77,6 +77,10 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
   - Small touch targets, a rotate button overlapping the tray, a pause button that shrank at 360 px, missing offline and error states — detected by Eduard (S1–S9) and by a script that renders every screen at 360 × 780.
   - Adding a shared `.chip` component silently broke the color swatches of the style guide, which used the same class name — detected when looking at the rendered PNG; the swatch class was renamed.
   - The first light theme had three accents below 4.5:1 as text — detected by computing the contrast before publishing; the colors were darkened.
+- **Both themes and the strings (2026-11-16):** prompt, verbatim: "q mas puedo adelantra? ir haciendo? acuerdate de hacer todo con sus verxipnes claras y oscuras y eso pues". Result: every screen exported in the light theme, theme and symbol settings, `docs/ui/tokens.json` and the ARB files in Spanish and English (120 keys, checked for equal keys and placeholders and parsed as ICU).
+  - The pause menu and leave confirmation drew the game behind them in the dark theme even in the light export, because the iframe did not receive `?theme` — detected when looking at the light exports; `hexgrid.js` now passes the page's query to the iframe.
+  - The style guide ignored `?theme` and printed the dark hex codes by hand — detected the same way; it now reads each value from the active theme.
+  - Settings offered no way to choose the theme or to hide the color symbols promised in B4 — detected while writing the strings; both rows added.
 - **Lessons:** Render and look at every mockup at full size; diagrams that look right in code can read wrong on screen. Check example game states against the written rules, not only the visual style. Shared tokens and one template made each later screen faster and kept the four games consistent. Check a design against the assignment's exact wording and an accessibility standard before asking for review, not after.
 
 ## Critical evaluation

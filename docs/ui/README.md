@@ -19,6 +19,8 @@ Every screen is an HTML page in [`src/`](src/) built from shared files, so a cha
 | [`src/hexgrid.js`](src/hexgrid.js) | Draws boards from axial coordinates, the per-color glyphs, the stars and the shared icons. It holds no game rules. A different cell shape (ADR-0004) changes only this file. |
 | [`src/levels.js`](src/levels.js) | The data of the level select: one screen for every level-based variant. |
 | [`src/strings.js`](src/strings.js) | English strings; any mockup renders in English with `?lang=en`. |
+| [`tokens.json`](tokens.json) | The tokens of `tokens.css` for both themes, for building the Flutter themes. |
+| [`l10n/`](l10n/) | Every string of the mockups as Spanish and English ARB files, ready for Flutter's `gen-l10n`. |
 
 To edit a mockup, open its HTML file in a browser, change it, and export the PNG again (a 390 × 844 viewport at device scale factor 2, for example with Chrome DevTools *Capture screenshot*). Add `?theme=light` or `?lang=en` to the address to export the other theme or language.
 
@@ -37,7 +39,7 @@ To edit a mockup, open its HTML file in a browser, change it, and export the PNG
 | 08 | Hexa Merge: numeric tiles, six swipe directions, target 2048, undo one move | [08-hexa-merge.png](png/08-hexa-merge.png) | S6, FR-03, FR-60 to FR-67 |
 | 09 | Victory, Hexa Fit (a level with a next one) | [09-victory.png](png/09-victory.png) | S7, FR-06 |
 | 10 | Defeat, Hexa Lines: no piece fits | [10-defeat.png](png/10-defeat.png) | S8, FR-07 |
-| 11 | Settings: account and sync, music, effects, language, credits, version | [11-settings.png](png/11-settings.png) | S9, FR-09, FR-10, FR-15 |
+| 11 | Settings: account and sync, music, effects, language, theme (dark, light, system), color symbols, credits, version | [11-settings.png](png/11-settings.png) | S9, FR-09, FR-10, FR-15 |
 | 12 | Victory, Hexa Sort, last level: no "next level" | [12-victory-sort-last.png](png/12-victory-sort-last.png) | S7, FR-06, SORT-7 |
 | 13 | Defeat, Hexa Sort: board full before the goals | [13-defeat-sort.png](png/13-defeat-sort.png) | S8, FR-07, SORT-5 |
 | 14 | End of game, Hexa Merge: no swipe changes the board | [14-defeat-merge.png](png/14-defeat-merge.png) | S8, FR-64, MERGE-1 |
@@ -46,7 +48,7 @@ To edit a mockup, open its HTML file in a browser, change it, and export the PNG
 | 17 | Leave confirmation: what is lost and what is kept | [17-leave-confirm.png](png/17-leave-confirm.png) | S12 |
 | 18 | States: sync, offline, level download and errors, first launch, invalid placement, color glyphs, back button | [18-states.png](png/18-states.png) | S13, FR-04, FR-14, FR-15, FR-32 |
 
-Light theme: [`png/light/`](png/light/). English: [`png/en/`](png/en/).
+Every screen also exists in the light theme, in [`png/light/`](png/light/) with the same file names (export any mockup with `?theme=light`). English: [`png/en/`](png/en/).
 
 <p>
 <img src="png/01-home.png" width="170"> <img src="png/03-level-select.png" width="170"> <img src="png/05-hexa-lines.png" width="170"> <img src="png/06-hexa-fit.png" width="170">
@@ -82,14 +84,18 @@ Hexa Lines and Hexa Merge are endless games that can last long, so screen 18 pro
 
 The light theme only redefines tokens in `tokens.css` (`:root[data-theme="light"]`); no screen, component or board file changes. In the light theme every accent used as text keeps at least 4.5:1 on the light backgrounds, and meaningful borders 3.7:1. It is the same change the professor may ask for the day before the defense ("change the interface"), so in the app the theme is one `ThemeData` built from the same token names and chosen by one setting.
 
+- **Choosing the theme:** Settings → *Pantalla e idioma* → *Tema*: dark (default), light, or system (follows the phone). The light export of Settings shows *Claro* selected.
+- **Both themes in every export:** `png/` is dark and `png/light/` is light, file for file. A screen drawn behind a sheet (pause menu, leave confirmation) takes the same theme and language. The style guide lists the real values of the theme it is drawn in.
+- **For Flutter:** [`tokens.json`](tokens.json) holds the same tokens as `tokens.css`: the shared type, radius and spacing, and every color for `dark` and `light`. The app builds one `ThemeData`, plus a `ThemeExtension` for the game colors, per theme from these names. Export it again when `tokens.css` changes.
+
 ## Verification
 
-- Every screen was rendered at 390 × 844 and at 360 × 780 with a script that reports any element outside the screen. At 360 wide nothing overflows horizontally; the home screen and the Hexa Merge end screen scroll vertically on short phones, and the game boards scale to the board zone.
+- Every screen was rendered at 390 × 844 and at 360 × 780 with a script that reports any element outside the screen. At 360 wide nothing overflows horizontally; the home screen, Settings and the Hexa Merge end screen scroll vertically on short phones, and the game boards scale to the board zone.
 - Larger text sizes are left to the app: the HUD caps the text scale and the other screens scroll.
 
 ## English strings
 
-The app keeps its strings in ARB files with ICU placeholders and plurals (for example `{done} of {total} levels`, `{count, plural, one{1 piece left} other{{count} pieces left}}`); numbers use the locale's separator (3 960 in Spanish, 3,960 in English).
+The strings of every mockup are ready as ARB files for Flutter's `gen-l10n`: [`l10n/app_es.arb`](l10n/app_es.arb) (the template, with a description and typed placeholders for each key) and [`l10n/app_en.arb`](l10n/app_en.arb), 120 keys each. Both files have the same keys and the same placeholders, and every ICU message parses (checked with `@messageformat/parser`). They move to the app's `lib/l10n/` when the Flutter project exists. The app keeps its strings in ARB files with ICU placeholders and plurals (for example `{done} of {total} levels`, `{count, plural, one{1 piece left} other{{count} pieces left}}`); numbers use the locale's separator (3 960 in Spanish, 3,960 in English).
 
 | Screen | Spanish (mockup) → English |
 |---|---|
