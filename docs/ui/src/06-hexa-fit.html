@@ -8,11 +8,13 @@
 <link rel="stylesheet" href="screens.css">
 <link rel="stylesheet" href="game.css">
 <script src="hexgrid.js"></script>
+<script src="strings.js"></script>
 <style>
   body { --accent: var(--variant-fit); }
-  .rotate { position: absolute; bottom: -14px; right: -14px; width: 44px; height: 44px; border-radius: 50%; background: var(--secondary); color: var(--bg);
+  .rotate { position: absolute; right: 4px; bottom: 6px; width: 48px; height: 48px; border-radius: 50%; background: var(--secondary); color: var(--bg);
     display: flex; align-items: center; justify-content: center; box-shadow: var(--glow-cyan); }
   .rotate svg { width: 24px; height: 24px; }
+  .hint { position: absolute; left: 4px; bottom: 14px; font-size: 13px; color: var(--text-muted); max-width: 230px; }
 </style>
 </head>
 <body>
@@ -31,18 +33,22 @@
       </div>
     </div>
     <div class="sub-row">
-      <span class="pill">Nivel 7</span>
-      <span class="pill"><span class="k">3★ con</span>≤ 8 mov. · ≤ 1:00</span>
+      <span class="chip">Nivel 7</span>
+      <span class="chip"><span class="k">3★ con</span>≤ 8 mov. · ≤ 1:00</span>
     </div>
   </div>
 
   <!-- Zone 2: board = the level's figure (14 cells) -->
-  <div class="z-board"><div data-render="board"></div></div>
+  <div class="z-board">
+    <div data-render="board"></div>
+    <span class="t-body hint">Toca una pieza puesta para devolverla a la bandeja.</span>
+    <span class="rotate" data-icon="rotate" aria-label="Girar pieza seleccionada 60°"></span>
+  </div>
 
   <!-- Zone 3: tray with the level's remaining pieces -->
   <div class="z-tray">
-    <span class="t-label tray-label">Piezas · 3 de 5</span>
-    <div class="slot selected" data-render="pC"><span class="rotate" data-icon="rotate"></span></div>
+    <span class="t-label tray-label">Quedan 3 de 5 piezas</span>
+    <div class="slot selected" data-render="pC"></div>
     <div class="slot" data-render="pD"></div>
     <div class="slot" data-render="pE"></div>
   </div>
@@ -59,7 +65,7 @@
   function board() {
     return HB.board({ cells: FIGURE, size: 37, gap: 3, fill: (q, r) => GHOST.has(q + "," + r) ? "ghost" : PLACED[q + "," + r] || null });
   }
-  function pC() { return HB.piece([[0,0],[0,-1],[1,-1]], 15, "var(--tile-cyan)") + document.querySelector('[data-render="pC"]').innerHTML; }
+  function pC() { return HB.piece([[0,0],[0,-1],[1,-1]], 15, "var(--tile-cyan)"); }
   function pD() { return HB.piece([[0,0],[1,0],[1,1]], 15, "var(--tile-orange)"); }
   function pE() { return HB.piece([[0,0]], 15, "var(--tile-red)"); }
 </script>

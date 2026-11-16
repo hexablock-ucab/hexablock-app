@@ -70,7 +70,14 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
   - The first Hexa Sort board had two neighboring stacks with the same top color, a state the cascade rule (SORT-3) never leaves — detected by checking the board by hand against `docs/game-rules.md`; two stacks changed.
   - The first Hexa Lines defeat board left full rows that would have been cleared (LINES-2) — detected by the same check; the free cells were chosen with a small search so that every row of the three axes has one free cell and no two free cells touch.
   - Smaller visual defects found on review of each render: two yellow tiles side by side in the logo, a misaligned status bar, result chips wrapping to two lines, a squeezed icon, a faded "game over" stamp.
-- **Lessons:** Render and look at every mockup at full size; diagrams that look right in code can read wrong on screen. Check example game states against the written rules, not only the visual style. Shared tokens and one template made each later screen faster and kept the four games consistent.
+- **Review round (2026-11-16):** Eduard's review of PR #14 found defects the AI had not caught; they were fixed with the same session. Prompts, verbatim: "ya voy a aprobar esto y continuamos avanzando lo mas posible"; decisions "Exacto a." (game selector on the home screen) and "Dale perfect." (light theme).
+  - The game selector was a separate screen, against assignment 5.1.1 and FR-01 — detected by Eduard (B1); moved to the home screen.
+  - Result screens covered only Hexa Fit and Hexa Lines, and the games had no pause menu or way out — detected by Eduard (B2, B3); added for every variant.
+  - Hexa Sort relied on color alone, and white numbers on bright Hexa Merge tiles had 2.3–2.9:1 contrast — detected by Eduard with the WCAG formula (B4, B5); a glyph per color and dark text were added, and the contrast was recomputed with a script.
+  - Small touch targets, a rotate button overlapping the tray, a pause button that shrank at 360 px, missing offline and error states — detected by Eduard (S1–S9) and by a script that renders every screen at 360 × 780.
+  - Adding a shared `.chip` component silently broke the color swatches of the style guide, which used the same class name — detected when looking at the rendered PNG; the swatch class was renamed.
+  - The first light theme had three accents below 4.5:1 as text — detected by computing the contrast before publishing; the colors were darkened.
+- **Lessons:** Render and look at every mockup at full size; diagrams that look right in code can read wrong on screen. Check example game states against the written rules, not only the visual style. Shared tokens and one template made each later screen faster and kept the four games consistent. Check a design against the assignment's exact wording and an accessibility standard before asking for review, not after.
 
 ## Critical evaluation
 

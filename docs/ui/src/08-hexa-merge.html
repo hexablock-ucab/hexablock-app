@@ -29,8 +29,8 @@
       <div class="actions"><span class="icon-btn" data-icon="undo"></span></div>
     </div>
     <div class="sub-row">
-      <span class="pill">Hexa Merge</span>
-      <span class="pill accent"><span class="k" style="color:inherit">Deshacer</span>1</span>
+      <span class="chip">Hexa Merge</span>
+      <span class="chip accent"><span class="k" style="color:inherit">Deshacer</span>1</span>
     </div>
   </div>
 
@@ -55,15 +55,14 @@
 
 <script>
   const V = { "0,0": 128, "1,-1": 64, "1,0": 8, "-1,0": 4, "0,-1": 32, "2,-2": 16, "-1,2": 2, "-2,1": 2, "0,2": 4, "2,0": 2, "-1,-1": 8, "1,1": 16 };
-  const col = n => `var(--merge-${n})`;
-  const ink = n => [8, 16, 32].includes(n) ? "#0B1026" : [64, 128].includes(n) ? "#1A1300" : "#F2F4FF";
+  const col = HB.MERGE.fill, ink = HB.MERGE.ink;   // dark text on every tile from 8 up (B5)
   function board() {
     return HB.board({ cells: HB.hexagon(2), size: 38, gap: 3,
       fill: (q, r) => V[q + "," + r] ? col(V[q + "," + r]) : null,
       label: (q, r) => { const n = V[q + "," + r]; return n ? { text: n, color: ink(n), size: n >= 100 ? 24 : 28 } : null; } });
   }
   function target() {
-    return HB.board({ cells: [[0,0]], size: 22, gap: 0, fill: () => col(2048), label: () => ({ text: "2048", color: "#F2F4FF", size: 12 }) }).replace(/<use href="#hx-empty"[^>]*\/>/g, "");
+    return HB.board({ cells: [[0,0]], size: 22, gap: 0, fill: () => col(2048), label: () => ({ text: "2048", color: ink(2048), size: 13 }) }).replace(/<use href="#hx-empty"[^>]*\/>/g, "");
   }
   // Six arrows around a small hexagon: the six neighbor directions of the topology.
   document.addEventListener("DOMContentLoaded", () => {

@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="screens.css">
 <script src="hexgrid.js"></script>
 <style>
-  .group { margin-top: 18px; }
+  .group { margin-top: 14px; }
   .group > .t-label { margin: 0 0 10px 4px; }
   .list { padding: 4px 16px; }
-  .item { display: flex; align-items: center; gap: 14px; min-height: 64px; border-bottom: 1.5px solid rgba(52,64,138,0.6); }
+  .item { display: flex; align-items: center; gap: 14px; min-height: 60px; border-bottom: 1.5px solid var(--divider); }
   .item:last-child { border-bottom: 0; }
   .item .ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex: none; }
   .item .ic span { width: 22px; height: 22px; display: inline-flex; }
@@ -26,6 +26,17 @@
     <span class="icon-btn" data-icon="back"></span>
     <div class="title t-h1" style="font-size:26px">Ajustes</div>
     <span class="spacer"></span>
+  </div>
+
+  <div class="group">
+    <div class="t-label">Cuenta y progreso</div>
+    <div class="card list">
+      <div class="item">
+        <span class="ic" style="background:rgba(63,224,224,0.16); color:var(--secondary)"><span data-icon="sync"></span></span>
+        <div class="txt"><div class="t-body">valentina</div><div class="hint">Tu progreso se guarda en el teléfono y se sincroniza</div></div>
+        <span class="sync ok"><i></i>Al día</span>
+      </div>
+    </div>
   </div>
 
   <div class="group">

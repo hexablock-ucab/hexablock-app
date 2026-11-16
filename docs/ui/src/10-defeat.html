@@ -6,42 +6,28 @@
 <title>10 · Defeat (Hexa Lines)</title>
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="result.css">
 <script src="hexgrid.js"></script>
 <style>
   body { --accent: var(--variant-lines);
     background: radial-gradient(460px 360px at 50% 30%, rgba(255,77,109,0.16), transparent 70%), var(--bg); }
-  .head { text-align: center; margin-top: 28px; }
-  .board { position: relative; display: flex; justify-content: center; margin-top: 24px; }
-  .board > [data-render] { opacity: 0.5; filter: saturate(0.6); }
-  .stamp { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-6deg); padding: 10px 18px; border-radius: 14px;
-    border: 3px solid var(--danger); color: var(--danger); font: 700 24px/1 var(--font-display); background: rgba(11,16,38,0.9); white-space: nowrap; box-shadow: 0 0 24px rgba(255,77,109,0.35); }
-  .scores { display: flex; gap: 12px; margin-top: 24px; }
-  .scores .card { flex: 1; padding: 16px; text-align: center; }
-  .actions { margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 14px; }
-  .actions .btn { width: 100%; }
 </style>
 </head>
 <body>
 <div class="screen">
   <div class="head">
     <div class="t-label" style="color:var(--accent)">Hexa Lines</div>
-    <div class="t-display" style="margin-top:10px">Sin espacio</div>
-    <div class="t-body" style="color:var(--text-muted); margin-top:8px">Ninguna de tus piezas cabe en el tablero.</div>
+    <div class="t-display">Sin espacio</div>
+    <div class="t-body sub">Ninguna de tus piezas cabe en el tablero.</div>
   </div>
-
-  <div class="board">
-    <div data-render="board"></div>
-    <span class="stamp">Fin de la partida</span>
-  </div>
-
+  <div class="board-dim"><div data-render="board"></div><span class="stamp">Fin de la partida</span></div>
   <div class="scores">
     <div class="card"><div class="t-label">Puntaje</div><div class="t-number" style="margin-top:8px">1 248</div></div>
-    <div class="card"><div class="t-label">Mejor</div><div class="t-number" style="margin-top:8px; color:var(--primary)">3 960</div></div>
+    <div class="card"><div class="t-label">Mejor</div><div class="t-number" style="margin-top:8px; color: var(--primary-text)">3 960</div></div>
   </div>
-
   <div class="actions">
-    <span class="btn btn-primary"><span data-icon="retry" style="width:22px; height:22px; display:inline-flex"></span>Reintentar</span>
-    <span class="btn btn-ghost"><span data-icon="home" style="width:20px; height:20px; display:inline-flex"></span>Inicio</span>
+    <span class="btn btn-primary"><span class="ico" data-icon="retry"></span>Jugar otra vez</span>
+    <span class="btn btn-ghost"><span class="ico" data-icon="home"></span>Inicio</span>
   </div>
 </div>
 <div class="home-indicator"></div>

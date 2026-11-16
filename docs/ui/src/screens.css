@@ -13,7 +13,7 @@ body {
 }
 .status { height: 47px; padding: 12px 28px 0; display: flex; align-items: center; justify-content: space-between; font: 700 16px/1 var(--font-body); }
 .status .icons { display: flex; gap: 6px; align-items: center; }
-.home-indicator { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: rgba(242,244,255,0.85); }
+.home-indicator { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--text); opacity: 0.85; }
 .screen { position: absolute; top: 47px; bottom: 34px; left: 0; right: 0; padding: 0 20px; display: flex; flex-direction: column; }
 .nav { display: flex; align-items: center; gap: 12px; height: 64px; }
 .nav .title { flex: 1; text-align: center; }

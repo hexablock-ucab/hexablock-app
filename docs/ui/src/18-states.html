@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>18 · States: sync, offline, loading, errors, first launch</title>
+<link rel="stylesheet" href="tokens.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { width: 1440px; padding: 48px 64px 56px; background: radial-gradient(900px 500px at 90% -10%, rgba(63,224,224,0.12), transparent 60%), var(--bg); }
+  .status { display: none; }
+  h1 { margin: 0 0 6px; } h2 { margin: 0 0 14px; }
+  .lead { color: var(--text-muted); max-width: 980px; margin: 0 0 30px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .panel { padding: 22px; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .when { font-size: 13px; color: var(--text-muted); }
+  .ico { width: 22px; height: 22px; display: inline-flex; flex: none; }
+  .banner .t-body { font-size: 14px; }
+  .banner.err { border-color: var(--danger); }
+  .banner.info { border-color: var(--secondary); }
+  .spinner { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--secondary); flex: none; }
+  .skeleton { height: 64px; border-radius: 16px; background: linear-gradient(90deg, var(--surface), var(--surface-2), var(--surface)); }
+  .mini-game { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+  .mini-game .t-h2 { font-size: 18px; }
+  .dash { color: var(--text-muted); font: 600 15px/1 var(--font-display); }
+  .ruleset li { margin: 6px 0; color: var(--text-muted); }
+  .ruleset b { color: var(--text); }
+</style>
+</head>
+<body>
+<h1 class="t-h1">Estados de la app</h1>
+<p class="t-body lead">Lo que se ve cuando no todo sale bien: sincronización (FR-15), niveles que se descargan (FR-04, FR-14), primer inicio y jugadas inválidas (FR-32). <b style="color:var(--text)">Regla: el juego nunca espera a la red.</b> El progreso se guarda primero en el teléfono (FR-08) y la sincronización ocurre de fondo.</p>
+
+<div class="grid">
+  <div class="card panel">
+    <h2 class="t-h2">1. Sincronización (FR-15)</h2>
+    <div class="stack">
+      <div class="row"><span class="sync ok"><i></i>Al día</span><span class="when">Todo el progreso está en el servidor.</span></div>
+      <div class="row"><span class="sync busy"><i></i>Sincronizando…</span><span class="when">Al volver la conexión, de fondo. No bloquea nada.</span></div>
+      <div class="row"><span class="sync off"><i></i>Sin conexión · guardado en el teléfono</span><span class="when">Se puede jugar todo; se sube después.</span></div>
+      <div class="row"><span class="sync err"><i></i>No se pudo sincronizar · Reintentar</span><span class="when">Tocar reintenta. Nunca se pierde progreso local.</span></div>
+      <div class="row"><span class="sync off"><i></i>Invitado · inicia sesión para guardar en la nube</span></div>
+    </div>
+    <p class="when" style="margin-top:14px">Dónde aparece: arriba a la derecha del inicio y en Ajustes → Cuenta. Nunca dentro de una partida.</p>
+  </div>
+
+  <div class="card panel">
+    <h2 class="t-h2">2. Niveles (FR-04, FR-14)</h2>
+    <div class="stack">
+      <div class="banner info"><span class="ico" style="color:var(--secondary)" data-icon="download"></span><div class="t-body">2 niveles nuevos de Hexa Sort descargados.</div></div>
+      <div class="banner"><span class="spinner"></span><div class="t-body">Cargando nivel 7…</div></div>
+      <div class="skeleton"></div>
+      <div class="banner err"><span class="ico" style="color:var(--danger)" data-icon="alert"></span><div class="t-body" style="flex:1">No se pudieron bajar los niveles nuevos. Los que ya tienes siguen disponibles.</div><span class="chip" style="color:var(--danger); border-color:var(--danger)">Reintentar</span></div>
+    </div>
+    <p class="when" style="margin-top:14px">Los niveles vienen dentro de la app; los nuevos se bajan al sincronizar. Un error de descarga nunca bloquea los niveles ya instalados.</p>
+  </div>
+
+  <div class="card panel">
+    <h2 class="t-h2">3. Primer inicio</h2>
+    <div class="stack">
+      <div class="card mini-game"><div data-render="pFit"></div><div style="flex:1"><div class="t-h2">Hexa Fit</div><span class="chip"><span class="k">Niveles</span>0/15</span></div><span class="chip" style="color:var(--accent-new, var(--primary)); border-color:var(--primary)">Nuevo</span></div>
+      <div class="card mini-game"><div data-render="pLines"></div><div style="flex:1"><div class="t-h2">Hexa Lines</div><span class="chip"><span class="k">Mejor</span><span class="dash">—</span></span></div></div>
+    </div>
+    <p class="when" style="margin-top:14px">Sin partidas todavía: los récords muestran "—", no 0, y no aparece "Continuar".</p>
+  </div>
+
+  <div class="card panel">
+    <h2 class="t-h2">4. Colocar una pieza (FR-32)</h2>
+    <div class="row" style="justify-content:center; gap:30px">
+      <div style="text-align:center"><div data-render="fits"></div><div class="t-label" style="margin-top:8px">Encaja</div></div>
+      <div style="text-align:center"><div data-render="bad"></div><div class="t-label" style="margin-top:8px">No encaja</div></div>
+    </div>
+    <p class="when" style="margin-top:14px">Al soltar donde no encaja, la pieza vuelve a la bandeja con una vibración corta. La vista previa se dibuja por encima del dedo para que se vea la celda.</p>
+  </div>
+
+  <div class="card panel">
+    <h2 class="t-h2">5. Símbolos por color (Hexa Sort)</h2>
+    <div class="row" style="justify-content:center; gap:14px" data-render="glyphs"></div>
+    <p class="when" style="margin-top:14px">Cada color lleva su símbolo en la ficha de arriba y en el borde de cada capa, así el juego se puede jugar sin distinguir colores (WCAG 1.4.1). Ajuste opcional para ocultarlos.</p>
+  </div>
+
+  <div class="card panel ruleset">
+    <h2 class="t-h2">6. Botón Atrás y salir</h2>
+    <ul class="t-body" style="margin:0; padding-left:20px; font-size:14px">
+      <li><b>En una partida:</b> Atrás (Android) o deslizar para volver (iPhone) abre el menú de pausa; nunca sale directo.</li>
+      <li><b>Salir con un intento a medias</b> pide confirmación (Fit pierde movimientos y tiempo; Sort, el estado del nivel).</li>
+      <li><b>Lines y Merge</b> guardan la partida al salir y se puede continuar.</li>
+      <li><b>En victoria o derrota:</b> Atrás vuelve a la lista de niveles o al inicio.</li>
+    </ul>
+  </div>
+</div>
+<script>
+  function pFit() { return HB.board({ cells: [[0,0],[1,0],[0,1]], size: 13, gap: 3, fill: () => "var(--variant-fit)" }); }
+  function pLines() { return HB.board({ cells: [[0,0],[1,0],[2,0]], size: 11, gap: 3, fill: () => "var(--variant-lines)" }); }
+  const AREA = [[0,0],[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
+  function fits() { return HB.board({ cells: AREA, size: 24, gap: 3, fill: (q, r) => ["0,0","1,0","1,-1"].includes(q + "," + r) ? "ghost" : (q === -1 ? "var(--tile-violet)" : null) }); }
+  function bad()  { return HB.board({ cells: AREA, size: 24, gap: 3, fill: (q, r) => ["-1,0","0,0"].includes(q + "," + r) ? "bad" : (q === -1 ? "var(--tile-violet)" : null) }); }
+  function glyphs() {
+    return ["red","orange","yellow","green","cyan","violet"].map(c =>
+      `<div style="text-align:center">${HB.board({ cells: [[0,0]], size: 24, gap: 0, stack: () => [`var(--tile-${c})`, `var(--tile-${c})`] }).replace(/<use href="#hx-empty"[^>]*\/>/g, "")}<div class="t-label" style="margin-top:4px">${c}</div></div>`).join("");
+  }
+</script>
+</body>
+</html>

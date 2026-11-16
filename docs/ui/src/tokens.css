@@ -19,7 +19,20 @@
   --bg-2: #121A40;
   --surface: #19214F;
   --surface-2: #232D68;
-  --line: #34408A;
+  --line: #34408A;          /* decorative borders (cards, panels) */
+  --line-strong: #6B78C8;   /* borders that carry meaning: empty cells, toggles, empty stars; >= 3:1 on every surface (WCAG 1.4.11) */
+  --cell-empty: #121A40;
+  --well: rgba(10,14,40,0.6);          /* recessed areas: trays, chips, previews */
+  --well-strong: rgba(10,14,40,0.7);
+  --divider: rgba(52,64,138,0.6);
+  --scrim: rgba(4,6,18,0.72);
+  --text-disabled: #7A83B8;
+  --tile-edge: rgba(255,255,255,0.35);
+  --primary-text: #FFD23C;             /* the primary color when it is text, not a fill */
+  --primary-light: #FFE27A;
+  --star: #FFD23C;
+  --ink-on-tile: #1A1300;   /* dark text on bright tiles */
+  --ink-on-tile-cool: #0B1026;
   --text: #F2F4FF;
   --text-muted: #A3ABD9;
   --text-on-accent: #1A1300;
@@ -65,6 +78,30 @@
   --shadow-card: 0 10px 30px rgba(3, 6, 20, 0.55);
 }
 
+/*
+ * Light theme (suggested in the review of PR #14). Only tokens change: no screen, component or board file is edited.
+ * Export any mockup in this theme with ?theme=light. In the app this is a second ThemeData, chosen by one setting.
+ * Accent colors are darker here so that every accent used as text keeps >= 4.5:1 on white.
+ */
+:root[data-theme="light"] {
+  --bg: #F4F1FB;  --bg-2: #E9E4F6;  --surface: #FFFFFF;  --surface-2: #F8F6FD;
+  --line: #DCD6EF;  --line-strong: #7D77AD;  --cell-empty: #E6E1F4;
+  --text: #1B1840;  --text-muted: #57537D;  --text-disabled: #8E8AAE;  --text-on-accent: #1A1300;
+  --well: rgba(27,24,64,0.05);  --well-strong: rgba(27,24,64,0.08);  --divider: rgba(27,24,64,0.10);  --scrim: rgba(27,24,64,0.42);
+  --primary: #FFC727;  --primary-deep: #E8A400;  --primary-light: #FFE07A;  --primary-text: #8A6300;
+  --star: #FFC727;  --star-edge: #A77800;
+  --secondary: #077275;  --success: #0E7744;  --danger: #C8233F;
+  --variant-lines: #0568A0;  --variant-fit: #7A3FD6;  --variant-sort: #B35300;  --variant-merge: #8A6300;
+  --tile-red: #F2445F;  --tile-orange: #F98A25;  --tile-yellow: #F6C21C;  --tile-green: #25C274;  --tile-cyan: #27A9EE;  --tile-violet: #9B5DF2;
+  --tile-edge: rgba(27,24,64,0.28);
+  --merge-2: #E3DDF5;  --merge-4: #CFC6F0;
+  --ink-on-tile-cool: #0B1026;
+  --glow-primary: 0 6px 18px rgba(232,164,0,0.35);  --glow-cyan: 0 0 0 4px rgba(7,114,117,0.18);
+  --shadow-card: 0 8px 24px rgba(27,24,64,0.10);
+}
+:root[data-theme="light"] .btn-secondary { color: var(--secondary); }
+:root[data-theme="light"] .segmented .active, :root[data-theme="light"] .toggle.on { color: #fff; }
+
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-weight: 600; }
 
@@ -83,12 +120,12 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
   color: var(--text-on-accent); box-shadow: var(--glow-primary), inset 0 -4px 0 rgba(0,0,0,0.18); }
 .btn-secondary { background: transparent; color: var(--text); border: 2px solid var(--secondary); box-shadow: var(--glow-cyan); }
 .btn-ghost { background: var(--surface); color: var(--text-muted); }
-.btn-disabled { background: var(--surface); color: #5C6596; box-shadow: none; }
+.btn-disabled { background: var(--surface); color: var(--text-disabled); box-shadow: none; }
 
-.icon-btn { width: 48px; height: 48px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid var(--line);
+.icon-btn { flex: none; width: 48px; height: 48px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid var(--line);
   display: inline-flex; align-items: center; justify-content: center; color: var(--text); }
 .icon-btn svg { width: 24px; height: 24px; }
-.icon-btn.is-off { color: #5C6596; background: var(--surface); }
+.icon-btn.is-off { color: var(--text-disabled); background: var(--surface); } /* dimmed but readable: 4.2:1, it still tells there is nothing to redo */
 
 /* ---- Cards and surfaces ---- */
 .card { background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1.5px solid var(--line);
@@ -99,14 +136,38 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
 /* ---- Toggle and segmented control (settings) ---- */
-.toggle { width: 56px; height: 32px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); position: relative; }
-.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #5C6596; }
+.toggle { width: 56px; height: 32px; border-radius: 999px; background: var(--surface); border: 2px solid var(--line-strong); position: relative; flex: none; }
+.toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: var(--text-muted); }
 .toggle.on { background: var(--success); border-color: var(--success); box-shadow: 0 0 16px rgba(59,224,139,0.45); }
-.toggle.on::after { left: 27px; background: #fff; }
+.toggle.on::after { left: 26px; background: #fff; }
 .segmented { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); }
-.segmented span { padding: 8px 18px; border-radius: 999px; font: 700 15px/1 var(--font-display); color: var(--text-muted); }
+.segmented span { padding: 14px 18px; min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; font: 700 15px/1 var(--font-display); color: var(--text-muted); }
 .segmented .active { background: var(--secondary); color: var(--bg); }
 
 /* ---- Hex cells ---- */
 .hex { filter: drop-shadow(0 0 6px rgba(0,0,0,0.4)); }
-.hex-empty { fill: var(--bg-2); stroke: var(--line); stroke-width: 3; }
+.hex-empty { fill: var(--cell-empty); stroke: var(--line-strong); stroke-width: 3; }
+
+/* ---- Stars: earned stars are filled, missing ones are outlined, so they differ by shape and not only by color ---- */
+.star-on  { fill: var(--star); stroke: var(--star-edge, none); stroke-width: 1.2; }
+.star-off { fill: none; stroke: var(--line-strong); stroke-width: 1.8; stroke-linejoin: round; }
+
+/* ---- Small labelled values (one component for game select chips and in-game pills) ---- */
+.chip { display: inline-flex; align-items: center; gap: 5px; min-height: 30px; padding: 0 10px; border-radius: 999px; white-space: nowrap;
+  background: var(--well); border: 1.5px solid var(--line); font: 600 14px/1 var(--font-display); }
+.chip .k { font: 800 10px/1 var(--font-body); letter-spacing: 1.2px; color: var(--text-muted); text-transform: uppercase; }
+
+/* ---- Modal sheet (pause menu, leave confirmation) ---- */
+.scrim { position: absolute; inset: 0; background: var(--scrim); backdrop-filter: blur(3px); }
+.sheet { position: absolute; left: 16px; right: 16px; padding: 24px 20px 20px; border-radius: 28px; background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1.5px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 12px; }
+.sheet .btn { width: 100%; }
+
+/* ---- Toast for game events ---- */
+.banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 18px; background: var(--surface-2); border: 1.5px solid var(--line); box-shadow: var(--shadow-card); }
+
+/* ---- Sync status (FR-15): gameplay never waits for the network ---- */
+.sync { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 10px; border-radius: 999px; font: 700 12px/1 var(--font-body);
+  background: var(--well); border: 1.5px solid var(--line); color: var(--text-muted); }
+.sync i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.sync.ok { color: var(--success); } .sync.busy { color: var(--secondary); } .sync.off { color: var(--text-muted); } .sync.err { color: var(--danger); }

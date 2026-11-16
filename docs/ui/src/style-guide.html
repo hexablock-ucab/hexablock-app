@@ -15,7 +15,7 @@
   section > h2 { margin: 0 0 18px; }
   .grid { display: grid; gap: 20px; }
   .swatch { border-radius: var(--radius-s); overflow: hidden; border: 1.5px solid var(--line); background: var(--surface); }
-  .swatch .chip { height: 84px; }
+  .swatch .sw { height: 84px; }
   .swatch .meta { padding: 10px 12px; }
   .swatch .meta b { display: block; font: 700 15px/1.2 var(--font-display); }
   .swatch .meta code { font: 700 12px/1.4 ui-monospace, monospace; color: var(--text-muted); }
@@ -31,7 +31,7 @@
   .level .n { position: relative; font: 700 28px/1 var(--font-display); }
   .level .stars { position: relative; display: flex; gap: 2px; margin-top: 6px; }
   .stars svg { width: 16px; height: 16px; }
-  .tray { display: flex; gap: 16px; padding: 16px; border-radius: var(--radius-m); background: rgba(10,14,40,0.6); border: 1.5px dashed var(--line); }
+  .tray { display: flex; gap: 16px; padding: 16px; border-radius: var(--radius-m); background: var(--well); border: 1.5px dashed var(--line); }
   .slot { width: 120px; height: 120px; border-radius: 18px; background: var(--surface); display: flex; align-items: center; justify-content: center; }
   .slot.selected { outline: 3px solid var(--secondary); box-shadow: var(--glow-cyan); }
   .slot.used { opacity: 0.35; }
@@ -86,22 +86,23 @@
 <section>
   <h2 class="t-h1">1. Paleta</h2>
   <div class="t-label" style="margin-bottom:12px">Base</div>
-  <div class="grid" style="grid-template-columns: repeat(7, 1fr)">
-    <div class="swatch"><div class="chip" style="background:var(--bg)"></div><div class="meta"><b>Fondo</b><code>--bg #0B1026</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--bg-2)"></div><div class="meta"><b>Fondo 2 / celda</b><code>--bg-2 #121A40</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--surface)"></div><div class="meta"><b>Superficie</b><code>--surface #19214F</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--surface-2)"></div><div class="meta"><b>Superficie 2</b><code>--surface-2 #232D68</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--line)"></div><div class="meta"><b>Línea</b><code>--line #34408A</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--text)"></div><div class="meta"><b>Texto</b><code>--text #F2F4FF</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--text-muted)"></div><div class="meta"><b>Texto suave</b><code>--text-muted #A3ABD9</code></div></div>
+  <div class="grid" style="grid-template-columns: repeat(8, 1fr)">
+    <div class="swatch"><div class="sw" style="background:var(--bg)"></div><div class="meta"><b>Fondo</b><code>--bg #0B1026</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--bg-2)"></div><div class="meta"><b>Fondo 2 / celda</b><code>--bg-2 #121A40</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--surface)"></div><div class="meta"><b>Superficie</b><code>--surface #19214F</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--surface-2)"></div><div class="meta"><b>Superficie 2</b><code>--surface-2 #232D68</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--line)"></div><div class="meta"><b>Línea (decorativa)</b><code>--line #34408A</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--line-strong)"></div><div class="meta"><b>Línea con significado</b><code>--line-strong #6B78C8</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--text)"></div><div class="meta"><b>Texto</b><code>--text #F2F4FF</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--text-muted)"></div><div class="meta"><b>Texto suave</b><code>--text-muted #A3ABD9</code></div></div>
   </div>
 
   <div class="t-label" style="margin:22px 0 12px">Acentos y estados</div>
   <div class="grid" style="grid-template-columns: repeat(7, 1fr)">
-    <div class="swatch"><div class="chip" style="background:var(--primary)"></div><div class="meta"><b>Primario</b><code>--primary #FFD23C</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--secondary)"></div><div class="meta"><b>Secundario</b><code>--secondary #3FE0E0</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--success)"></div><div class="meta"><b>Éxito</b><code>--success #3BE08B</code></div></div>
-    <div class="swatch"><div class="chip" style="background:var(--danger)"></div><div class="meta"><b>Peligro</b><code>--danger #FF4D6D</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--primary)"></div><div class="meta"><b>Primario</b><code>--primary #FFD23C</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--secondary)"></div><div class="meta"><b>Secundario</b><code>--secondary #3FE0E0</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--success)"></div><div class="meta"><b>Éxito</b><code>--success #3BE08B</code></div></div>
+    <div class="swatch"><div class="sw" style="background:var(--danger)"></div><div class="meta"><b>Peligro</b><code>--danger #FF4D6D</code></div></div>
   </div>
 
   <div class="t-label" style="margin:22px 0 12px">Fichas de color (Hexa Lines y Hexa Sort)</div>
@@ -112,7 +113,7 @@
     <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-green)"/></svg><div class="t-label">green</div></div>
     <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-cyan)"/></svg><div class="t-label">cyan</div></div>
     <div style="text-align:center"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--tile-violet)"/></svg><div class="t-label">violet</div></div>
-    <div class="t-body" style="color:var(--text-muted); max-width:420px; margin-left:16px">Seis colores muy distintos entre sí. Cada ficha lleva brillo arriba y sombra abajo para leerse como "bloque". Para daltonismo, Hexa Sort puede sumar un símbolo por color (pendiente de D1).</div>
+    <div class="t-body" style="color:var(--text-muted); max-width:420px; margin-left:16px">Seis colores muy distintos entre sí. Cada ficha lleva brillo arriba y sombra abajo para leerse como "bloque". En Hexa Sort cada color lleva además su símbolo (círculo, triángulo, estrella, cuadrado, rombo, cruz) para no depender del color.</div>
   </div>
 
   <div class="t-label" style="margin:22px 0 12px">Rampa de valores (Hexa Merge)</div>
@@ -124,10 +125,10 @@
     <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-32)"/></svg><span style="color:var(--bg)">32</span></div>
     <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-64)"/></svg><span style="color:var(--text-on-accent)">64</span></div>
     <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-128)"/></svg><span style="color:var(--text-on-accent); font-size:19px">128</span></div>
-    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-256)"/></svg><span style="font-size:19px">256</span></div>
-    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-512)"/></svg><span style="font-size:19px">512</span></div>
-    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-1024)"/></svg><span style="font-size:16px">1024</span></div>
-    <div class="merge" style="filter: drop-shadow(0 0 14px rgba(180,124,255,0.8))"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-2048)"/></svg><span style="font-size:16px">2048</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-256)"/></svg><span style="color:var(--ink-on-tile-cool); font-size:19px">256</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-512)"/></svg><span style="color:var(--ink-on-tile-cool); font-size:19px">512</span></div>
+    <div class="merge"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-1024)"/></svg><span style="color:var(--ink-on-tile-cool); font-size:16px">1024</span></div>
+    <div class="merge" style="filter: drop-shadow(0 0 14px rgba(180,124,255,0.8))"><svg width="74" height="85"><use href="#hx" width="74" height="85" fill="var(--merge-2048)"/></svg><span style="color:var(--ink-on-tile-cool); font-size:16px">2048</span></div>
   </div>
 </section>
 
@@ -191,7 +192,7 @@
       </div>
 
       <div class="t-label" style="margin:22px 0 14px">Barra superior de partida (zona 1 de la plantilla)</div>
-      <div class="topbar" style="padding:14px 16px; border-radius:var(--radius-m); background:rgba(10,14,40,0.6); border:1.5px solid var(--line)">
+      <div class="topbar" style="padding:14px 16px; border-radius:var(--radius-m); background:var(--well); border:1.5px solid var(--line)">
         <span class="icon-btn"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.5" height="14" rx="1.5"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.5"/></svg></span>
         <div class="stat"><span class="t-label">Puntaje</span><span class="t-number">1 248</span></div>
         <div class="stat"><span class="t-label">Mejor</span><span class="t-number" style="font-size:22px; color:var(--primary)">3 960</span></div>
@@ -232,11 +233,11 @@
         <div class="level"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--surface-2)" stroke="var(--line)" stroke-width="3"/></svg>
           <span class="n">1</span><span class="stars" style="fill:var(--primary)"><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg></span></div>
         <div class="level"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--surface-2)" stroke="var(--line)" stroke-width="3"/></svg>
-          <span class="n">2</span><span class="stars"><svg style="fill:var(--primary)"><use href="#star"/></svg><svg style="fill:var(--primary)"><use href="#star"/></svg><svg style="fill:#3A4580"><use href="#star"/></svg></span></div>
-        <div class="level" style="filter: drop-shadow(0 0 14px rgba(255,210,60,0.6))"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--primary)" stroke="#FFE27A" stroke-width="3"/></svg>
+          <span class="n">2</span><span class="stars"><svg style="fill:var(--primary)"><use href="#star"/></svg><svg style="fill:var(--primary)"><use href="#star"/></svg><svg class="star-off"><use href="#star"/></svg></span></div>
+        <div class="level" style="filter: drop-shadow(0 0 14px rgba(255,210,60,0.6))"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--primary)" stroke="var(--primary-light)" stroke-width="3"/></svg>
           <span class="n" style="color:var(--text-on-accent)">3</span><span class="t-label" style="position:relative; color:var(--text-on-accent); margin-top:6px">Jugar</span></div>
         <div class="level"><svg class="bg" viewBox="-4 -4 108 123.47"><polygon points="50,0 100,28.87 100,86.6 50,115.47 0,86.6 0,28.87" fill="var(--surface)" stroke="var(--line)" stroke-width="3" stroke-dasharray="8 6"/></svg>
-          <svg style="position:relative" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B75AD" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="#6B75AD"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+          <svg style="position:relative" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--line-strong)" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="var(--line-strong)"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
       </div>
       <div class="t-body caption" style="color:var(--text-muted)">Completado (3★) · completado (2★) · siguiente (resaltado) · bloqueado.</div>
     </div>
@@ -247,7 +248,7 @@
       <div class="row" style="justify-content:space-between; margin-top:14px"><span class="t-body">Efectos de sonido</span><span class="toggle"></span></div>
       <div class="row" style="justify-content:space-between; margin-top:14px"><span class="t-body">Idioma</span><span class="segmented"><span class="active">Español</span><span>English</span></span></div>
       <div class="t-label" style="margin:22px 0 10px">Estrellas de resultado</div>
-      <div class="row" style="gap:6px"><svg width="44" height="44" style="fill:var(--primary); filter:drop-shadow(0 0 10px rgba(255,210,60,0.7))"><use href="#star"/></svg><svg width="44" height="44" style="fill:var(--primary); filter:drop-shadow(0 0 10px rgba(255,210,60,0.7))"><use href="#star"/></svg><svg width="44" height="44" style="fill:#3A4580"><use href="#star"/></svg></div>
+      <div class="row" style="gap:6px"><svg width="44" height="44" style="fill:var(--primary); filter:drop-shadow(0 0 10px rgba(255,210,60,0.7))"><use href="#star"/></svg><svg width="44" height="44" style="fill:var(--primary); filter:drop-shadow(0 0 10px rgba(255,210,60,0.7))"><use href="#star"/></svg><svg width="44" height="44" class="star-off"><use href="#star"/></svg></div>
     </div>
   </div>
 </section>

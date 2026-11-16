@@ -7,62 +7,101 @@
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="screens.css">
 <script src="hexgrid.js"></script>
+<script src="strings.js"></script>
 <style>
-  .top { display: flex; justify-content: space-between; padding-top: 8px; }
-  .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-  .logo { filter: drop-shadow(0 0 28px rgba(180,124,255,0.45)); margin-bottom: 26px; }
-  .name { font: 700 52px/0.95 var(--font-display); letter-spacing: 0.5px; }
-  .suite { font: 700 20px/1 var(--font-display); letter-spacing: 12px; color: var(--primary); margin: 10px 0 0 12px; }
-  .tagline { margin-top: 18px; color: var(--text-muted); }
-  .actions { display: flex; flex-direction: column; gap: 14px; padding-bottom: 18px; }
-  .actions .btn { width: 100%; height: 60px; font-size: 22px; }
-  .resume { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
+  /* FR-01 (assignment 5.1.1): the home screen holds the suite name, settings and the selector of the four variants. */
+  .top { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; }
+  .brand { display: flex; align-items: center; gap: 12px; margin: 14px 0 16px; }
+  .brand .logo { filter: drop-shadow(0 0 18px rgba(180,124,255,0.45)); flex: none; }
+  .name { font: 700 34px/0.95 var(--font-display); }
+  .suite { font: 700 13px/1 var(--font-display); letter-spacing: 8px; color: var(--primary-text); margin-top: 6px; }
+  .resume { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; margin-bottom: 14px; }
   .resume .txt { flex: 1; }
-  .foot { text-align: center; padding-bottom: 6px; }
+  .games { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; align-content: start; } /* the home screen scrolls when the phone is shorter */
+  .game { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 6px; padding: 12px 12px 12px 16px; min-height: 212px; }
+  .game::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 5px; border-radius: 0 5px 5px 0; background: var(--accent); box-shadow: 0 0 14px var(--accent); }
+  .game .preview { height: 92px; border-radius: 14px; background: var(--well); display: flex; align-items: center; justify-content: center; }
+  .game .t-h2 { font-size: 19px; }
+  .game .desc { color: var(--text-muted); font-size: 13px; line-height: 1.3; flex: 1; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .foot { text-align: center; padding: 8px 0 4px; }
 </style>
 </head>
 <body>
-<div class="deco" style="top:110px; left:-34px" data-render="decoA"></div>
-<div class="deco" style="top:520px; right:-40px" data-render="decoB"></div>
-
 <div class="screen">
   <div class="top">
-    <span class="icon-btn" title="Sonido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg></span>
-    <span class="icon-btn" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.4" fill="var(--surface-2)"/><circle cx="15" cy="17" r="2.4" fill="var(--surface-2)"/></svg></span>
+    <span class="sync ok"><i></i>Progreso al día</span>
+    <span class="icon-btn" data-icon="settings" aria-label="Ajustes"></span>
   </div>
 
-  <div class="hero">
+  <div class="brand">
     <div class="logo" data-render="logo"></div>
-    <div class="name">HexaBlock</div>
-    <div class="suite">SUITE</div>
-    <div class="t-body tagline">Cuatro juegos, un solo tablero.</div>
+    <div><div class="name">HexaBlock</div><div class="suite">SUITE</div></div>
   </div>
 
-  <div class="actions">
-    <div class="card resume">
-      <div data-render="resumeIcon"></div>
-      <div class="txt"><div class="t-label">Continuar</div><div class="t-h2" style="font-size:19px">Hexa Fit · Nivel 7</div></div>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-    </div>
-    <span class="btn btn-primary">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>
-      Jugar</span>
+  <div class="card resume">
+    <div data-render="resumeIcon"></div>
+    <div class="txt"><div class="t-label">Continuar</div><div class="t-h2" style="font-size:18px">Hexa Fit · Nivel 7</div></div>
+    <span class="icon-btn" style="background:var(--primary); color:var(--text-on-accent); border:0" data-icon="play"></span>
   </div>
-  <div class="foot t-label">v1.0 · UCAB 2026-2</div>
+
+  <!-- The whole card is the touch target (S2). -->
+  <div class="games">
+    <div class="card game" style="--accent: var(--variant-lines)">
+      <div class="preview" data-render="pLines"></div>
+      <div class="t-h2">Hexa Lines</div>
+      <div class="desc">Completa líneas en los 3 ejes.</div>
+      <div class="chips"><span class="chip"><span class="k">Mejor</span>3 960</span></div>
+    </div>
+    <div class="card game" style="--accent: var(--variant-fit)">
+      <div class="preview" data-render="pFit"></div>
+      <div class="t-h2">Hexa Fit</div>
+      <div class="desc">Encaja todas las piezas.</div>
+      <div class="chips"><span class="chip"><span class="k">Hechos</span>6/15</span><span class="chip"><span data-stars="1/1" data-size="13"></span>14</span></div>
+    </div>
+    <div class="card game" style="--accent: var(--variant-sort)">
+      <div class="preview" data-render="pSort"></div>
+      <div class="t-h2">Hexa Sort</div>
+      <div class="desc">Apila y junta 10 iguales.</div>
+      <div class="chips"><span class="chip"><span class="k">Hechos</span>3/10</span><span class="chip"><span data-stars="1/1" data-size="13"></span>8</span></div>
+    </div>
+    <div class="card game" style="--accent: var(--variant-merge)">
+      <div class="preview" data-render="pMerge"></div>
+      <div class="t-h2">Hexa Merge</div>
+      <div class="desc">Suma fichas hasta 2048.</div>
+      <div class="chips"><span class="chip"><span class="k">Mejor</span>12 480</span></div>
+    </div>
+  </div>
+  <div class="foot t-label">Versión 1.0.0 · UCAB 2026-2</div>
 </div>
 <div class="home-indicator"></div>
 
 <script>
-  const V = ["var(--variant-lines)", "var(--variant-fit)", "var(--variant-sort)", "var(--variant-merge)", "var(--tile-red)", "var(--tile-green)"];
+  const C = { r: "var(--tile-red)", o: "var(--tile-orange)", y: "var(--tile-yellow)", g: "var(--tile-green)", c: "var(--tile-cyan)", v: "var(--tile-violet)" };
   function logo() {
-    // A radius-1 flower: center in gold, ring in the four variant colors.
     const ring = { "0,0": "var(--primary)", "1,-1": "var(--variant-lines)", "1,0": "var(--variant-fit)", "0,1": "var(--variant-sort)",
                    "-1,1": "var(--tile-red)", "-1,0": "var(--merge-1024)", "0,-1": "var(--tile-green)" };
-    return HB.board({ cells: HB.hexagon(1), size: 40, gap: 6, fill: (q, r) => ring[q + "," + r] });
+    return HB.board({ cells: HB.hexagon(1), size: 15, gap: 3, fill: (q, r) => ring[q + "," + r] });
   }
-  function decoA() { return HB.board({ cells: [[0,0],[1,0],[0,1]], size: 34, gap: 6, fill: (q) => q ? "var(--variant-lines)" : "var(--variant-fit)" }); }
-  function decoB() { return HB.board({ cells: [[0,0],[0,1],[-1,1]], size: 34, gap: 6, fill: () => "var(--variant-sort)" }); }
   function resumeIcon() { return HB.board({ cells: [[0,0],[1,0],[0,1]], size: 13, gap: 3, fill: () => "var(--variant-fit)" }); }
+  function pLines() {
+    const filled = { "-2,0": C.c, "-1,0": C.c, "0,0": C.c, "1,0": C.c, "2,0": C.c, "0,-2": C.r, "1,-2": C.r, "-1,1": C.y, "-2,2": C.g, "-1,2": C.g, "2,-1": C.v };
+    return HB.board({ cells: HB.hexagon(2), size: 9.5, gap: 1.6, fill: (q, r) => filled[q + "," + r] || null });
+  }
+  function pFit() {
+    const figure = [[0,0],[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1],[2,-1],[-2,1],[-1,2]];
+    const placed = { "0,0": C.v, "1,0": C.v, "1,-1": C.v, "-1,1": C.g, "-2,1": C.g, "-1,2": C.g, "0,-1": "ghost", "-1,0": "ghost" };
+    return HB.board({ cells: figure, size: 11, gap: 1.6, fill: (q, r) => placed[q + "," + r] || null });
+  }
+  function pSort() {
+    const s = { "0,0": [C.c, C.o, C.o], "1,-1": [C.g, C.y], "-1,1": [C.v, C.g], "0,-1": [C.r], "1,0": [C.v, C.v, C.r] };
+    return HB.board({ cells: HB.hexagon(1), size: 16, gap: 2, stack: (q, r) => s[q + "," + r] || null });
+  }
+  function pMerge() {
+    const v = { "0,0": 64, "1,-1": 8, "-1,0": 2, "0,1": 16, "1,0": 4, "-1,1": 2 };
+    return HB.board({ cells: HB.hexagon(1), size: 17, gap: 2, fill: (q, r) => v[q + "," + r] ? HB.MERGE.fill(v[q + "," + r]) : null,
+      label: (q, r) => v[q + "," + r] ? { text: v[q + "," + r], color: HB.MERGE.ink(v[q + "," + r]), size: 13 } : null });
+  }
 </script>
 </body>
 </html>
