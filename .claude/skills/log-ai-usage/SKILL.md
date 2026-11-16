@@ -23,17 +23,22 @@ The assignment (§7.2) requires one entry per significant AI use. Undocumented A
 - **Author:** <team member who drove the session>
 - **Tool / model:** Claude Code <version> — <model(s) used, e.g. Sonnet for orchestration, Opus for odd-worker>
 - **Task:** <problem addressed, with requirement IDs>
-- **Prompts:** <verbatim or faithful paraphrase; quote the key ones>
+- **Prompts:** <verbatim for prompts that led to a design decision or exposed an AI error; faithful paraphrase for routine ones>
 - **Result:** <what the AI produced: files, design, explanation>
 - **Team modifications:** <what we changed and why>
 - **Errors and corrections:** <wrong or suboptimal outputs and how we detected them, or "none detected">
+- **Verification:** <tests, commands or reviews that checked the AI's output>
 - **Lessons:** <one or two lines>
 ```
+
+   For AI-generated content (for example levels), also state how many items were generated, how each one was checked and what was adjusted by hand.
+   Add the entry to the index table at the top of `## Usage log`. If the entry lists a new AI error, add it to the table in `## Critical evaluation` too.
 
 4. Update the running estimate in `## Critical evaluation` only when the user gives a new figure; never invent percentages.
 
 ## Rules
 
 - Never fabricate a prompt, a figure or a correction. Missing information is asked for or marked `TODO(team)`.
+- An entry is complete before its pull request is merged: no field stays pending. Anything still open says what and who closes it.
 - Never include secrets, tokens or personal data in an entry.
 - The entry is in English. Quoted prompts keep their original language.
