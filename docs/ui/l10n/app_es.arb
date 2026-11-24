@@ -443,6 +443,87 @@
   "@pauseBackNote": {
     "description": "Note on the pause sheet."
   },
+  "pauseHowToPlay": "Cómo jugar",
+  "@pauseHowToPlay": {
+    "description": "Pause menu button that opens the how-to-play modal."
+  },
+  "pauseBoardHidden": "Tablero oculto mientras el reloj está detenido",
+  "@pauseBoardHidden": {
+    "description": "Shown in Hexa Fit instead of the board while paused."
+  },
+  "howToPlayTitle": "Cómo jugar",
+  "@howToPlayTitle": {
+    "description": "Title of the how-to-play modal."
+  },
+  "howToPlayClockPaused": "Reloj en pausa",
+  "@howToPlayClockPaused": {
+    "description": "Chip on the how-to-play modal in Hexa Fit."
+  },
+  "howToPlayGotIt": "Entendido",
+  "@howToPlayGotIt": {
+    "description": "Button that closes the how-to-play modal."
+  },
+  "howToPlayWhen": "Aparece la primera vez que juegas {game} y en Pausa → Cómo jugar.",
+  "@howToPlayWhen": {
+    "description": "Note under the how-to-play modal.",
+    "placeholders": {
+      "game": {
+        "type": "String"
+      }
+    }
+  },
+  "howToFitStep1": "Arrastra una pieza a la figura, o tócala y luego toca una casilla.",
+  "@howToFitStep1": {
+    "description": "Hexa Fit, step 1."
+  },
+  "howToFitStep2": "Gírala con el botón, de 60° en 60°. Toca una pieza puesta para devolverla.",
+  "@howToFitStep2": {
+    "description": "Hexa Fit, step 2."
+  },
+  "howToFitStep3": "Cubre toda la figura, sin huecos ni piezas encimadas.",
+  "@howToFitStep3": {
+    "description": "Hexa Fit, step 3."
+  },
+  "howToFitStars": "1 estrella por ganar, +1 si no pasas los movimientos y +1 si no pasas el tiempo.",
+  "@howToFitStars": {
+    "description": "Hexa Fit, stars."
+  },
+  "howToLinesStep1": "Coloca una de las 3 piezas en un lugar libre donde quepa entera.",
+  "@howToLinesStep1": {
+    "description": "Hexa Lines, step 1."
+  },
+  "howToLinesStep2": "Completa líneas en cualquiera de los 3 ejes para borrarlas y sumar puntos.",
+  "@howToLinesStep2": {
+    "description": "Hexa Lines, step 2."
+  },
+  "howToLinesStep3": "Varias líneas a la vez y jugadas seguidas con línea multiplican el puntaje. Pierdes cuando ninguna pieza cabe.",
+  "@howToLinesStep3": {
+    "description": "Hexa Lines, step 3."
+  },
+  "howToSortStep1": "Toca una casilla vacía para poner la pila de la bandeja.",
+  "@howToSortStep1": {
+    "description": "Hexa Sort, step 1."
+  },
+  "howToSortStep2": "Las fichas iguales de arriba pasan a la pila vecina que tiene más, en cascada.",
+  "@howToSortStep2": {
+    "description": "Hexa Sort, step 2."
+  },
+  "howToSortStep3": "10 fichas iguales juntas cuentan una meta. Cumple las metas antes de llenar el tablero.",
+  "@howToSortStep3": {
+    "description": "Hexa Sort, step 3."
+  },
+  "howToMergeStep1": "Desliza en una de las 6 direcciones: todas las fichas se mueven hasta el borde.",
+  "@howToMergeStep1": {
+    "description": "Hexa Merge, step 1."
+  },
+  "howToMergeStep2": "Dos fichas iguales que chocan se suman en una. Cada fusión suma puntos.",
+  "@howToMergeStep2": {
+    "description": "Hexa Merge, step 2."
+  },
+  "howToMergeStep3": "Llega a 2048 y sigue jugando. Termina cuando ningún deslizamiento cambia el tablero.",
+  "@howToMergeStep3": {
+    "description": "Hexa Merge, step 3."
+  },
   "leaveTitle": "¿Salir del nivel?",
   "@leaveTitle": {
     "description": "Confirmation title."

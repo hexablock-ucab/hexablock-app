@@ -55,6 +55,7 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 - **S15** (NFR-02, C-31): A **light theme** made only by redefining tokens; key screens exported in `docs/ui/png/light/`.
 - **S16** (FR-10): Two screens exported in English (`docs/ui/png/en/`), and every screen fits at 360 × 780 without horizontal overflow.
 - **S17** (FR-10, C-28): Every screen exists in the dark and the light theme (`docs/ui/png/` and `docs/ui/png/light/`, file for file); Settings lets the player choose dark, light or system and hide the color symbols; `docs/ui/tokens.json` has the tokens of both themes and `docs/ui/l10n/` the strings in Spanish and English.
+- **S18** (FR-03, FR-44, team decisions of 2026-11-23): A how-to-play modal exists per variant, in both languages, opened the first time a variant is played and from the pause menu; in Hexa Fit the pause menu and the modal stop the clock and hide the board. State colors (`--danger`, `--success`) differ from the tile colors in both themes (review O5).
 
 ## Allowed edit surfaces
 
@@ -73,6 +74,7 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 - [x] **T6** `log-ai-usage` entry.
 - [x] **T7** (S2, S3, S7, S8, S12–S16) Changes after the review of PR #14 (Eduard: B1–B5, S1–S9, O1–O7; Ali: light theme).
 - [x] **T8** (S17) Light export of every screen, theme and symbol settings, `tokens.json` and the ARB files.
+- [x] **T9** (S18) Screen 19 (how to play, Hexa Fit), *Cómo jugar* in the pause menu, Hexa Fit board hidden while paused, the steps of the four variants in the ARB files, state colors separated from tile colors, every PNG exported again.
 
 ## Verification
 
@@ -95,12 +97,13 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 | S15 | `docs/ui/png/light/` (all 19 exports); only `tokens.css` defines the theme | Pending team review |
 | S16 | `docs/ui/png/en/` (home, Hexa Fit); every phone screen rendered at 360 × 780 with a script that reports elements outside the screen: none horizontally | Pending team review |
 | S17 | `docs/ui/png/light/` file for file with `docs/ui/png/`; `11-settings.png` in both themes; `docs/ui/tokens.json`; `docs/ui/l10n/app_es.arb` and `app_en.arb` (120 keys, same placeholders, ICU parsed) | Pending team review |
+| S18 | `19-how-to-play.png` and `16-pause-menu.png` in both themes (Fit board hidden behind them, checked at 360 × 780: no horizontal overflow); `howTo…` keys for the four variants in `l10n/` (139 keys, same placeholders, ICU parsed); `--danger` #FF7A5C and `--success` #7DF0C4 against `--tile-red` #FF4D6D and `--tile-green` #3BE08B, text contrast 5.0–7.3:1 and 9.2–13.6:1 on every dark surface | Pending team review |
 
 ## Open questions
 
 - Sign-in, register and leaderboard (FR-11, FR-13) are not in the D12 list of `docs/PLAN.md`. Proposal: add them in a follow-up once D5 (API contract) defines the data they show.
 - Task number 0003 assumes the game rules task on `docs/game-rules` keeps 0002; renumber if another task merges first.
-- Proposal for the team: keep an endless game (Hexa Lines, Hexa Merge) when the player leaves it, so "Continue" resumes it. No requirement asks for it yet; it is marked as a proposal in `docs/ui/README.md`.
+- Saving an endless game on leave (Hexa Lines, Hexa Merge): accepted by the team on 2026-11-23 as the last item of the plan; it still needs its requirement in `docs/requirements.md` (Eduard's requirements pull request).
 
 ## Next step
 
@@ -121,3 +124,5 @@ Eduard re-reviews PR #14 against his comments of 2026-11-09; then merge and mark
 - 2026-11-16 — Valentina Maza with Claude (Opus 5.5, claude.ai): T7 done. B2 victory for the last Sort level, defeats for Sort and Merge, target reached in Merge (rule from PR #13 and #18); B3 pause menu and leave confirmation; B4 glyph per Sort color; B5 dark text on Merge tiles from 8; S1 `--line-strong` and outlined stars; S2 48 px targets, rotate button moved off the tray; S3 tap-then-tap in Lines; S4 checked at 360 × 780 and fixed (icon buttons no longer shrink, tighter top bar); S5 `strings.js` and two English exports; S6/S7 states sheet and sync status; S8 next threshold in Sort; S9 Sort level select and a "Levels" action; O1–O6 applied; light theme. Each defeat board was checked with a script. FR-15 exists on `main` (merged with PR #12 after the review).
 - 2026-11-16 15:48 — Valentina Maza (verbatim): "q mas puedo adelantra? ir haciendo? acuerdate de hacer todo con sus verxipnes claras y oscuras y eso pues"
 - 2026-11-16 — Valentina Maza with Claude (Opus 5.5, claude.ai): T8 done. All 19 exports in `png/light/` (13 new); sheets behind the pause menu and leave confirmation now take the page's theme and language (`hexgrid.js`); the style guide reads its swatch values from the active theme; Settings gains *Tema* (dark, light, system) and *Símbolos en las fichas* (B4); `tokens.json` exported from `tokens.css`; `l10n/app_es.arb` and `l10n/app_en.arb` with 120 keys, same keys and placeholders, every ICU message parsed. Settings now scrolls at 360 × 780 (vertical only; no horizontal overflow).
+- 2026-11-24 — Valentina Maza (verbatim): "sigamos" (answering the offer to apply review point O5 and the team decisions of 2026-11-23 that touch the mockups: saving endless games, the how-to-play modal and the Hexa Fit board hidden while paused).
+- 2026-11-24 — Valentina Maza with Claude (Opus 5.5, claude.ai): T9 done. Screen 19 (how to play, Hexa Fit); *Cómo jugar* in the pause menu; Hexa Fit hides its board while paused (`06-hexa-fit.html?paused`, used by 16, 17 and 19); `hexgrid.js` now adds the page's `?theme`/`?lang` to an iframe that already has a query; `--danger` and `--success` no longer equal tile colors (O5); 19 new keys in the ARB files with the steps of the four variants; the saving proposal marked as accepted; every PNG exported again in both themes.

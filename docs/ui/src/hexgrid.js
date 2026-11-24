@@ -30,7 +30,7 @@
       <polygon points="${CELL_POINTS}" style="fill: var(--well-strong); stroke: var(--secondary)" stroke-width="5" stroke-dasharray="10 7" stroke-linejoin="round"/>
     </symbol>
     <symbol id="hx-bad" viewBox="-4 -4 108 123.47">
-      <polygon points="${CELL_POINTS}" fill="rgba(255,77,109,0.16)" style="stroke: var(--danger)" stroke-width="5" stroke-dasharray="10 7" stroke-linejoin="round"/>
+      <polygon points="${CELL_POINTS}" style="fill: color-mix(in srgb, var(--danger) 16%, transparent); stroke: var(--danger)" stroke-width="5" stroke-dasharray="10 7" stroke-linejoin="round"/>
       <path d="M35 43 65 73M65 43 35 73" style="stroke: var(--danger)" stroke-width="7" stroke-linecap="round"/>
     </symbol>
     <symbol id="hx-flat" viewBox="-4 -4 108 123.47">
@@ -157,6 +157,7 @@
     globe: `<svg ${S} stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>`,
     theme: `<svg ${S} stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>`,
     shapes: `<svg ${S} stroke-width="2.2"><circle cx="7.5" cy="7.5" r="4"/><path d="M16.5 3.5l4.5 8h-9z"/><rect x="4" y="14" width="7" height="7" rx="1"/><path d="M16.5 13.5l3.5 3.5-3.5 3.5-3.5-3.5z"/></svg>`,
+    help: `<svg ${S} stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.8"/><circle cx="12" cy="17.2" r="0.6" fill="currentColor"/></svg>`,
     lock: `<svg ${S} stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`,
     next: `<svg ${S}><path d="m9 5 7 7-7 7"/></svg>`,
     levels: `<svg ${S} stroke-width="2.4"><path d="M7 3.5 11 6v4.5L7 13l-4-2.5V6zM17 3.5 21 6v4.5L17 13l-4-2.5V6zM12 11.5l4 2.5v4.5L12 21l-4-2.5V14z"/></svg>`,
@@ -182,7 +183,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     // A screen drawn behind a sheet (pause menu, leave confirmation) is an iframe: pass on ?theme and ?lang so it matches.
-    if (location.search) document.querySelectorAll("iframe[src]").forEach(f => { if (!f.getAttribute("src").includes("?")) f.src = f.getAttribute("src") + location.search; });
+    if (location.search) document.querySelectorAll("iframe[src]").forEach(f => { const s = f.getAttribute("src"); f.src = s + (s.includes("?") ? "&" + location.search.slice(1) : location.search); });
     document.querySelectorAll("[data-stars]").forEach(el => { const [e, t] = el.dataset.stars.split("/").map(Number); el.innerHTML = stars(e, t || 3, Number(el.dataset.size) || 16); });
     document.body.insertAdjacentHTML("afterbegin", DEFS + STATUS);
     document.querySelectorAll("[data-icon]").forEach(el => { el.innerHTML = ICONS[el.dataset.icon]; });

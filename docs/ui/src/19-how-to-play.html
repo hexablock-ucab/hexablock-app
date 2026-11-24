@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>19 · How to play (Hexa Fit)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<script src="hexgrid.js"></script>
+<style>
+  /* One short modal per variant, in both languages (team decision of 2026-11-23). It opens the first time a variant is played
+     and from Pause → Cómo jugar; in Hexa Fit it stops the clock and hides the board, like the pause menu. */
+  .behind { position: absolute; inset: 0; width: 390px; height: 844px; border: 0; pointer-events: none; }
+  .sheet { top: 108px; gap: 14px; }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .chip.clock { color: var(--secondary); border-color: var(--secondary); }
+  .steps { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .step { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; background: var(--well); border: 1.5px solid var(--line); }
+  .step .pic { width: 64px; height: 56px; flex: none; display: flex; align-items: center; justify-content: center; }
+  .step .n { font: 700 13px/1 var(--font-display); color: var(--variant-fit); letter-spacing: 1px; }
+  .step .t-body { font-size: 15px; line-height: 1.35; }
+  .stars-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; border: 1.5px dashed var(--line-strong); }
+  .stars-row > span:first-child { display: flex; gap: 2px; flex: none; }
+  .stars-row .t-body { font-size: 14px; color: var(--text-muted); }
+  .note { font-size: 13px; color: var(--text-muted); text-align: center; }
+</style>
+</head>
+<body>
+<iframe class="behind" src="06-hexa-fit.html?paused" title="Partida en curso"></iframe>
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Cómo jugar Hexa Fit">
+  <div class="head">
+    <div class="t-h1" style="font-size:26px">Cómo jugar</div>
+    <span class="chip clock"><span data-icon="pause" style="width:14px;height:14px;display:inline-flex"></span>Reloj en pausa</span>
+  </div>
+  <div class="t-h2" style="color:var(--variant-fit); margin-top:-8px">Hexa Fit</div>
+  <ol class="steps">
+    <li class="step"><div class="pic" data-render="p1"></div><div><div class="n">1</div><div class="t-body">Arrastra una pieza a la figura, o tócala y luego toca una casilla.</div></div></li>
+    <li class="step"><div class="pic" data-render="p2"></div><div><div class="n">2</div><div class="t-body">Gírala con el botón, de 60° en 60°. Toca una pieza puesta para devolverla.</div></div></li>
+    <li class="step"><div class="pic" data-render="p3"></div><div><div class="n">3</div><div class="t-body">Cubre toda la figura, sin huecos ni piezas encimadas.</div></div></li>
+  </ol>
+  <div class="stars-row"><span data-stars="3/3" data-size="18"></span><div class="t-body">1 estrella por ganar, +1 si no pasas los movimientos y +1 si no pasas el tiempo.</div></div>
+  <span class="btn btn-primary">Entendido</span>
+  <div class="note">Aparece la primera vez que juegas Hexa Fit y en Pausa → Cómo jugar.</div>
+</div>
+<div class="home-indicator"></div>
+<script>
+  const F = "var(--variant-fit)", G = "var(--tile-green)";
+  const fig = [[0,0],[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
+  function p1() { return HB.board({ cells: fig, size: 9, gap: 1.4, fill: (q, r) => (q === 1 && r === -1) || (q === 1 && r === 0) || (q === 0 && r === 0) ? F : null }); }
+  function p2() { return HB.piece([[0,0],[1,0],[1,-1]], 11, G); }
+  function p3() { const a = { "0,0": F, "1,0": F, "1,-1": F, "0,-1": G, "-1,0": G, "-1,1": G, "0,1": G };
+    return HB.board({ cells: fig, size: 9, gap: 1.4, fill: (q, r) => a[q + "," + r] }); }
+</script>
+</body>
+</html>

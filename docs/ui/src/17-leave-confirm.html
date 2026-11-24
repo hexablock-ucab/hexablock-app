@@ -11,14 +11,14 @@
   .behind { position: absolute; inset: 0; width: 390px; height: 844px; border: 0; pointer-events: none; }
   .ico { width: 20px; height: 20px; display: inline-flex; }
   .sheet { top: 250px; text-align: center; }
-  .warn { width: 64px; height: 64px; margin: 0 auto 4px; border-radius: 50%; background: rgba(255,77,109,0.16); color: var(--danger); display: flex; align-items: center; justify-content: center; }
+  .warn { width: 64px; height: 64px; margin: 0 auto 4px; border-radius: 50%; background: color-mix(in srgb, var(--danger) 16%, transparent); color: var(--danger); display: flex; align-items: center; justify-content: center; }
   .warn span { width: 30px; height: 30px; display: inline-flex; }
   .lose { text-align: left; padding: 12px 14px; border-radius: 16px; background: var(--well); border: 1.5px solid var(--line); }
   .lose li { margin: 4px 0; }
 </style>
 </head>
 <body>
-<iframe class="behind" src="06-hexa-fit.html" title="Partida en curso"></iframe>
+<iframe class="behind" src="06-hexa-fit.html?paused" title="Partida en curso"></iframe>
 <div class="scrim"></div>
 <div class="sheet" role="alertdialog" aria-label="¿Salir del nivel?">
   <div class="warn"><span data-icon="exit"></span></div>

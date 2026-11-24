@@ -44,9 +44,10 @@ To edit a mockup, open its HTML file in a browser, change it, and export the PNG
 | 13 | Defeat, Hexa Sort: board full before the goals | [13-defeat-sort.png](png/13-defeat-sort.png) | S8, FR-07, SORT-5 |
 | 14 | End of game, Hexa Merge: no swipe changes the board | [14-defeat-merge.png](png/14-defeat-merge.png) | S8, FR-64, MERGE-1 |
 | 15 | Hexa Merge, target reached: the game goes on | [15-merge-target.png](png/15-merge-target.png) | S6, FR-64, MERGE-1 |
-| 16 | Pause menu: resume, restart, settings, quit | [16-pause-menu.png](png/16-pause-menu.png) | S12 |
+| 16 | Pause menu: resume, restart, how to play, settings, quit; in Hexa Fit the board is hidden | [16-pause-menu.png](png/16-pause-menu.png) | S12, S18 |
 | 17 | Leave confirmation: what is lost and what is kept | [17-leave-confirm.png](png/17-leave-confirm.png) | S12 |
 | 18 | States: sync, offline, level download and errors, first launch, invalid placement, color glyphs, back button | [18-states.png](png/18-states.png) | S13, FR-04, FR-14, FR-15, FR-32 |
+| 19 | How to play: a short modal per variant (Hexa Fit shown), with the clock stopped | [19-how-to-play.png](png/19-how-to-play.png) | S18 |
 
 Every screen also exists in the light theme, in [`png/light/`](png/light/) with the same file names (export any mockup with `?theme=light`). English: [`png/en/`](png/en/).
 
@@ -65,13 +66,16 @@ Every screen also exists in the light theme, in [`png/light/`](png/light/) with 
 - **One template for four games.** The game screens share the top bar, the board zone and the tray zone. Undo appears only where the variant offers it (FR-37, FR-45, FR-56, FR-66), so the bar's actions are optional, not different layouts. The left stat is the variant's progress result (score, moves or goals); the right one is secondary.
 - **Zone 3 varies by what the player plays next:** three pieces (Lines), the level's pieces (Fit), one stack (Sort, SORT-6) or the six swipe directions (Merge).
 - **One result layout.** Victory and defeat share `result.css`. The primary button is always the forward action (next level, play again); the secondary ones go back (levels, home). After the last level the primary action is "See levels".
+- **Pausing Hexa Fit hides the board.** With the clock stopped, the player cannot study the figure for free; the board comes back on resume (team decision of 2026-11-23). The how-to-play modal stops the clock and hides the board the same way.
+- **How to play.** One short modal per variant, in Spanish and English. It opens the first time a variant is played and from Pause → How to play. The steps of the four variants are in `l10n/` (`howTo…` keys); the Hexa Fit modal is drawn (19).
+- **State colors are not tile colors** (review O5). `--danger` and `--success` differ from `--tile-red` and `--tile-green` in both themes, so an error never reads as a red tile. `--primary` stays the brand gold, shared on purpose with Hexa Merge's identity, and never signals a state.
 - **Leaving a game.** The system back button and the iOS swipe-back open the pause menu; they never leave a game without asking. Leaving a level-based game in progress asks for confirmation.
 - **Game states follow `docs/game-rules.md`.** No two neighboring Hexa Sort stacks share a top color (SORT-3); the Hexa Lines defeat board has a free cell on every row of the three axes, all isolated (LINES-1, LINES-2); the Hexa Sort and Hexa Merge defeat boards are full with no two equal neighbors (SORT-5, MERGE-1). Each board was checked with a script.
 - **The game never waits for the network.** Progress is saved on the phone first (FR-08); sync runs in the background and its status appears on the home and settings screens, never inside a game (FR-15).
 
-### Proposal for the team
+### Saving an endless game on leave
 
-Hexa Lines and Hexa Merge are endless games that can last long, so screen 18 proposes that leaving one keeps it and "Continue" resumes it. No requirement asks for this yet; if the team agrees, it becomes a requirement in `docs/requirements.md`, otherwise it is removed from the mockups.
+Leaving Hexa Lines or Hexa Merge keeps the game and "Continue" resumes it (screen 18). The team accepted it on 2026-11-23 as the last item of the plan: it needs a requirement in `docs/requirements.md`, and it is the first item to cut if time runs short.
 
 ## Accessibility
 
@@ -95,7 +99,7 @@ The light theme only redefines tokens in `tokens.css` (`:root[data-theme="light"
 
 ## English strings
 
-The strings of every mockup are ready as ARB files for Flutter's `gen-l10n`: [`l10n/app_es.arb`](l10n/app_es.arb) (the template, with a description and typed placeholders for each key) and [`l10n/app_en.arb`](l10n/app_en.arb), 120 keys each. Both files have the same keys and the same placeholders, and every ICU message parses (checked with `@messageformat/parser`). They move to the app's `lib/l10n/` when the Flutter project exists. The app keeps its strings in ARB files with ICU placeholders and plurals (for example `{done} of {total} levels`, `{count, plural, one{1 piece left} other{{count} pieces left}}`); numbers use the locale's separator (3 960 in Spanish, 3,960 in English).
+The strings of every mockup are ready as ARB files for Flutter's `gen-l10n`: [`l10n/app_es.arb`](l10n/app_es.arb) (the template, with a description and typed placeholders for each key) and [`l10n/app_en.arb`](l10n/app_en.arb), 139 keys each. Both files have the same keys and the same placeholders, and every ICU message parses (checked with `@messageformat/parser`). They move to the app's `lib/l10n/` when the Flutter project exists. The app keeps its strings in ARB files with ICU placeholders and plurals (for example `{done} of {total} levels`, `{count, plural, one{1 piece left} other{{count} pieces left}}`); numbers use the locale's separator (3 960 in Spanish, 3,960 in English).
 
 | Screen | Spanish (mockup) → English |
 |---|---|
@@ -106,6 +110,7 @@ The strings of every mockup are ready as ARB files for Flutter's `gen-l10n`: [`l
 | 10, 13, 14 Defeat | Sin espacio → Out of space · Ninguna de tus piezas cabe en el tablero → None of your pieces fits on the board · Tablero lleno → Board full · No quedan celdas vacías y te faltó {n} meta → No empty cell left; {n} goal short · Sin movimientos → No moves left · Ningún deslizamiento cambia el tablero → No swipe changes the board · Llegaste a 2048 en esta partida → You reached 2048 this game · Fin de la partida → Game over · Nivel no superado → Level failed · Jugar otra vez → Play again · Reintentar nivel → Retry level |
 | 11 Settings | Ajustes → Settings · Cuenta y progreso → Account and progress · Tu progreso se guarda en el teléfono y se sincroniza → Your progress is saved on the phone and synced · Al día → Up to date · Sonido → Sound · Música (de fondo) → (Background) music · Efectos de sonido → Sound effects · Colocar, completar, fusionar → Place, clear, merge · Idioma → Language · Acerca de → About · Créditos y licencias → Credits and licenses · Fuentes, sonidos y referencias → Fonts, sounds and references · Versión → Version |
 | 16, 17 Pause | Pausa → Paused · detenido → stopped · Seguir jugando → Keep playing · Reiniciar nivel → Restart level · Salir → Quit · ¿Salir del nivel? → Leave the level? · Se pierde este intento: {moves} movimientos y {time} → This attempt is lost: {moves} moves and {time} · Tus estrellas y récords anteriores se mantienen → Your earlier stars and records are kept · Salir sin guardar el intento → Leave without saving the attempt |
+| 16, 19 Pause and how to play | Cómo jugar → How to play · Tablero oculto mientras el reloj está detenido → Board hidden while the clock is stopped · Reloj en pausa → Clock paused · Entendido → Got it · the steps of every variant: `l10n/app_es.arb`, keys `howTo…` |
 | 18 States | Sincronizando… → Syncing… · Sin conexión · guardado en el teléfono → Offline · saved on the phone · No se pudo sincronizar · Reintentar → Sync failed · Retry · Invitado · inicia sesión para guardar en la nube → Guest · sign in to save in the cloud · {n} niveles nuevos de {game} descargados → {n} new {game} levels downloaded · Cargando nivel {n}… → Loading level {n}… · No se pudieron bajar los niveles nuevos. Los que ya tienes siguen disponibles → The new levels could not be downloaded. The ones you have are still available · Nuevo → New |
 
 ## Out of scope (follow-up)

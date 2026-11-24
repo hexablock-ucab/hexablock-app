@@ -41,8 +41,10 @@
   --primary: #FFD23C;
   --primary-deep: #E0A800;
   --secondary: #3FE0E0;
-  --success: #3BE08B;
-  --danger: #FF4D6D;
+  /* State colors differ from the tile colors (review O5): an error or a success never reads as a red or green tile.
+     --primary stays the brand gold, shared on purpose with Hexa Merge's identity; it never signals a state. */
+  --success: #7DF0C4;
+  --danger: #FF7A5C;
 
   /* Tile colors (Hexa Lines pieces, Hexa Sort stacks) */
   --tile-red: #FF4D6D;
@@ -138,7 +140,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 /* ---- Toggle and segmented control (settings) ---- */
 .toggle { width: 56px; height: 32px; border-radius: 999px; background: var(--surface); border: 2px solid var(--line-strong); position: relative; flex: none; }
 .toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: var(--text-muted); }
-.toggle.on { background: var(--success); border-color: var(--success); box-shadow: 0 0 16px rgba(59,224,139,0.45); }
+.toggle.on { background: var(--success); border-color: var(--success); box-shadow: 0 0 16px color-mix(in srgb, var(--success) 45%, transparent); }
 .toggle.on::after { left: 26px; background: #fff; }
 .segmented { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); }
 .segmented span { padding: 14px 18px; min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; font: 700 15px/1 var(--font-display); color: var(--text-muted); }

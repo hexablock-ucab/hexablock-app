@@ -10,7 +10,7 @@
 <style>
   .behind { position: absolute; inset: 0; width: 390px; height: 844px; border: 0; pointer-events: none; }
   .ico { width: 20px; height: 20px; display: inline-flex; }
-  .sheet { top: 200px; }
+  .sheet { top: 150px; }
   .sheet .title { text-align: center; }
   .sheet .meta { display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
   .quick { display: flex; gap: 12px; }
@@ -19,18 +19,19 @@
 </style>
 </head>
 <body>
-<iframe class="behind" src="06-hexa-fit.html" title="Partida en curso"></iframe>
+<iframe class="behind" src="06-hexa-fit.html?paused" title="Partida en curso"></iframe>
 <div class="scrim"></div>
 <div class="sheet" role="dialog" aria-label="Pausa">
   <div class="title t-h1">Pausa</div>
   <div class="meta"><span class="chip">Hexa Fit · Nivel 7</span><span class="chip"><span class="k">Mov.</span>5</span><span class="chip"><span class="k">Tiempo</span>0:42 · detenido</span></div>
   <span class="btn btn-primary"><span class="ico" data-icon="play"></span>Seguir jugando</span>
   <span class="btn btn-secondary"><span class="ico" data-icon="retry"></span>Reiniciar nivel</span>
+  <span class="btn btn-ghost"><span class="ico" data-icon="help"></span>Cómo jugar</span>
   <div class="quick">
     <span class="btn btn-ghost"><span class="ico" data-icon="settings"></span>Ajustes</span>
     <span class="btn btn-ghost"><span class="ico" data-icon="exit"></span>Salir</span>
   </div>
-  <div class="note">El botón Atrás del teléfono y el gesto de volver en iPhone abren este menú; nunca sacan de la partida sin preguntar.</div>
+  <div class="note">En Hexa Fit el tablero se oculta mientras el reloj está detenido. El botón Atrás del teléfono y el gesto de volver en iPhone abren este menú; nunca sacan de la partida sin preguntar.</div>
 </div>
 <div class="home-indicator"></div>
 </body>
