@@ -10,7 +10,7 @@
 
 The variants build different boards: a hexagon of radius 4 (Hexa Lines), a hexagon of radius 2 (Hexa Sort, Hexa Merge) and an arbitrary closed figure per level (Hexa Fit). Hexa Fit and Hexa Sort levels also bring pieces and goals, and they come from configuration files (FR-04).
 
-In class (2026-10-30) the professor pointed to a Builder for creating the board, as part of the domain, and asked that the game logic stay independent of the framework.
+The assignment proposes a Builder that assembles Hexa Fit and Hexa Sort levels step by step from files (§3.3), and the game logic must stay independent of the framework (C-05, NFR-03).
 
 A board needs several optional steps (topology, shape, initial cells, blocked cells) and invariants that must hold before the game starts, for example that the pieces of a Hexa Fit level cover exactly the area of its figure (FR-40). A constructor with many parameters hides those rules; reading a file inside the domain would couple the domain to a format.
 
@@ -35,7 +35,7 @@ Names are indicative; the team fixes them when the engine is built.
 - One place assembles and validates every board and level; invalid levels fail at build time with a domain error.
 - A new board size is configuration; a new shape is a new builder step or a new topology (NFR-02).
 - Tests build boards and levels with the same builders (the test data builder pattern, covered in the course's testing classes), which keeps the tests short and readable.
-- Requires two more classes in the domain, justified by C-06 and by the professor's guidance.
+- Requires two more classes in the domain, justified by C-06 and NFR-03.
 
 ## References
 

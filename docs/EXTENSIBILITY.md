@@ -26,12 +26,12 @@ Files that must not change: `packages/hexablock_engine/**`, the other variants.
 
 Check: `git diff --stat main -- packages/hexablock_engine` is empty.
 
-## Small rule changes the jury may ask for
+## Changes the defense may ask for
 
 | Change | Where it goes | Engine touched? |
 |---|---|---|
 | New board size | TODO | No |
 | Different scoring policy | TODO | No |
 | New piece shape | TODO | No |
-| Another grid shape (for example squares), a change the professor may request before the defense | New topology class (ADR-0004) | No |
+| Another grid shape (for example squares), which may be requested the day before the defense (C-31) | New topology class (ADR-0004) | No |
 | Another way to draw the board (for example 3D) | New `BoardRenderer` implementation | No |
