@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HexaBlock Suite · Sounds</title>
+<link rel="stylesheet" href="../src/tokens.css">
+<style>
+  body { padding: 24px; max-width: 640px; margin: 0 auto; }
+  h1 { font: 700 28px/1.2 var(--font-display); margin: 0 0 6px; }
+  p { color: var(--text-muted); margin: 0 0 18px; }
+  .row { display: flex; align-items: center; gap: 14px; padding: 12px 14px; margin-bottom: 8px; border-radius: 16px; background: var(--surface); border: 1.5px solid var(--line); }
+  .row button { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--primary); color: var(--text-on-accent); font-size: 18px; cursor: pointer; flex: none; }
+  .row b { display: block; font: 600 16px/1.3 var(--font-display); }
+  .row code { color: var(--text-muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>Sonidos de HexaBlock</h1>
+<p>Toca cada botón para oírlo. Todos son de <em>Interface Sounds</em> de Kenney (CC0).</p>
+<div id="list"></div>
+<script>
+  const S = [["Tocar un botón o una tarjeta","click_002"],["Cambiar un ajuste","toggle_001"],["Colocar pieza o pila","drop_002"],["Girar pieza (Fit)","tick_002"],
+    ["Quitar pieza, deshacer","back_002"],["Lugar no válido","error_008"],["Borrar una línea (Lines)","confirmation_002"],["Borrar varias líneas (Lines)","confirmation_004"],
+    ["Paso de cascada (Sort)","glass_002"],["Borrar un bloque de 10 (Sort)","confirmation_003"],["Fusionar fichas (Merge)","pluck_001"],["Llegar a 2048 (Merge)","maximize_006"]];
+  document.getElementById("list").innerHTML = S.map(([t, f]) => `<div class="row"><button onclick="new Audio('${f}.wav').play()" aria-label="Oír ${t}">▶</button><div><b>${t}</b><code>${f}.wav</code></div></div>`).join("");
+</script>
+</body>
+</html>

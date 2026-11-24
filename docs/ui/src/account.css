@@ -1,0 +1,24 @@
+/* HexaBlock Suite — account screens (sign in, create account). Draft until the API contract (D5) fixes the fields and errors. */
+.acc-hero { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 6px 0 18px; text-align: center; }
+.acc-hero .why { color: var(--text-muted); font-size: 14px; line-height: 1.4; max-width: 300px; }
+.tabs { display: flex; width: 100%; }
+.tabs span { flex: 1; justify-content: center; }
+.form { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font: 800 12px/1.2 var(--font-body); letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); }
+.input { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 14px; border-radius: 16px; background: var(--well-strong); border: 1.5px solid var(--line-strong); font: 600 16px/1 var(--font-body); }
+.input .ic { width: 22px; height: 22px; color: var(--text-muted); display: inline-flex; flex: none; }
+.input .val { flex: 1; color: var(--text); }
+.input .ph { flex: 1; color: var(--text-disabled); }
+.input .eye { width: 48px; height: 48px; margin-right: -12px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); }
+.input .eye span { width: 22px; height: 22px; display: inline-flex; }
+.input.focus { border-color: var(--secondary); box-shadow: 0 0 0 4px color-mix(in srgb, var(--secondary) 22%, transparent); }
+.input.error { border-color: var(--danger); }
+.help { font-size: 13px; color: var(--text-muted); display: flex; gap: 6px; align-items: center; }
+.help.err { color: var(--danger); }
+.help.ok { color: var(--success); }
+.help .i { width: 16px; height: 16px; display: inline-flex; flex: none; }
+.form .btn { width: 100%; margin-top: 4px; }
+.guest { text-align: center; margin-top: 6px; }
+.guest .btn { width: 100%; }
+.fine { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 10px; }
