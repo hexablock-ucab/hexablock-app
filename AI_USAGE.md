@@ -42,6 +42,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-08 | [Professor's answers of 2026-11-05 applied to the requirements](#2026-11-08--professors-answers-of-2026-11-05-applied-to-the-requirements-docs-no-task-document) |
 | 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
+| 2026-11-24 | [Script that copies the levels from hexablock-api](#2026-11-24--script-that-copies-the-levels-from-hexablock-api-odd-tasks-0004-sync-levelsmd) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -107,6 +108,20 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Errors and corrections:** A first draft used examples (an email value object, a registration command) that no requirement backs; the AI replaced them with examples taken from the requirements before committing.
 - **Verification:** The rules were checked against Esposito (2024), chapter 6 (aggregates, methods over properties, anemic model) and the course's Clean Architecture class; the diff was reviewed in the pull request, and commitlint and CI run on it.
 - **Lessons:** Writing the modeling rules before the domain model gives the reviewer agent something concrete to check, and the table of roles prepares the answer to "is this a DDD pattern or a GoF pattern?" in the defense.
+
+### 2026-11-24 — Script that copies the levels from hexablock-api ([odd/tasks/0004-sync-levels.md](odd/tasks/0004-sync-levels.md))
+
+- **Author:** Valentina Maza
+- **Pull request:** #
+- **Tool / model:** Claude (claude.ai agent session, configured model Claude Opus 5.5).
+- **Task:** Keep the app's copy of the levels equal to `levels/` in hexablock-api, the single source the team chose (FR-04, FR-14, FR-23, C-13).
+- **Prompts (faithful paraphrase; original in Spanish):**
+  - "Yes" (answering the offer to prepare the script that copies the levels to the app and the CI warning).
+- **Result:** `tool/sync-levels.mjs` (copy and `--check`), two npm scripts and a CI step that warns when the copy differs.
+- **Team modifications:** Pending review.
+- **Errors and corrections:** The first version printed every file as "missing" on the first copy and a stack trace when the API had no `levels/` folder — detected by running it; it now prints a summary and a one-line message.
+- **Verification:** run against the API's `feat/levels` branch: a fresh copy is in sync; an edited and a deleted file are both reported with exit 1.
+- **Lessons:** One source of truth needs a check, not only a convention.
 
 ## Critical evaluation
 
