@@ -2,7 +2,7 @@
 
 - **Status:** Verifying — waiting for the agreement of the three members in the PR
 - **Owner:** Eduard Velasco
-- **Branch / PR:** `docs/accept-adrs` · paired with hexablock-api #22
+- **Branch / PR:** `docs/accept-adrs` · #23, paired with hexablock-api #22
 - **Requirements:** C-05, C-16d, C-19a, C-24a, C-30, C-31, C-32, FR-08, FR-11, FR-12, FR-14, FR-15, FR-16, FR-18, FR-66, NFR-02, NFR-03, NFR-05
 - **ADRs:** 0001 to 0008
 
@@ -94,3 +94,4 @@ The three members review the PR; then D1 and task 0001 start.
 - 2026-11-25 — Eduard Velasco (prompt): "La mitad app de docs/requirements-baseline (2.8, igual a api #21) y de docs/accept-adrs (2.9, parte app), con los PR abiertos y enlazados a los de la api." (part of a longer request that applies the team's change plan of 2026-11-24; "Sigue AGENTS.md. No fusiones nada.")
 - 2026-11-25 — Claude Code (finding): another session has uncommitted changes to ADR-0004 in the main checkout for the domain model (D1). This branch writes ADR-0004 from the change plan; the two agree on `Board<TCell>`, the coordinate as a list of integers and the fixed cell order. The other session also proposes that the topology be injected instead of named by each level; this branch keeps the current text ("level files declare their topology"), because the level format of the API names the topology, and leaves that point to D1.
 - 2026-11-25 — Claude Code (edit): T1 to T6 done. The branch is stacked on `docs/requirements-baseline` (which is stacked on `docs/game-rules`), because it edits `docs/game-rules.md` and the ADRs cite the Baseline IDs.
+- 2026-11-25 — Claude Code (PR): opened #23 (base `docs/requirements-baseline`, PR #22), paired with hexablock-api #22. Also opened #21 (domain model without DDD) and #22 (Baseline), and updated #13. Nothing merged.
