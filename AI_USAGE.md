@@ -43,6 +43,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-08 | [Document the game rules the assignment leaves open](#2026-11-08--document-the-game-rules-the-assignment-leaves-open-oddtasks0002-game-rulesmd-pr-13) |
 | 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
+| 2026-11-25 | [Game rules completed with the team decisions of 2026-11-24](#2026-11-25--game-rules-completed-with-the-team-decisions-of-2026-11-24-oddtasks0002-game-rulesmd-pr-13) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -130,6 +131,20 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Errors and corrections:** A first draft used examples (an email value object, a registration command) that no requirement backs; the AI replaced them with examples taken from the requirements before committing.
 - **Verification:** The rules were checked against Esposito (2024), chapter 6 (aggregates, methods over properties, anemic model) and the course's Clean Architecture class; the diff was reviewed in the pull request, and commitlint and CI run on it.
 - **Lessons:** Writing the modeling rules before the domain model gives the reviewer agent something concrete to check, and the table of roles prepares the answer to "is this a DDD pattern or a GoF pattern?" in the defense.
+
+### 2026-11-25 — Game rules completed with the team decisions of 2026-11-24 (odd/tasks/0002-game-rules.md, PR #13)
+
+- **Author:** Eduard Velasco
+- **Pull request:** #13
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5. RANK-3 comes from the team's software requirements specification draft, which a teammate wrote with Gemini (Google); the team reviewed that draft critically on 2026-11-24 before taking the rule.
+- **Task:** Add to `docs/game-rules.md` the rules the team decided on 2026-11-24 (LINES-4 to LINES-6, MERGE-2 to MERGE-4, FIT-6, LEVEL-1, LEVEL-2, RANK-3) and three more the domain model needs (FIT-7, SORT-8, LINES-7), each with its reason and an example a test can reuse (C-23b, C-33).
+- **Prompts (original in Spanish, verbatim in the task log):**
+  - "app #13 (2.4): rebase y las reglas nuevas, más estas tres que necesita el modelo de dominio, cada una con su razón y un ejemplo que sirva de prueba: (a) en Hexa Fit una pieza solo se rota mientras está fuera del tablero (como muestra el ejemplo de FIT-4); (b) en Hexa Sort cada pila de la bandeja sortea su tamaño dentro de stackSize del nivel y el color de cada ficha entre los colores del nivel, con la semilla del nivel; (c) en Hexa Lines cada entrada del catálogo de piezas trae su color."
+- **Result:** Thirteen new rules and changes to SORT-6 (the level stores the seed), SORT-7 (why Hexa Sort has stars), FIT-2, FIT-5, RANK-1 (the date comes from the phone), the level file sections and *Out of scope*; specs S17 to S29 and decisions 25 to 39 in the task document.
+- **Team modifications:** The team took every decision (2026-11-24 change plan; FIT-7, SORT-8 and LINES-7 from Eduard on 2026-11-25). The AI wrote the reasons and the examples; a teammate reviews them in this pull request.
+- **Errors and corrections:** None detected. One deviation from the request: it asked for a rebase, and the AI merged `main` instead, because a rebase needs a force push, which `AGENTS.md` §6 forbids.
+- **Verification:** Every cited requirement ID was checked against `docs/requirements.md`; the MERGE-2 rows and the RANK-3 example were recomputed by hand; the rules were read against assignment §1.1 to §1.5 for contradictions (none found). A teammate's full review is still required before merging.
+- **Lessons:** A rule drafted by another AI tool (RANK-3) needs the same review as any other: the team checked it against FR-13 and FR-22 before adopting it.
 
 ## Critical evaluation
 

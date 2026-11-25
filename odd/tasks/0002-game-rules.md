@@ -1,9 +1,9 @@
 # 0002 — Document the game rules the assignment leaves open
 
-- **Status:** Verifying — accepted by Eduard on 2026-11-08; ready to ship (Done after the PR merges)
+- **Status:** Verifying — rules of 2026-11-24 added on 2026-11-25; needs a new review (Done after the PR merges)
 - **Owner:** Eduard Velasco
 - **Branch / PR:** `docs/game-rules` · #13
-- **Requirements:** C-33, FR-05, FR-22, FR-33, FR-34, FR-44, FR-52, FR-53, FR-54, FR-65 (also FR-06, FR-08, FR-13, FR-40 to FR-43, FR-45, NFR-05, C-19e, C-23b)
+- **Requirements:** C-33, FR-05, FR-22, FR-33, FR-34, FR-44, FR-52, FR-53, FR-54, FR-65 (also FR-02, FR-06, FR-08, FR-13, FR-14, FR-31, FR-32, FR-35, FR-40 to FR-46, FR-55, FR-62, FR-63, FR-66, NFR-01, NFR-05, C-19e, C-23b)
 - **ADRs:** 0004 (grid topology, Proposed), 0006 (board and level builder, Proposed). No ADR is Accepted, so the rules speak of "the topology's axes and neighbors", not of hexagons, wherever the rule allows it.
 
 Plan reference: design task D2 of the workspace plan. D3 (level format) depends on this task.
@@ -48,11 +48,31 @@ Each row was asked as a closed question, with a recommendation and alternatives.
 | 19 | Ranking: order | Lines and Merge: score descending, then date ascending. Fit: stars descending, moves ascending, time ascending, then date ascending. Sort: stars descending, moves ascending, then date ascending. "Date" is when the result was achieved. |
 | 20 | Ranking: entries | One entry per user per table (per `gameId` and, in level-based variants, per level): the user's best result under that order. |
 
+### Decisions of 2026-11-24 (team change plan) and 2026-11-25
+
+| # | Topic | Decision | Source |
+|---|---|---|---|
+| 25 | Lines: rotation | Pieces do not rotate; each orientation is a catalog entry (LINES-4). | Team decision 8g |
+| 26 | Lines: catalog | Fixed catalog in configuration, poly-hexes of 1 to 5 cells (LINES-5). | 8f |
+| 27 | Lines: draw | Seeded random draw from the catalog, with no fit guarantee (LINES-6). | 8h |
+| 28 | Merge: order | A merged tile does not merge again in the same move; the pair nearest the edge merges first (MERGE-2). | 8c, 8d |
+| 29 | Merge: new tiles | 2 starting tiles; 2 at 90 %, 4 at 10 %, as parameters; a swipe that changes nothing is not a move (MERGE-3). | 8a, 8b |
+| 30 | Merge: undo | One undo, never twice in a row; it restores board, score, generator state and the "target reached" notice (MERGE-4). | 8e; change plan §3 point 6 |
+| 31 | Fit: pause | Pause and "How to play" stop the clock and hide the board (FIT-6). | 8j; team decision 5 |
+| 32 | Levels: unlocking | Level 1 open; each level unlocks the next; server levels go at the end by `number` (LEVEL-1). | 8i |
+| 33 | Levels: difficulty | `difficulty` 1–5 that never goes down within a variant, checked by a test (LEVEL-2). | 8k |
+| 34 | Ranking: global table of Fit and Sort | Stars ↓, levels ↓, sum of moves ↑, sum of time ↑ (Fit only), date ↑, user id ↑ (RANK-3). | Team decision 7 (from the specification draft) |
+| 35 | Sort: seed | The level stores the seed (SORT-6). | Team decision 10 |
+| 36 | Ranking: date | The date comes from the phone; the API rejects future dates (RANK-1). | Team decision 21 |
+| 37 | Fit: rotation | A piece rotates only while it is off the board (FIT-7). | Eduard, 2026-11-25 |
+| 38 | Sort: drawing a stack | Size drawn in `stackSize`, then each tile's color among `colors`, bottom to top, with the level's seed (SORT-8). | Eduard, 2026-11-25 |
+| 39 | Lines: piece color | Each catalog entry carries its color (LINES-7). | Eduard, 2026-11-25 |
+
 ## Specs
 
 Each spec is checked by reading `docs/game-rules.md`; every rule carries a worked example that a rule test can reuse (C-23b).
 
-- **S1** (C-33, FR-05): Given `docs/game-rules.md`, when it is read, then each rule states its decision, the reason (the assignment, the team's logic or a requirement ID) and one worked example, and C-33 is cited as "pending in PR #12". The document says "the topology's axes and neighbors" and flags every hexagon-specific value as such (ADR-0004).
+- **S1** (C-33, FR-05): Given `docs/game-rules.md`, when it is read, then each rule states its decision, the reason (the assignment, the team's logic or a requirement ID) and one worked example, and C-33 is cited. The document says "the topology's axes and neighbors" and flags every hexagon-specific value as such (ADR-0004).
 - **S2** (FR-52): Given a placed stack, when the cascade runs, then each transfer moves the whole contiguous top block of one color from the stack with the smaller top block of that color to the adjacent stack with the larger one. Example: top blocks red×2 and red×3 on adjacent cells → the stack holds red×5 on top and the other cell exposes the tile below, or is empty.
 - **S3** (FR-52): Given two adjacent stacks whose top blocks of the same color are equal, when a transfer is chosen, then the destination is the stack just placed or most recently changed; if neither is, the destination is the lowest cell in the topology's fixed order. Example: red×3 on the placed stack and red×3 on a neighbor → the neighbor's block moves onto the placed stack.
 - **S4** (FR-52, NFR-05): Given the same board and the same stack, when the cascade runs twice, then the final board is identical. The order in which eligible transfers run is written in the document (see open question O1).
@@ -68,12 +88,25 @@ Each spec is checked by reading `docs/game-rules.md`; every rule carries a worke
 - **S14** (FR-05, FR-06): Given a won Hexa Sort level, then the score is 10 per removed tile and the stars are 1 for winning plus one per move threshold met, with thresholds per level. Example: a 10-tile goal reached with 25 moves, with thresholds 30 and 24 → 2 stars.
 - **S15** (FR-65, FR-66): Given a merge, then the score adds the value of the resulting tile, and undo restores both the board and the score. Example: 4 and 4 merge → +8; undo → the score drops by 8.
 - **S16** (FR-22, FR-13): Given the results of a table, then the order is: Lines and Merge by score descending then date ascending; Fit by stars descending, moves ascending, time ascending then date ascending; Sort by stars descending, moves ascending then date ascending. Each user appears once per table with the best result under that order. Example: two users with 3 stars and 20 moves → the one with less time ranks first.
+- **S17** (FR-32, FR-42): LINES-4. Given a Hexa Lines piece, then it never rotates; two orientations of one shape are two catalog entries.
+- **S18** (FR-31, NFR-01): LINES-5. Given the catalog, when a 4-cell piece is added, then only configuration changes.
+- **S19** (FR-31, FR-35, NFR-05): LINES-6. Given the same seed, when two games start, then their first trays hold the same three pieces in the same order; the draw does not check fit.
+- **S20** (FR-62): MERGE-2. Given the row `2, 2, 4` sliding toward the edge on its right, then it becomes `_, 4, 4`; given `2, 2, 2`, then `_, 2, 4`.
+- **S21** (FR-63, NFR-05): MERGE-3. Given a swipe that changes nothing, then no tile appears and undo still refers to the previous move.
+- **S22** (FR-66, NFR-05): MERGE-4. Given a swipe that spawned a 2 in cell X, when the player undoes and repeats the swipe, then a 2 appears in X again; a second undo in a row is not accepted; undoing the move that made the first 2048 also removes the notice.
+- **S23** (FR-44): FIT-6. Given 20 s played and a 30 s pause, when the player continues, then the clock shows 20 s.
+- **S24** (FR-02, FR-14): LEVEL-1. Given levels 1 to 15 completed, when level 16 arrives from the server, then it is unlocked at the end of the list.
+- **S25** (FR-46, FR-55): LEVEL-2. Given difficulties 1, 1, 2, 2, 3, then the check passes; given a 3 followed by a 2, then it fails.
+- **S26** (FR-13, FR-22): RANK-3. Given two Hexa Fit users with 45 stars and 15 levels, then the one with fewer total moves ranks first.
+- **S27** (FR-41, FR-42, FR-44): FIT-7. Given piece A on the board, when the player turns it one step, then it takes remove, rotate and place (3 moves); a rotate on a placed piece changes nothing.
+- **S28** (FR-51, NFR-05): SORT-8. Given colors red, cyan, green, `stackSize` 1 to 4 and a random source stubbed to answer size 3 and colors 1st, 1st, 2nd, then the stack is red, red, cyan from bottom to top.
+- **S29** (FR-31, FR-33): LINES-7. Given the catalog entry "bar of 3" with color cyan, when it is placed, then its 3 cells are cyan; a full row of mixed colors still clears.
 
 ## Allowed edit surfaces
 
 - `docs/game-rules.md` (new)
 - `odd/tasks/0002-game-rules.md`
-- `AI_USAGE.md` (the entry for this task)
+- `AI_USAGE.md` (the entries for this task)
 
 ## Tasks
 
@@ -85,6 +118,9 @@ Each spec is checked by reading `docs/game-rules.md`; every rule carries a worke
 - [x] **T6** (S16) Leaderboard order and entries.
 - [x] **T7** Update the README, `docs/EXTENSIBILITY.md` and diagrams if affected: none expected. Record the README summary C-33 asks for as a follow-up after PR #12.
 - [x] **T8** `log-ai-usage` entry.
+- [x] **T9** (S17 to S29) Add the rules of 2026-11-24 and 2026-11-25; change SORT-6, SORT-7, FIT-2, FIT-5, RANK-1, the level file sections, *Out of scope* and the table of rules.
+- [x] **T10** `log-ai-usage` entry for T9.
+- [ ] **T11** New full review of PR #13 by a teammate (the earlier approval no longer applies).
 
 ## Verification
 
@@ -95,7 +131,7 @@ git diff --stat main...HEAD
 grep -oE '\b(NFR|FR|C)-[0-9]+[a-z]?\b' docs/game-rules.md | sort -u
 ```
 
-The first command must list only the allowed edit surfaces. Every ID printed by the second must exist in `docs/requirements.md`, except C-33, which is flagged as pending in PR #12. `odd-verify` also reads the document against each spec.
+The first command must list only the allowed edit surfaces. Every ID printed by the second must exist in `docs/requirements.md`. `odd-verify` also reads the document against each spec.
 
 | Spec | Evidence | Verdict |
 |---|---|---|
@@ -115,8 +151,9 @@ The first command must list only the allowed edit surfaces. Every ID printed by 
 | S14 | SORT-7, SCORE-1 | PASS |
 | S15 | SCORE-2 | PASS |
 | S16 | RANK-1, RANK-2 | PASS |
+| S17 to S29 | LINES-4 to LINES-7, MERGE-2 to MERGE-4, FIT-6, FIT-7, SORT-8, LEVEL-1, LEVEL-2, RANK-3; every cited ID checked against `docs/requirements.md`; the MERGE-2 rows recomputed by hand | Written; needs the teammate's review (T11) |
 
-Checks run: every cited ID exists in `docs/requirements.md` except C-33 (pending in PR #12); the numeric examples were recomputed by `odd-verify`. `git diff --stat main...HEAD` prints nothing because the two new files are still untracked.
+Checks run: every cited ID exists in `docs/requirements.md` (C-33 is on `main` since PR #12 merged); the numeric examples were recomputed by `odd-verify`. `git diff --stat main...HEAD` prints nothing because the two new files are still untracked.
 
 ## Open questions
 
@@ -153,3 +190,6 @@ Ship with the `ship` skill (run `ci-local` first), and add the README summary of
 - 2026-11-08 — Claude Code (PR): opened PR #13 (https://github.com/hexablock-ucab/hexablock-app/pull/13); PR number and Claude Code version 2.1.312 filled in `AI_USAGE.md`.
 - 2026-11-10 — Eduard Velasco (decision 24): Hexa Merge is endless; reaching 2048 does not end the game. Raised in the review of PR #14 (B2) because FR-64 (victory at the target tile) contradicts FR-67 (endless game).
 - 2026-11-10 — Claude Code (edit): added MERGE-1 to `docs/game-rules.md`: the first 2048 tile is announced as "target reached" and play continues; the game ends only when no move changes the board. The announcement is a proposal that keeps §1.4's victory; the user should confirm it. FR-64 still needs a wording change in `docs/requirements.md` of both repositories (separate pair of PRs).
+- 2026-11-25 — Eduard Velasco (prompt): "app #13 (2.4): rebase y las reglas nuevas, más estas tres que necesita el modelo de dominio, cada una con su razón y un ejemplo que sirva de prueba: (a) en Hexa Fit una pieza solo se rota mientras está fuera del tablero (como muestra el ejemplo de FIT-4); (b) en Hexa Sort cada pila de la bandeja sortea su tamaño dentro de stackSize del nivel y el color de cada ficha entre los colores del nivel, con la semilla del nivel; (c) en Hexa Lines cada entrada del catálogo de piezas trae su color." (part of a longer request that applies the team's change plan of 2026-11-24, §2.4)
+- 2026-11-25 — Claude Code (git): `main` merged into the branch instead of a rebase, because a rebase needs a force push, which `AGENTS.md` §6 forbids; the branch already took `main` by merge before. The only conflict was `AI_USAGE.md`; both entries were kept, and the 2026-11-08 entry got its PR, verification and index row.
+- 2026-11-25 — Claude Code (edit): decisions 25 to 39 written as LINES-4 to LINES-7, MERGE-2 to MERGE-4, FIT-6, FIT-7, SORT-8, LEVEL-1, LEVEL-2 and RANK-3, with the changes to SORT-6, SORT-7, FIT-2, FIT-5, RANK-1, the level file sections and *Out of scope* (change plan §2.4, points 1 to 8). Checked against assignment §1.1 to §1.5: no contradiction (§1.5 gives Hexa Lines the cell content "Color" and Hexa Fit the moves place, remove and rotate). Point 9 (FR-17 on FIT-6) goes with the Baseline pair.

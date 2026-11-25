@@ -85,9 +85,10 @@ Board: radius 2, 19 cells **[hex]** (FR-50). Each cell holds a stack of colored 
 
 ### SORT-6 — Tray
 
-- **Decision:** the tray offers one stack at a time. A seeded generator draws each stack, and the level's parameters set what a stack may contain.
+- **Decision:** the tray offers one stack at a time. A seeded generator draws each stack, and the level's parameters set what a stack may contain (SORT-8).
   The generator gets its randomness through an injected random source, so the same seed and the same parameters give the same sequence of stacks.
-- **Reason:** FR-51 says the player places "the stack offered by the tray". NFR-05 requires every random source to be injectable and replayable. Level parameters let each level tune its difficulty without code.
+  The level stores the seed, so every player gets the same stacks.
+- **Reason:** FR-51 says the player places "the stack offered by the tray". NFR-05 requires every random source to be injectable and replayable. Level parameters let each level tune its difficulty without code. A seed stored in the level keeps the per-level leaderboard fair (RANK-1), because every player faces the same sequence, and lets the designer calibrate the move thresholds (SORT-7) against a known sequence.
 - **Example:** two games of the same level both start with seed 42. Both trays offer the same first stack, the same second stack, and so on.
 
 ### SORT-7 — Moves and stars
@@ -96,15 +97,26 @@ Board: radius 2, 19 cells **[hex]** (FR-50). Each cell holds a stack of colored 
   A won level earns 1 star, plus 1 star for each move threshold met. A threshold is met when the moves are less than or equal to it.
   Each level has two move thresholds, so the maximum is 3 stars, as in Hexa Fit.
 - **Reason:** FR-05 lets the team define the scoring; FR-06 and FR-08 need a result per level (score and stars), and C-19e names a progress model with stars. Two thresholds give the same 3-star scale as Hexa Fit (FIT-3).
+  Assignment §1.5 gives Hexa Sort the progress model "levels", without stars; the team adds stars because FR-05 lets it define the scoring and FR-08 saves stars per level, so the level select screen shows the same progress for both level-based variants.
 - **Example:** a level with a goal of one 10-tile block and thresholds 30 and 24. The player wins with 25 moves.
   25 ≤ 30 meets the first threshold; 25 > 24 misses the second. Stars = 1 + 1 + 0 = 2.
 
+### SORT-8 — How the tray draws a stack
+
+- **Decision:** for each stack, the generator first draws its size, a whole number in the level's `stackSize` range (both ends included).
+  Then it draws the color of each tile, from the bottom tile to the top tile, among the level's `colors`.
+  Every size in the range and every color is equally likely, each tile is drawn on its own, and all draws come from the generator seeded with the level's seed (SORT-6).
+- **Reason:** SORT-6 says the level's parameters set what a stack may contain, but not how; a fixed order of draws is what makes the same seed give the same stacks (NFR-05). Drawing each tile on its own lets one stack hold several color blocks, which is what feeds the cascade (FR-52). The level format keeps `stackSize` at most 9, so no stack arrives already holding a block to remove (SORT-4).
+- **Example:** a level has `colors` red, cyan and green and `stackSize` 1 to 4.
+  A random source stubbed to answer, in order, size 3 and then the 1st, 1st and 2nd color of the list gives a stack of red, red, cyan from bottom to top: cyan×1 on top of red×2.
+  Two games of the same level, with the same seed, offer the same stacks in the same order.
+
 ### What a Hexa Sort level file must provide
 
-The level format (design task D3) must provide, for each Hexa Sort level:
+The level format (`docs/level-format.md` of `hexablock-api`) provides, for each Hexa Sort level:
 
 - the goal count;
-- the tray generator parameters (SORT-6): the colors in play and the size range of a stack (its minimum and maximum number of tiles). D3 decides whether the level also stores the seed or the game supplies it;
+- the tray generator parameters (SORT-6, SORT-8): the seed, the colors in play and the size range of a stack (its minimum and maximum number of tiles);
 - two move thresholds for the stars (SORT-7).
 
 ## Hexa Lines
@@ -146,6 +158,30 @@ Board: radius 4, 61 cells **[hex]** (FR-30).
 
   The total after move 4 is 12 + 183 + 4 + 41 = 240.
 
+### LINES-4 — Pieces do not rotate
+
+- **Decision:** a Hexa Lines piece never rotates and never mirrors. The catalog (LINES-5) lists each orientation the team wants as a separate piece.
+- **Reason:** FR-32 asks the player to drag a piece where it fits and says nothing about rotation, and FR-42 gives rotation to Hexa Fit only. Listing orientations as pieces keeps the move a single drag and leaves the variety to the catalog.
+- **Example:** a straight bar of 3 cells along one axis and the same bar along another axis are two entries of the catalog.
+
+### LINES-5 — Piece catalog
+
+- **Decision:** the tray takes its pieces from a fixed catalog kept as configuration: poly-hexes of 1 to 5 cells (FR-31). Each entry has a shape and a color (LINES-7). A new shape is new data, not new code.
+- **Reason:** FR-31 fixes the size of the pieces, not their shapes. NFR-01 asks that a new piece shape need only new configuration.
+- **Example:** adding a 4-cell piece changes the catalog only; no class changes.
+
+### LINES-6 — Drawing the pieces
+
+- **Decision:** each piece of the tray is drawn at random among the catalog entries, with a seeded generator, and with no check that it fits. The game ends when none of the available pieces fits (FR-35).
+- **Reason:** FR-31 asks for 3 pieces and a new tray when the 3 are used; FR-35 ends the game when none fits, which only happens if the draw does not guarantee a fit. NFR-05 requires the generator to be injectable and replayable.
+- **Example:** two games started with the same seed offer the same three pieces, in the same order, in their first tray.
+
+### LINES-7 — Piece colors
+
+- **Decision:** each catalog entry carries its color, as a name of the palette (`red`, `cyan`, ...), never as a hex code. Placing a piece fills its cells with that color. The color never changes a rule: a line clears whatever the colors of its cells.
+- **Reason:** assignment §1.5 gives Hexa Lines the cell content "Color", so a placed cell needs a color, and the only thing the player places is a piece. Taking it from the catalog entry keeps the color a datum of the piece (LINES-5), needs no extra random draw, and lets the client map the name to its palette and its symbol, as it does for the level files.
+- **Example:** the catalog entry "bar of 3" has color cyan. Placing it fills 3 cells with cyan. A row made of 4 cyan cells and 1 red cell is complete and clears (LINES-1).
+
 Hexa Lines is endless; its result is the score (RANK-1).
 
 ## Hexa Fit
@@ -161,7 +197,7 @@ Hexa Lines is endless; its result is the score (RANK-1).
 
 ### FIT-2 — Pieces
 
-- **Decision:** a piece rotates by the topology's rotation step (60° **[hex]**) and never mirrors.
+- **Decision:** a piece rotates by the topology's rotation step (60° **[hex]**), only while it is off the board (FIT-7), and never mirrors.
   A level may contain the same piece more than once. Equal pieces are interchangeable: the win check looks only at which cells are covered, not at which copy covers them.
 - **Reason:** FR-42 asks for rotation and says nothing about mirroring; leaving mirroring out keeps the level design under control. FR-43 defines victory by coverage only.
 - **Example:** a level has two identical 3-cell pieces. The player places them in either order and wins the same way. A piece whose mirror image differs cannot be flipped to fit.
@@ -184,16 +220,28 @@ Hexa Lines is endless; its result is the score (RANK-1).
 
 ### FIT-5 — Counting time
 
-- **Decision:** the time starts at the player's first action, which is any place, remove or rotate (the actions that count as moves, FIT-4). It pauses while the app is in the background and stops on victory.
+- **Decision:** the time starts at the player's first action, which is any place, remove or rotate (the actions that count as moves, FIT-4). It pauses while the app is in the background or the game is paused (FIT-6), and stops on victory.
   It is counted in whole seconds: the total is truncated to the second below.
   It comes from an injected `Clock`, never from the system clock directly.
 - **Reason:** FR-44 counts time. The player should not lose time for reading the level before acting, or for leaving the app. NFR-05 requires an injectable, testable source, so tests use a fake clock.
 - **Example:** the player acts first at t = 0, plays 40.6 s, leaves the app for 30 s, comes back and wins 20.7 s later.
   Time = 40.6 + 20.7 = 61.3 s, counted as 61 s. With a time par of 60 s, the time star is missed.
 
+### FIT-6 — Pause
+
+- **Decision:** the pause button and the "How to play" modal stop the clock and hide the board until the player continues.
+- **Reason:** FR-44 counts time, so a player who stops must not lose time; hiding the board stops a player from planning while the clock is stopped, which would make the time par meaningless.
+- **Example:** the player has played 20 s, pauses for 30 s and continues. The clock still shows 20 s: the 30 s of pause add nothing.
+
+### FIT-7 — Rotation off the board
+
+- **Decision:** a piece rotates only while it is off the board. A piece on the board does not rotate: to turn it, the player removes it, rotates it and places it again, and each of those actions counts (FIT-4).
+- **Reason:** FR-42 asks for rotation but not where. A piece rotated on the board would need a pivot and a rule for every case where the turned piece overlaps another one or leaves the figure (FR-41). Rotating off the board leaves one check, at placement, and matches the example of FIT-4 (rotate B, then place B) and the level format's solution, which turns a piece and then places it.
+- **Example:** piece A is on the board. The player wants it turned one step: remove A (1), rotate A by one step (2), place A (3) = 3 moves. Asking to rotate A while it is on the board is not a valid action: the board and the move count stay the same.
+
 ### What a Hexa Fit level file must provide
 
-Besides the figure and the pieces (FR-40), each Hexa Fit level must provide a move par and a time par (FIT-3). The format is for D3.
+Besides the figure and the pieces (FR-40), each Hexa Fit level provides a move par and a time par (FIT-3). The format is in `docs/level-format.md` of `hexablock-api`.
 
 ## Hexa Merge
 
@@ -204,6 +252,28 @@ Besides the figure and the pieces (FR-40), each Hexa Fit level must provide a mo
 - **Reason:** assignment §1.4 names the target tile as the victory, while §1.5 (progress model: high score) and §5.1 item 4 ask for an endless game with a high score. Ending the game at the target would cap the score and contradict §1.5 and §5.1; marking the target as reached keeps the victory of §1.4 without ending the game.
 - **Example:** the score is 20 400 and the board has two 1024 tiles in line. A swipe merges them: a 2048 tile appears, the score becomes 22 448 (SCORE-2), the app shows that the target was reached, and the next swipe is accepted.
   Later, no swipe in any of the six directions changes the board: the game ends with its current score.
+
+### MERGE-2 — Merge order
+
+- **Decision:** a tile made by a merge does not merge again in the same move. When three or more equal tiles stand in a row, the pair nearest the edge the tiles slide toward merges first.
+- **Reason:** FR-62 says two equal tiles that collide merge, but not what happens with three or with a tile just made. One merge per tile per move, starting from the edge, gives one result for every row (NFR-05) and is the rule players know from 2048-style games.
+- **Example:** a row is read with the edge it slides toward on the right.
+  `2, 2, 4` slides to `_, 4, 4`: the two 2s merge, and the new 4 does not merge with the 4 that was already there.
+  `2, 2, 2` slides to `_, 2, 4`: the two 2s nearest the edge merge, and the 4 sits against the edge.
+
+### MERGE-3 — New tiles
+
+- **Decision:** a game starts with 2 tiles. After each move that changes the board, a new tile appears in a random empty cell: a 2 with probability 90 % and a 4 with probability 10 %. Both numbers are parameters of the tile source, not constants of the engine.
+  A swipe that changes nothing is not a move: it adds no tile and cannot be undone.
+- **Reason:** FR-63 asks for a new 2 or 4 after each valid move but gives no odds. Parameters keep the odds out of the engine (NFR-01), and the source is seeded and injected (NFR-05).
+- **Example:** every tile already rests against the edge in the swiped direction. The swipe changes nothing: no new tile appears, and undo still refers to the previous move.
+
+### MERGE-4 — Undo
+
+- **Decision:** the player can undo one move, and cannot undo twice in a row. Undo restores the board, the score, the state of the random generator and the "target reached" notice.
+  So repeating the undone move gives the same new tile in the same cell, and undoing the move that made the first 2048 tile also takes back the notice.
+- **Reason:** FR-66 offers undo of the last move. Restoring the generator stops the player from undoing until a better tile appears; restoring the score keeps it consistent with the board (SCORE-2). Undo returns exactly the earlier state, so a notice tied to a tile that no longer exists goes too; reaching 2048 again shows it again.
+- **Example:** the player swipes and a 2 appears in cell X. The player undoes and swipes the same way again: a 2 appears in X again. A second undo right after the first is not accepted.
 
 ## Scoring of Hexa Sort and Hexa Merge
 
@@ -223,13 +293,29 @@ Hexa Lines scores in LINES-3 and Hexa Fit in FIT-3.
 - **Example:** the score is 100. A swipe merges 4 and 4: +8, so the score is 108. Undo: the board returns and the score drops by 8, back to 100.
   A swipe that merges 2 + 2 and 8 + 8 adds 4 + 16 = 20.
 
+## Levels
+
+These rules apply to the level-based variants, Hexa Fit and Hexa Sort.
+
+### LEVEL-1 — Unlocking
+
+- **Decision:** level 1 is open. Each level unlocks when the player completes the one before it. Levels that arrive from the server are added at the end, in the order of their `number`.
+- **Reason:** FR-02 shows locked levels but does not say how they open; FR-14 adds levels without an app update, so they need a place in the order.
+- **Example:** the player has completed levels 1 to 15. A level 16 arrives on the next sync: it appears unlocked at the end of the list.
+
+### LEVEL-2 — Progressive difficulty
+
+- **Decision:** each level has a `difficulty` from 1 to 5 that never goes down from one level to the next within a variant. A test checks it on the level files.
+- **Reason:** FR-46 and FR-55 ask for progressive difficulty; a number per level makes that checkable instead of a matter of opinion.
+- **Example:** difficulties 1, 1, 2, 2, 3 are valid; a 3 followed by a 2 fails the test.
+
 ## Leaderboard
 
 The leaderboard exists per `gameId` and, for level-based variants (Hexa Fit and Hexa Sort), per level (FR-22, FR-13). Each of these is one table.
 
 ### RANK-1 — Order
 
-- **Decision:** each table is ordered as follows. "Date" is the moment the result was achieved; earlier ranks higher.
+- **Decision:** each table is ordered as follows. "Date" is the moment the result was achieved, taken from the phone; earlier ranks higher. The API rejects a date in the future.
 
   | Variant | Order |
   |---|---|
@@ -249,6 +335,14 @@ The leaderboard exists per `gameId` and, for level-based variants (Hexa Fit and 
 - **Reason:** a global leaderboard (FR-22) compares players, not attempts. One entry per user stops one player from filling the table.
 - **Example:** on one Hexa Sort level, a user wins first with 2 stars and 25 moves, then with 3 stars and 23 moves, then with 2 stars and 20 moves. The table shows one entry: 3 stars, 23 moves.
 
+### RANK-3 — Global leaderboard of the level-based variants
+
+- **Decision:** the table per `gameId` of Hexa Fit orders users by total stars descending, levels completed descending, sum of moves ascending, sum of time ascending, date of the latest of those results ascending, then user id ascending.
+  Hexa Sort uses the same order without the time.
+  The sums use each user's best result in each level (RANK-2).
+- **Reason:** FR-13 and FR-22 ask for a leaderboard per variant as well as per level, and RANK-1 only orders one level. Stars first rewards the quality of the play, then the number of levels rewards progress; the sums break ties the same way RANK-1 does inside a level.
+- **Example:** in Hexa Fit, two users have 45 stars and 15 levels each. One has 150 moves in total, the other 160: the one with 150 ranks first.
+
 ## Rules and requirements
 
 | Rule | Topic | Requirement IDs |
@@ -260,24 +354,37 @@ The leaderboard exists per `gameId` and, for level-based variants (Hexa Fit and 
 | SORT-5 | End of game | FR-54, FR-51 |
 | SORT-6 | Tray | FR-51, NFR-05 |
 | SORT-7 | Moves and stars | FR-05, FR-06, FR-08, C-19e |
+| SORT-8 | How the tray draws a stack | FR-51, FR-52, NFR-05 |
 | LINES-1 | What a line is | FR-33 |
 | LINES-2 | Clearing | FR-33, FR-32 |
 | LINES-3 | Score | FR-34, FR-05 |
+| LINES-4 | Pieces do not rotate | FR-32, FR-42 |
+| LINES-5 | Piece catalog | FR-31, NFR-01 |
+| LINES-6 | Drawing the pieces | FR-31, FR-35, NFR-05 |
+| LINES-7 | Piece colors | FR-31, FR-33 |
 | FIT-1 | The figure | FR-40 |
 | FIT-2 | Pieces | FR-42, FR-43 |
 | FIT-3 | Stars | FR-44, FR-43, FR-05 |
 | FIT-4 | Counting moves | FR-44, FR-45 |
 | FIT-5 | Counting time | FR-44, NFR-05 |
+| FIT-6 | Pause | FR-44 |
+| FIT-7 | Rotation off the board | FR-41, FR-42, FR-44 |
 | MERGE-1 | Target tile and end of game | FR-64, FR-67 |
+| MERGE-2 | Merge order | FR-62 |
+| MERGE-3 | New tiles | FR-63, NFR-05 |
+| MERGE-4 | Undo | FR-66, NFR-05 |
 | SCORE-1 | Hexa Sort score | FR-05, FR-06 |
 | SCORE-2 | Hexa Merge score | FR-65, FR-66, FR-67 |
 | RANK-1 | Order | FR-22, FR-13 |
 | RANK-2 | One entry per user | FR-22, FR-13 |
+| RANK-3 | Global leaderboard of the level-based variants | FR-13, FR-22 |
+| LEVEL-1 | Unlocking | FR-02, FR-14 |
+| LEVEL-2 | Progressive difficulty | FR-46, FR-55 |
 
 Every rule also traces to C-33 and C-23b (its example is a rule test).
 
 ## Out of scope
 
-- The level file format (design task D3). This document only names what the files must provide.
+- The level file format: `docs/level-format.md` of `hexablock-api`. This document only names what the files must provide.
 - The API contract, including how the user id and the leaderboard are exposed (design task D5).
 - The README summary of these rules that C-33 asks for. It follows in a separate change.
