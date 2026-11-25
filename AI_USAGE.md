@@ -176,6 +176,20 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Verification:** `node tool/check-architecture.mjs` passes and `tool/architecture-rules.json` parses; a search for "Proposed" leaves only templates, generic instructions and dated history; every cited chapter was checked in the team's library (Martin 2017, ch. 30).
 - **Lessons:** Writing the decisions with their reasons in the team's plan first turned the acceptance into a translation step; the review time goes to the two new ADRs.
 
+### 2026-11-25 — App skeleton: pub workspace, composition root and CI (odd/tasks/0001-bootstrap-workspace.md)
+
+- **Author:** Eduard Velasco
+- **Pull request:** draft, stacked on #23
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
+- **Task:** Create the Dart pub workspace of ADR-0003 (three layer packages and the Flutter app for Android and iOS), an empty composition root wired by hand (ADR-0007), the CI of every pull request and one smoke test per package (C-02, C-05, C-13, C-23, NFR-03).
+- **Prompts (faithful paraphrase; original in Spanish, verbatim in the task log):**
+  - "Task 0001 of the app: the skeleton. Work in a separate worktree and do not touch the domain model branch. Read the task, AGENTS.md, the requirements, the rule files and the ADRs as they stand in #23. Build the workspace, an empty composition root with a minimal screen, the CI and one minimal test per package. No domain classes. Open the pull request as a draft and merge nothing. Tell me what Valentina must do for the iPhone test installation."
+- **Result:** Root `pubspec.yaml` with the workspace; `packages/hexablock_engine`, `packages/hexablock_application`, `packages/hexablock_adapters` and `app/` (Flutter 3.47.8, Android and iOS); `CompositionRoot` and a placeholder home screen; `tool/run-tests.mjs`, which fails when a package with code runs no test (S7); CI pinned to Flutter 3.47.8; README *Getting Started* and *Running Tests*.
+- **Team modifications:** TODO(team): record what the team changes in review, including the answer to the open question on where the plugin-backed adapters live.
+- **Errors and corrections:** The test-name check written in the setup session read one line at a time, so it silently skipped two of the four tests after `dart format` wrapped their names. The AI detected it by comparing the count it printed with the number of tests that ran, and fixed it in this task.
+- **Verification:** Format, `flutter analyze --fatal-infos --fatal-warnings`, `node tool/run-tests.mjs` (4 tests ran), coverage, architecture and test-name checks, all exit 0; probes for S3 (a Flutter import in the engine fails both the analyzer and the architecture check) and S7 (a package with code and no tests fails the test gate). CI result: see the pull request.
+- **Lessons:** A quality gate should print what it checked; a count that does not match reality is how a silent gap shows up.
+
 ## Critical evaluation
 
 - **Approximate share of code with AI assistance:** TODO (updated at the end of the project).
@@ -190,6 +204,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-10-28 | Commit bodies over 100 characters | The `commits` check in CI | Tooling |
 | 2026-10-28 | Dependabot commits rejected by commitlint | CI | Tooling |
 | 2026-11-08 | Could not run speech recognition on the meeting audio; corrected the existing transcription from context instead | The AI reported the limitation itself and listed the passages to check by ear | Tooling |
+| 2026-11-25 | The test-name check skipped tests whose name `dart format` moved to the next line | The count it printed (2) did not match the tests that ran (4) | Tooling |
 - **Impact on productivity and quality:** TODO.
 
 ## Effective prompts
