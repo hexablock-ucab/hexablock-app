@@ -45,6 +45,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
 | 2026-11-25 | [Game rules completed with the team decisions of 2026-11-24](#2026-11-25--game-rules-completed-with-the-team-decisions-of-2026-11-24-oddtasks0002-game-rulesmd-pr-13) |
 | 2026-11-25 | [Requirements baseline](#2026-11-25--requirements-baseline-docs-no-task-document) |
+| 2026-11-25 | [ADRs of the app accepted](#2026-11-25--adrs-of-the-app-accepted-oddtasks0006-accept-adrsmd) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -160,6 +161,20 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Team modifications:** Open until the merge: the three members (Eduard Velasco, Ali Dahouk, Valentina Maza) review the catalog and record their agreement in this pull request and in hexablock-api #21; any change they ask for goes into both pull requests and is listed here before merging.
 - **Errors and corrections:** None detected yet.
 - **Lessons:** Copying the reviewed file from the paired pull request, instead of editing the catalog a second time, is what keeps the two repositories identical.
+
+### 2026-11-25 — ADRs of the app accepted (odd/tasks/0006-accept-adrs.md)
+
+- **Author:** Eduard Velasco
+- **Pull request:** this pull request, paired with hexablock-api #22
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
+- **Task:** Accept ADR-0001 to ADR-0006 with the team's decisions of 2026-11-24, add ADR-0007 (local data and view models) and ADR-0008 (iOS from a Mac), and remove every *Proposed* condition from the repository (C-05, C-24a, C-30, C-32, NFR-03, NFR-05).
+- **Prompts (faithful paraphrase; original in Spanish, verbatim in the task log):**
+  - "The app half of `docs/accept-adrs` (change plan 2.9, app part), with the pull request open and linked to the API one. Follow AGENTS.md. Do not merge anything."
+- **Result:** The changes listed in `odd/tasks/0006-accept-adrs.md`: the interfaces the domain calls live in the domain (ADR-0003); the coordinate is a list of integers checked by the topology and the board is `Board<TCell>` (ADR-0004); two new ADRs; `AGENTS.md` §3, the README, `docs/EXTENSIBILITY.md`, the game rules and task 0001 no longer wait for the ADRs; the domain and the use cases may not import drift or `flutter_secure_storage`.
+- **Team modifications:** The team took every decision on 2026-11-24; the AI wrote the text. Open until the merge: the three members record their agreement in this pull request; any change they ask for is listed here before merging.
+- **Errors and corrections:** None detected yet. The AI found that another session was editing ADR-0004 for the domain model and kept this change consistent with it (task log).
+- **Verification:** `node tool/check-architecture.mjs` passes and `tool/architecture-rules.json` parses; a search for "Proposed" leaves only templates, generic instructions and dated history; every cited chapter was checked in the team's library (Martin 2017, ch. 30).
+- **Lessons:** Writing the decisions with their reasons in the team's plan first turned the acceptance into a translation step; the review time goes to the two new ADRs.
 
 ## Critical evaluation
 

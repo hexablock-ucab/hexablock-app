@@ -1,5 +1,5 @@
 {
-  "$comment": "Architecture rules as checks (C-05, C-20, NFR-01, NFR-03, NFR-05). Paths follow the PROPOSED layout of ADR-0003; update them in the same PR that accepts or changes that ADR. Rules whose folders do not exist yet are skipped.",
+  "$comment": "Architecture rules as checks (C-05, C-20, NFR-01, NFR-03, NFR-05). Paths follow the layout of ADR-0003 (Accepted); update them in the same PR that changes that ADR. Rules whose folders do not exist yet are skipped.",
   "sourceExtensions": [".dart"],
   "rules": [
     {
@@ -8,9 +8,9 @@
       "forbidden": [
         { "pattern": "import\\s+['\"]package:flutter", "reason": "The domain must not depend on Flutter." },
         { "pattern": "import\\s+['\"]dart:(io|ui|html)", "reason": "The domain must not depend on I/O or the UI runtime." },
-        { "pattern": "import\\s+['\"]package:(http|dio|shared_preferences|sqflite|hive)", "reason": "The domain must not depend on network or storage libraries." },
+        { "pattern": "import\\s+['\"]package:(http|dio|shared_preferences|sqflite|hive|drift|flutter_secure_storage)", "reason": "The domain must not depend on network or storage libraries (ADR-0007)." },
         { "pattern": "import\\s+['\"]package:hexablock_(application|adapters|app)", "reason": "Dependency Rule: the domain must not import outer layers." },
-        { "pattern": "\\bRandom\\(", "reason": "Randomness is injected through a port, never created in the domain (NFR-05)." }
+        { "pattern": "\\bRandom\\(", "reason": "The domain never uses the platform generator (dart:math Random); its own seeded algorithm is injected (NFR-05, ADR-0003)." }
       ]
     },
     {
@@ -19,7 +19,7 @@
       "forbidden": [
         { "pattern": "import\\s+['\"]package:flutter", "reason": "Use cases must not depend on Flutter." },
         { "pattern": "import\\s+['\"]dart:(io|ui|html)", "reason": "Use cases must not depend on I/O or the UI runtime." },
-        { "pattern": "import\\s+['\"]package:(http|dio|shared_preferences|sqflite|hive)", "reason": "Use cases depend on ports, not on network or storage libraries." },
+        { "pattern": "import\\s+['\"]package:(http|dio|shared_preferences|sqflite|hive|drift|flutter_secure_storage)", "reason": "Use cases depend on ports, not on network or storage libraries (ADR-0007)." },
         { "pattern": "import\\s+['\"]package:hexablock_(adapters|app)", "reason": "Dependency Rule: use cases must not import outer layers." }
       ]
     },

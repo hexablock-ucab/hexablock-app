@@ -6,7 +6,7 @@ This document records one decision for each open rule, so the engine, the rule t
 - **Who decides:** the team decides and documents these rules (C-33).
 - **Format of each rule:** the decision, the reason (an assignment section, the team's logic or a requirement ID) and a worked example.
   Each example is written so that a rule test can reuse it as its Arrange – Act – Assert data (C-23b).
-- **Topology:** the rules speak of "the topology's axes and neighbors", not of hexagons, because the grid geometry may change (ADR-0004, Proposed).
+- **Topology:** the rules speak of "the topology's axes and neighbors", not of hexagons, because the grid geometry may change (ADR-0004).
   Values that hold only for the current hexagonal topology are marked **[hex]**.
 - **Value objects:** scores, stars, moves, time and goals are domain concepts (`Score`, `StarCount`, `MoveCount`, `ElapsedTime`, `GoalCount`), not bare numbers.
   This document names them only; it does not design the classes.
@@ -192,7 +192,7 @@ Hexa Lines is endless; its result is the score (RANK-1).
   A hole is a group of cells outside the figure that has no path to the outside: every route of non-figure cells that leaves the figure is blocked by the figure.
   The check looks at the unbounded grid, because a Hexa Fit board is the figure itself and has no border to act as a wall. An open bay, with one way out, is not a hole.
   The figure's area equals the total area of the level's pieces.
-- **Reason:** FR-40 (assignment 1.2) calls the figure "closed" and "an arbitrary set of cells" with an area equal to the pieces. The team reads "closed" as one connected piece with no holes, so the player always fills one solid shape. ADR-0006 (Proposed) proposes that the level builder checks these conditions.
+- **Reason:** FR-40 (assignment 1.2) calls the figure "closed" and "an arbitrary set of cells" with an area equal to the pieces. The team reads "closed" as one connected piece with no holes, so the player always fills one solid shape. The level builder checks these conditions (ADR-0006).
 - **Example [hex]:** a center cell and its 6 neighbors form a 7-cell figure; pieces of 3 and 4 cells fit it. The same 6 neighbors without the center form a ring around a hole: not a valid figure. Two groups of cells that share no edge: not a valid figure.
 
 ### FIT-2 — Pieces
