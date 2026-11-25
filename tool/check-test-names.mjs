@@ -17,8 +17,8 @@ const SKIP_DIRS = new Set(['node_modules', '.dart_tool', 'build', 'dist', 'cover
 
 // Test files and the calls that declare a single test case, per language.
 const KINDS = [
-  { file: /_test\.dart$/, call: /\b(?:test|testWidgets)\(\s*(['"])(.*?)\1/g },
-  { file: /\.(?:spec|e2e-spec|test)\.ts$/, call: /\b(?:it|test)\(\s*(['"`])(.*?)\1/g },
+  { file: /_test\.dart$/, call: /\b(?:test|testWidgets)\(\s*(['"])([^'"\n]*)\1/g },
+  { file: /\.(?:spec|e2e-spec|test)\.ts$/, call: /\b(?:it|test)\(\s*(['"`])([^'"`\n]*)\1/g },
 ];
 
 function* walk(dir) {
@@ -37,13 +37,13 @@ const bad = [];
 for (const file of walk(root)) {
   const kind = KINDS.find((k) => k.file.test(file));
   if (!kind) continue;
-  const lines = readFileSync(file, 'utf8').split('\n');
-  lines.forEach((line, i) => {
-    for (const match of line.matchAll(kind.call)) {
-      checked += 1;
-      if (!NAME.test(match[2])) bad.push(`${path.relative(root, file)}:${i + 1}  "${match[2]}"`);
-    }
-  });
+  // Match the whole file: dart format often moves a long test name to the next line.
+  const text = readFileSync(file, 'utf8');
+  for (const match of text.matchAll(kind.call)) {
+    checked += 1;
+    const line = text.slice(0, match.index).split('\n').length;
+    if (!NAME.test(match[2])) bad.push(`${path.relative(root, file)}:${line}  "${match[2]}"`);
+  }
 }
 
 if (bad.length > 0) {
