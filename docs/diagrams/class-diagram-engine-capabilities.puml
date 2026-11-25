@@ -1,0 +1,222 @@
+@startuml class-diagram-engine-capabilities
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Generic engine — capabilities, undo history (Memento), randomness, pieces and time
+
+package "hexablock_engine / core/capabilities" {
+  interface IUndoable << (▲,#D4A300) interface >> #FFF4C2 {
+    +/canUndo : bool {readOnly}
+    --
+    +undo()
+  }
+  interface IRedoable << (▲,#D4A300) interface >> #FFF4C2 {
+    +/canRedo : bool {readOnly}
+    --
+    +redo()
+  }
+  interface ITimed << (▲,#D4A300) interface >> #FFF4C2 {
+    +/elapsed : ElapsedTime {readOnly}
+    +/isRunning : bool {readOnly}
+    --
+  }
+  interface IRandomSeeded << (▲,#D4A300) interface >> #FFF4C2 {
+    +seed : Seed {readOnly}
+    --
+  }
+  class CapabilitySet << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +undo : IUndoable [0..1] {readOnly}
+    +redo : IRedoable [0..1] {readOnly}
+    +timer : ITimed [0..1] {readOnly}
+    +seeded : IRandomSeeded [0..1] {readOnly}
+    --
+    {static} +none() : CapabilitySet
+  }
+  class SeedRecord << (▲,#D4A300) Value Object >> #FFF4C2 {
+    --
+  }
+}
+package "hexablock_engine / core/memento" {
+  interface ISnapshotable<TSelf, TSnapshot> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +toSnapshot() : TSnapshot
+    +restoredFrom(snapshot : TSnapshot) : TSelf
+  }
+  class SnapshotHistory<TState extends ISnapshotable<TState, TSnapshot>, TSnapshot> << (▲,#D4A300) >> #FFF4C2 {
+    -target : IRestorable<TState> {readOnly}
+    -capacity : HistoryCapacity {readOnly}
+    #past : List<TSnapshot>
+    #latest : TState
+    --
+    +onStateChanged(change : StateChange<TState>)
+    +undo()
+  }
+  class RedoableSnapshotHistory<TState extends ISnapshotable<TState, TSnapshot>, TSnapshot> << (▲,#D4A300) >> #FFF4C2 {
+    -future : List<TSnapshot>
+    --
+    +undo()
+    +redo()
+  }
+  class HistoryCapacity << (▲,#D4A300) Value Object >> #FFF4C2 {
+    -limit : int [0..1] {readOnly}
+    --
+    {static} +unlimited() : HistoryCapacity
+    {static} +steps(count : int) : HistoryCapacity
+    +allows(size : int) : bool
+  }
+}
+package "hexablock_engine / core/random" {
+  interface IRandomSource << (▲,#D4A300) interface >> #FFF4C2 {
+    +state : GeneratorState {readOnly}
+    --
+    +next() : RandomDraw<int>
+    +nextBelow(bound : int) : RandomDraw<int>
+  }
+  class Mulberry32 << (▲,#D4A300) >> #FFF4C2 {
+    -generatorState : GeneratorState {readOnly}
+    --
+    {static} +fromSeed(seed : Seed) : Mulberry32
+    {static} +restore(state : GeneratorState) : Mulberry32
+  }
+  interface IRandomSourceFactory << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +fromSeed(seed : Seed) : IRandomSource
+    +restore(state : GeneratorState) : IRandomSource
+  }
+  class Mulberry32Factory << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class RandomDraw<T> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : T {readOnly}
+    +next : IRandomSource {readOnly}
+    --
+  }
+  class Seed << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+  }
+  class GeneratorState << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+  }
+}
+package "hexablock_engine / core/pieces" {
+  interface IPieceSource<TPiece> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +next() : PieceDraw<TPiece, IPieceSource<TPiece>>
+  }
+  class PieceDraw<TPiece, TSource extends IPieceSource<TPiece>> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +piece : TPiece {readOnly}
+    +rest : TSource {readOnly}
+    --
+  }
+  interface IPieceRecipe<TPiece> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +draw(random : IRandomSource) : RandomDraw<TPiece>
+  }
+  class SeededPieceSource<TPiece> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    -random : IRandomSource {readOnly}
+    -recipe : IPieceRecipe<TPiece> {readOnly}
+    +/generatorState : GeneratorState {readOnly}
+    --
+    +next() : PieceDraw<TPiece, SeededPieceSource<TPiece>>
+  }
+  class FixedPieceSource<TPiece> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    -pieces : List<TPiece> {readOnly}
+    +/isExhausted : bool {readOnly}
+    --
+    +next() : PieceDraw<TPiece, FixedPieceSource<TPiece>>
+    +drawAll() : List<TPiece>
+  }
+}
+package "hexablock_engine / core/time" {
+  interface Clock << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +now() : DateTime
+  }
+  class GameStopwatch<TState> << (▲,#D4A300) >> #FFF4C2 {
+    -clock : Clock {readOnly}
+    -startedAt : DateTime [0..1]
+    -accumulated : Duration
+    -stopped : bool
+    --
+    +onStateChanged(change : StateChange<TState>)
+  }
+  class ElapsedTime << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +seconds : int {readOnly}
+    --
+    {static} +truncating(duration : Duration) : ElapsedTime
+    +atMost(limit : ElapsedTime) : bool
+    +isShorterThan(other : ElapsedTime) : bool
+  }
+}
+package "hexablock_engine / core/events" {
+  interface IStateListener<TState> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/engine" {
+  interface IRestorable<TState> << (▲,#D4A300) interface >> #FFF4C2
+}
+
+hide IStateListener members
+hide IRestorable members
+CapabilitySet --> "0..1" IUndoable : undo
+CapabilitySet --> "0..1" IRedoable : redo
+CapabilitySet --> "0..1" ITimed : timer
+CapabilitySet --> "0..1" IRandomSeeded : seeded
+SeedRecord ..|> IRandomSeeded
+SeedRecord --> "1" Seed : seed
+SnapshotHistory ..|> IUndoable
+SnapshotHistory ..|> IStateListener
+SnapshotHistory --> "1" IRestorable : target
+SnapshotHistory --> "1" HistoryCapacity : capacity
+RedoableSnapshotHistory --|> SnapshotHistory
+RedoableSnapshotHistory ..|> IRedoable
+IRandomSource ..> RandomDraw : <<create>>
+Mulberry32 ..|> IRandomSource
+Mulberry32 --> "1" GeneratorState : generatorState
+IRandomSourceFactory ..> IRandomSource : <<create>>
+Mulberry32Factory ..|> IRandomSourceFactory
+Mulberry32Factory ..> Mulberry32 : <<create>>
+RandomDraw --> "1" IRandomSource : next
+IPieceSource ..> PieceDraw : <<create>>
+IPieceRecipe ..> IRandomSource : <<use>>
+SeededPieceSource ..|> IPieceSource
+SeededPieceSource --> "1" IRandomSource : random
+SeededPieceSource --> "1" IPieceRecipe : recipe
+FixedPieceSource ..|> IPieceSource
+GameStopwatch ..|> ITimed
+GameStopwatch ..|> IStateListener
+GameStopwatch --> "1" Clock : clock
+GameStopwatch ..> ElapsedTime : <<create>>
+
+note right of ISnapshotable : Memento: originator
+note right of SnapshotHistory : Memento: caretaker\nObserver: concrete observer
+note right of RedoableSnapshotHistory : Memento: caretaker
+note right of Mulberry32Factory : Single instance: single instance
+note right of IPieceRecipe : Strategy: strategy
+note right of SeededPieceSource : Strategy: context
+note right of GameStopwatch : Observer: concrete observer
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

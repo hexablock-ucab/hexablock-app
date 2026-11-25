@@ -1,0 +1,174 @@
+@startuml class-diagram-engine-board
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Generic engine — geometry, board and errors (hexablock_engine)
+
+package "hexablock_engine / core/geometry" {
+  class Coordinate << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +components : List<int> {readOnly}
+    --
+  }
+  interface ITopology << (▲,#D4A300) interface >> #FFF4C2 {
+    +id : TopologyId {readOnly}
+    +origin : Coordinate {readOnly}
+    +directions : List<Direction> {readOnly}
+    +axes : List<Axis> {readOnly}
+    +fullTurn : RotationSteps {readOnly}
+    --
+    +isValid(at : Coordinate) : bool
+    +neighborsOf(at : Coordinate) : List<Coordinate>
+    +step(from : Coordinate, towards : Direction) : Coordinate
+    +translate(cell : Coordinate, by : Coordinate) : Coordinate
+    +rotate(cell : Coordinate, by : RotationSteps) : Coordinate
+    +rowsAlong(axis : Axis, cells : Set<Coordinate>) : List<CellLine>
+    +inFixedOrder(cells : Iterable<Coordinate>) : List<Coordinate>
+    +orderedTowards(towards : Direction, cells : Iterable<Coordinate>) : List<Coordinate>
+    +regularShape(radius : Radius) : Set<Coordinate>
+  }
+  class HexTopology << (▲,#D4A300) >> #FFF4C2 {
+    -unitDirections : List<Coordinate> {readOnly}
+    --
+    -q(at : Coordinate) : int
+    -r(at : Coordinate) : int
+  }
+  class TopologyId << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +name : String {readOnly}
+    --
+  }
+  class TopologyRegistry << (▲,#D4A300) >> #FFF4C2 {
+    -topologies : Map<TopologyId, ITopology> {readOnly}
+    --
+    +register(topology : ITopology)
+    +isRegistered(id : TopologyId) : bool
+    +resolve(id : TopologyId) : ITopology
+  }
+  class Direction << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +index : int {readOnly}
+    --
+  }
+  class Axis << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +index : int {readOnly}
+    --
+  }
+  class RotationSteps << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +count : int {readOnly}
+    --
+    +plus(other : RotationSteps) : RotationSteps
+    +within(fullTurn : RotationSteps) : RotationSteps
+  }
+  class Radius << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+  }
+  class Shape << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +cells : Set<Coordinate> {readOnly}
+    +/size : int {readOnly}
+    -topology : ITopology {readOnly}
+    --
+    +placedAt(anchor : Coordinate) : Set<Coordinate>
+    +rotated(by : RotationSteps) : Shape
+  }
+  class CellLine << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +axis : Axis {readOnly}
+    +cells : List<Coordinate> {readOnly}
+    --
+  }
+}
+package "hexablock_engine / core/board" {
+  class Board<TCell> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +topology : ITopology {readOnly}
+    +coordinates : List<Coordinate> {readOnly}
+    -contents : Map<Coordinate, TCell> {readOnly}
+    --
+    +contains(at : Coordinate) : bool
+    +cellAt(at : Coordinate) : TCell [0..1]
+    +isEmptyAt(at : Coordinate) : bool
+    +isFull() : bool
+    +emptyCoordinates() : List<Coordinate>
+    +occupied() : Map<Coordinate, TCell>
+    +neighborsOf(at : Coordinate) : List<Coordinate>
+    +neighborTowards(from : Coordinate, towards : Direction) : Coordinate [0..1]
+    +rows() : List<CellLine>
+    +canPlace(cells : Set<Coordinate>) : bool
+    +withCell(at : Coordinate, cell : TCell) : Board<TCell>
+    +withCells(cells : Map<Coordinate, TCell>) : Board<TCell>
+    +withoutCells(cells : Iterable<Coordinate>) : Board<TCell>
+  }
+  class BoardBuilder<TCell> << (▲,#D4A300) >> #FFF4C2 {
+    -topology : ITopology {readOnly}
+    -cells : Set<Coordinate>
+    -contents : Map<Coordinate, TCell>
+    --
+    +regular(radius : Radius) : BoardBuilder<TCell>
+    +cells(cells : Iterable<Coordinate>) : BoardBuilder<TCell>
+    +withCell(at : Coordinate, cell : TCell) : BoardBuilder<TCell>
+    +build() : Board<TCell>
+  }
+}
+package "hexablock_engine / core/errors" {
+  abstract class DomainError << (▲,#D4A300) >> #FFF4C2 {
+    +message : String {readOnly}
+    --
+  }
+  class InvalidValueError << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class InvalidBoardError << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class InvalidLevelError << (▲,#D4A300) >> #FFF4C2 {
+    +check : String {readOnly}
+    --
+  }
+}
+
+ITopology --> "1" TopologyId : id
+ITopology ..> Coordinate : <<use>>
+ITopology ..> CellLine : <<create>>
+HexTopology ..|> ITopology
+TopologyRegistry o--> "1..*" ITopology : topologies
+TopologyRegistry ..> TopologyId : <<use>>
+TopologyRegistry ..> InvalidValueError : <<create>>
+Shape --> "1" ITopology : topology
+Shape o--> "1..*" Coordinate : cells
+CellLine --> "1" Axis : axis
+CellLine o--> "1..*" Coordinate : cells
+Board --> "1" ITopology : topology
+Board o--> "1..*" Coordinate : coordinates
+BoardBuilder --> "1" ITopology : topology
+BoardBuilder ..> Board : <<create>>
+BoardBuilder ..> InvalidBoardError : <<create>>
+InvalidValueError --|> DomainError
+InvalidBoardError --|> DomainError
+InvalidLevelError --|> DomainError
+
+note right of ITopology : Strategy: strategy
+note right of HexTopology : Strategy: concrete strategy\nSingle instance: single instance
+note right of TopologyRegistry : Single instance: single instance
+note right of Board : Strategy: context
+note right of BoardBuilder : Builder: builder
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

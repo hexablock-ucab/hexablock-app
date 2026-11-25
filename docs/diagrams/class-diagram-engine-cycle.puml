@@ -1,0 +1,308 @@
+@startuml class-diagram-engine-cycle
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Generic engine — game cycle, reusable rules, phases (State) and events (Observer)
+
+package "hexablock_engine / core/engine" {
+  interface IGameRules<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +boardOf(state : TState) : Board<TCell>
+    +validate(state : TState, move : TMove) : MoveValidation
+    +apply(state : TState, move : TMove) : TState
+    +resolve(state : TState) : Resolution<TState>
+    +evaluate(state : TState) : GameEnd
+    +outcomeOf(state : TState) : GameOutcome
+  }
+  class GameEngine<TCell, TMove, TState> << (▲,#D4A300) >> #FFF4C2 {
+    -rules : IGameRules<TCell, TMove, TState> {readOnly}
+    -current : TState
+    -currentPhase : GamePhase
+    -stateListeners : List<IStateListener<TState>>
+    +/state : TState {readOnly}
+    +/phase : GamePhase {readOnly}
+    +/board : Board<TCell> {readOnly}
+    --
+    +submit(move : TMove) : MoveValidation
+    +pause()
+    +resume()
+    +restore(state : TState)
+    +outcome() : GameOutcome
+    +addStateListener(listener : IStateListener<TState>)
+    +removeStateListener(listener : IStateListener<TState>)
+    -notify(change : StateChange<TState>)
+  }
+  interface IRestorable<TState> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +restore(state : TState)
+  }
+  class MoveValidation << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +isAccepted : bool {readOnly}
+    +reason : RejectionReason [0..1] {readOnly}
+    --
+    {static} +accepted() : MoveValidation
+    {static} +rejected(reason : RejectionReason) : MoveValidation
+  }
+  class RejectionReason << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +code : String {readOnly}
+    --
+  }
+  class Resolution<TState> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +state : TState {readOnly}
+    +events : List<GameEvent> {readOnly}
+    --
+  }
+  enum GameEnd << (▲,#D4A300) >> #FFF4C2 {
+    ongoing
+    won
+    lost
+  }
+  class GameOutcome << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +end : GameEnd {readOnly}
+    +score : Score [0..1] {readOnly}
+    +moves : MoveCount [0..1] {readOnly}
+    +time : ElapsedTime [0..1] {readOnly}
+    --
+    +withTime(time : ElapsedTime) : GameOutcome
+  }
+  interface IGameFactory<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2 {
+    +gameId : GameId {readOnly}
+    --
+    +createBoard() : Board<TCell>
+    +createRules() : IGameRules<TCell, TMove, TState>
+    +createInitialState(board : Board<TCell>) : TState
+    +createCapabilities(engine : GameEngine<TCell, TMove, TState>) : CapabilitySet
+    +createProgressModel() : IProgressModel
+  }
+  class GameAssembler << (▲,#D4A300) >> #FFF4C2 {
+    --
+    {static} +newGame(factory : IGameFactory<TCell, TMove, TState>) : PreparedGame<TCell, TMove, TState>
+    {static} +resumeGame(factory : IGameFactory<TCell, TMove, TState>, state : TState) : PreparedGame<TCell, TMove, TState>
+  }
+  class PreparedGame<TCell, TMove, TState> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +engine : GameEngine<TCell, TMove, TState> {readOnly}
+    +capabilities : CapabilitySet {readOnly}
+    +progressModel : IProgressModel {readOnly}
+    --
+  }
+}
+package "hexablock_engine / core/rules" {
+  interface IMergeable<T> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +canMergeWith(other : T) : bool
+    +mergedWith(other : T) : T
+  }
+  class SlideMergeRule<TCell extends IMergeable<TCell>> << (▲,#D4A300) >> #FFF4C2 {
+    --
+    +slide(board : Board<TCell>, towards : Direction) : SlideResult<TCell>
+    +canSlide(board : Board<TCell>) : bool
+  }
+  class SlideResult<TCell> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<TCell> {readOnly}
+    +merged : List<TCell> {readOnly}
+    +changed : bool {readOnly}
+    --
+  }
+  class LineClearRule<TCell> << (▲,#D4A300) >> #FFF4C2 {
+    --
+    +clearFullRows(board : Board<TCell>) : LineClear<TCell>
+  }
+  class LineClear<TCell> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<TCell> {readOnly}
+    +lines : List<CellLine> {readOnly}
+    +clearedCells : Set<Coordinate> {readOnly}
+    +/lineCount : int {readOnly}
+    --
+  }
+}
+package "hexablock_engine / core/phases" {
+  abstract class GamePhase << (▲,#D4A300) >> #FFF4C2 {
+    +kind : PhaseKind {readOnly}
+    +acceptsMoves : bool {readOnly}
+    +isOver : bool {readOnly}
+    --
+    {abstract} +paused() : GamePhase
+    {abstract} +resumed() : GamePhase
+    {abstract} +ended(end : GameEnd) : GamePhase
+  }
+  class PlayingPhase << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class PausedPhase << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class WonPhase << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class LostPhase << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  enum PhaseKind << (▲,#D4A300) >> #FFF4C2 {
+    playing
+    paused
+    won
+    lost
+  }
+}
+package "hexablock_engine / core/events" {
+  abstract class GameEvent << (▲,#D4A300) >> #FFF4C2 {
+    +kind : EventKind {readOnly}
+    +cells : List<Coordinate> {readOnly}
+    --
+  }
+  class EventKind << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +name : String {readOnly}
+    --
+  }
+  class MoveApplied << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class MoveRejected << (▲,#D4A300) >> #FFF4C2 {
+    +reason : RejectionReason {readOnly}
+    --
+  }
+  class PhaseChanged << (▲,#D4A300) >> #FFF4C2 {
+    +from : PhaseKind {readOnly}
+    +to : PhaseKind {readOnly}
+    --
+  }
+  class GameWon << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class GameLost << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class StateRestored << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  interface IStateListener<TState> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +onStateChanged(change : StateChange<TState>)
+  }
+  class StateChange<TState> << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +before : TState {readOnly}
+    +after : TState {readOnly}
+    +cause : ChangeCause {readOnly}
+    +events : List<GameEvent> {readOnly}
+    +phase : PhaseKind {readOnly}
+    --
+  }
+  enum ChangeCause << (▲,#D4A300) >> #FFF4C2 {
+    moveApplied
+    moveRejected
+    restored
+    paused
+    resumed
+  }
+}
+package "hexablock_engine / core/progress" {
+  class Score << (▲,#D4A300) Value Object >> #FFF4C2
+  class MoveCount << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IProgressModel << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/time" {
+  class ElapsedTime << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/board" {
+  class Board<TCell> << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/capabilities" {
+  class CapabilitySet << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/geometry" {
+  class CellLine << (▲,#D4A300) Value Object >> #FFF4C2
+  class Coordinate << (▲,#D4A300) Value Object >> #FFF4C2
+}
+
+hide Score members
+hide MoveCount members
+hide ElapsedTime members
+hide Board members
+hide CapabilitySet members
+hide IProgressModel members
+hide CellLine members
+hide Coordinate members
+IGameRules ..> MoveValidation : <<use>>
+IGameRules ..> Resolution : <<use>>
+IGameRules ..> GameOutcome : <<use>>
+GameEngine ..|> IRestorable
+GameEngine --> "1" IGameRules : rules
+GameEngine --> "1" GamePhase : currentPhase
+GameEngine o--> "0..*" IStateListener : stateListeners
+GameEngine ..> StateChange : <<send>>
+MoveValidation --> "0..1" RejectionReason : reason
+Resolution o--> "0..*" GameEvent : events
+GameOutcome --> "1" GameEnd : end
+GameOutcome --> "0..1" Score : score
+GameOutcome --> "0..1" MoveCount : moves
+GameOutcome --> "0..1" ElapsedTime : time
+IGameFactory ..> IGameRules : <<create>>
+IGameFactory ..> Board : <<create>>
+IGameFactory ..> CapabilitySet : <<create>>
+IGameFactory ..> IProgressModel : <<create>>
+GameAssembler ..> IGameFactory : <<use>>
+GameAssembler ..> GameEngine : <<create>>
+GameAssembler ..> PreparedGame : <<create>>
+PreparedGame --> "1" GameEngine : engine
+PreparedGame --> "1" CapabilitySet : capabilities
+PreparedGame --> "1" IProgressModel : progressModel
+SlideMergeRule ..> Board : <<use>>
+SlideMergeRule ..> SlideResult : <<create>>
+SlideMergeRule ..> IMergeable : <<use>>
+SlideResult --> "1" Board : board
+LineClearRule ..> Board : <<use>>
+LineClearRule ..> LineClear : <<create>>
+LineClear --> "1" Board : board
+LineClear o--> "0..*" CellLine : lines
+GamePhase --> "1" PhaseKind : kind
+PlayingPhase --|> GamePhase
+PausedPhase --|> GamePhase
+WonPhase --|> GamePhase
+LostPhase --|> GamePhase
+GameEvent --> "1" EventKind : kind
+GameEvent o--> "0..*" Coordinate : cells
+MoveApplied --|> GameEvent
+MoveRejected --|> GameEvent
+MoveRejected --> "1" RejectionReason : reason
+PhaseChanged --|> GameEvent
+GameWon --|> GameEvent
+GameLost --|> GameEvent
+StateRestored --|> GameEvent
+StateChange --> "1" ChangeCause : cause
+StateChange o--> "0..*" GameEvent : events
+
+note right of IGameRules : Strategy: strategy
+note right of GameEngine : Strategy: context\nState: context\nObserver: subject
+note right of IGameFactory : Abstract Factory: abstract factory
+note right of GameAssembler : Abstract Factory: client
+note right of GamePhase : State: state
+note right of PlayingPhase : State: concrete state
+note right of PausedPhase : State: concrete state
+note right of WonPhase : State: concrete state
+note right of LostPhase : State: concrete state
+note right of GameEvent : Observer: event
+note right of IStateListener : Observer: observer
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

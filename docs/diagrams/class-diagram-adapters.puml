@@ -1,0 +1,430 @@
+@startuml class-diagram-adapters
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Interface adapters — generic (hexablock_adapters)
+
+package "hexablock_adapters / session" {
+  class GameSessionAdapter<TCell, TMove, TState> << (●,#2F6DB5) Adapter >> #DCEBFA {
+    +gameId : GameId {readOnly}
+    +levelId : LevelId [0..1] {readOnly}
+    +capabilities : CapabilitySet {readOnly}
+    +progressModel : IProgressModel {readOnly}
+    -engine : GameEngine<TCell, TMove, TState> {readOnly}
+    -translator : IIntentTranslator<TMove, TState> {readOnly}
+    -presenter : ISessionPresenter<TCell, TState> {readOnly}
+    -codec : IStateCodec<TState> [0..1] {readOnly}
+    -updates : StreamController<SessionUpdate> {readOnly}
+    --
+    +submit(intent : PlayerIntent) : MoveValidation
+    +pause()
+    +resume()
+    +outcome() : GameOutcome
+    +onStateChanged(change : StateChange<TState>)
+    +save() : SavedGame
+  }
+  interface IIntentTranslator<TMove, TState> << (●,#2F6DB5) interface >> #DCEBFA {
+    --
+    +toMove(intent : PlayerIntent, state : TState) : TMove [0..1]
+  }
+  interface ISessionPresenter<TCell, TState> << (●,#2F6DB5) interface >> #DCEBFA {
+    --
+    +present(state : TState, phase : PhaseKind) : SessionView
+  }
+  interface IStateCodec<TState> << (●,#2F6DB5) interface >> #DCEBFA {
+    --
+    +encode(state : TState) : String
+    +decode(payload : String) : TState
+  }
+}
+package "hexablock_adapters / levels" {
+  class LevelDto << (●,#2F6DB5) DTO >> #DCEBFA {
+    +id : String {readOnly}
+    +gameId : String {readOnly}
+    +number : int {readOnly}
+    +version : int {readOnly}
+    +difficulty : int {readOnly}
+    +data : Map<String, Object?> {readOnly}
+    --
+  }
+  interface ILevelDtoSource << (●,#2F6DB5) interface >> #DCEBFA {
+    --
+    +dtoFor(levelId : LevelId) : Future<LevelDto>
+  }
+  class LocalLevelRepository << (●,#2F6DB5) >> #DCEBFA {
+    -assets : IAssetReader {readOnly}
+    -database : SqliteDatabase {readOnly}
+    -headers : LevelHeaderMapper {readOnly}
+    --
+    +catalogOf(gameId : GameId) : Future<LevelCatalog>
+    +storeDownloaded(levels : List<DownloadedLevel>) : Future<void>
+    +dtoFor(levelId : LevelId) : Future<LevelDto>
+  }
+  class LevelHeaderMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    --
+    +toHeader(dto : LevelDto) : LevelHeader
+    +toDownloaded(dto : LevelDto) : DownloadedLevel
+  }
+  interface IAssetReader << (●,#2F6DB5) interface >> #DCEBFA {
+    --
+    +readText(path : String) : Future<String>
+  }
+  class LinesCatalogMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    -assets : IAssetReader {readOnly}
+    -topology : ITopology {readOnly}
+    --
+    +load() : Future<PieceCatalog>
+  }
+}
+package "hexablock_adapters / persistence" {
+  class SqliteProgressRepository << (●,#2F6DB5) >> #DCEBFA {
+    -database : SqliteDatabase {readOnly}
+    -mapper : ProgressMapper {readOnly}
+    --
+    +bestOf(gameId : GameId, levelId : LevelId [0..1]) : Future<ProgressRecord?>
+    +save(record : ProgressRecord) : Future<void>
+    +allOf(gameId : GameId) : Future<List<ProgressRecord>>
+    +unsynced() : Future<List<ProgressRecord>>
+    +markSynced(records : List<ProgressRecord>) : Future<void>
+  }
+  class SqliteSavedGameRepository << (●,#2F6DB5) >> #DCEBFA {
+    -database : SqliteDatabase {readOnly}
+    --
+    +save(game : SavedGame) : Future<void>
+    +load(gameId : GameId) : Future<SavedGame?>
+    +discard(gameId : GameId) : Future<void>
+  }
+  class SqlitePreferencesRepository << (●,#2F6DB5) >> #DCEBFA {
+    -database : SqliteDatabase {readOnly}
+    --
+    +load() : Future<Preferences>
+    +save(preferences : Preferences) : Future<void>
+  }
+  class SecureSessionStore << (●,#2F6DB5) >> #DCEBFA {
+    -storage : SecureStorage {readOnly}
+    --
+    +current() : Future<AuthSession?>
+    +keep(session : AuthSession) : Future<void>
+    +clear() : Future<void>
+  }
+  class ProgressMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    --
+    +toDto(record : ProgressRecord) : ProgressDto
+    +toRecord(dto : ProgressDto) : ProgressRecord
+  }
+  class ProgressDto << (●,#2F6DB5) DTO >> #DCEBFA {
+    +gameId : String {readOnly}
+    +levelId : String [0..1] {readOnly}
+    +score : int [0..1] {readOnly}
+    +stars : int [0..1] {readOnly}
+    +moves : int [0..1] {readOnly}
+    +timeSeconds : int [0..1] {readOnly}
+    +achievedAt : String {readOnly}
+    --
+  }
+}
+package "hexablock_adapters / remote" {
+  class HttpProgressGateway << (●,#2F6DB5) >> #DCEBFA {
+    -client : Client {readOnly}
+    -baseUrl : Uri {readOnly}
+    -mapper : ProgressMapper {readOnly}
+    --
+    +push(records : List<ProgressRecord>, session : AuthSession) : Future<void>
+    +pull(session : AuthSession) : Future<List<ProgressRecord>>
+  }
+  class HttpLeaderboardGateway << (●,#2F6DB5) >> #DCEBFA {
+    -client : Client {readOnly}
+    -baseUrl : Uri {readOnly}
+    -mapper : LeaderboardMapper {readOnly}
+    --
+    +fetch(gameId : GameId, levelId : LevelId [0..1]) : Future<List<LeaderboardEntry>>
+  }
+  class LeaderboardMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    --
+    +toEntry(dto : LeaderboardEntryDto) : LeaderboardEntry
+  }
+  class LeaderboardEntryDto << (●,#2F6DB5) DTO >> #DCEBFA {
+    +position : int {readOnly}
+    +userId : String {readOnly}
+    +displayName : String {readOnly}
+    +result : ProgressDto {readOnly}
+    --
+  }
+  class HttpAccountGateway << (●,#2F6DB5) >> #DCEBFA {
+    -client : Client {readOnly}
+    -baseUrl : Uri {readOnly}
+    --
+    +register(credentials : Credentials) : Future<AuthSession>
+    +signIn(credentials : Credentials) : Future<AuthSession>
+  }
+  class HttpLevelGateway << (●,#2F6DB5) >> #DCEBFA {
+    -client : Client {readOnly}
+    -baseUrl : Uri {readOnly}
+    -headers : LevelHeaderMapper {readOnly}
+    --
+    +fetchChanged(gameId : GameId, known : LevelCatalog) : Future<List<DownloadedLevel>>
+  }
+}
+package "hexablock_adapters / system" {
+  class SystemClock << (●,#2F6DB5) >> #DCEBFA {
+    --
+    +now() : DateTime
+  }
+  class SecureSeedSource << (●,#2F6DB5) >> #DCEBFA {
+    --
+    +newSeed() : Seed
+  }
+}
+package "hexablock_adapters / audio" {
+  class SoundCueMap << (●,#2F6DB5) >> #DCEBFA {
+    -cues : Map<EventKind, SoundCue> {readOnly}
+    --
+    +cueFor(kind : EventKind) : SoundCue [0..1]
+    +with(kind : EventKind, cue : SoundCue) : SoundCueMap
+  }
+  class SoundCue << (●,#2F6DB5) Value Object >> #DCEBFA {
+    +asset : String {readOnly}
+    --
+  }
+}
+package "hexablock_adapters / presentation" {
+  class HomeViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA {
+    -registry : VariantRegistry {readOnly}
+    +/games : List<VariantTexts> {readOnly}
+    --
+    +open(gameId : GameId)
+  }
+  class LevelSelectViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA {
+    -listLevels : ListLevelsUseCase {readOnly}
+    +/levels : List<LevelAccess> {readOnly}
+    --
+    +load(gameId : GameId) : Future<void>
+  }
+  class GameViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA {
+    -startGame : StartGameUseCase {readOnly}
+    -applyMove : ApplyMoveUseCase {readOnly}
+    -undoMove : UndoMoveUseCase {readOnly}
+    -redoMove : RedoMoveUseCase {readOnly}
+    -pauseGame : PauseGameUseCase {readOnly}
+    -resumeGame : ResumeGameUseCase {readOnly}
+    -saveProgress : SaveProgressUseCase {readOnly}
+    -audio : IAudioOutput {readOnly}
+    -session : PlayableSession [0..1]
+    +/view : SessionView [0..1] {readOnly}
+    +/canUndo : bool {readOnly}
+    +/canRedo : bool {readOnly}
+    +/showsTimer : bool {readOnly}
+    +/hidesBoard : bool {readOnly}
+    --
+    +start(request : StartGameRequest) : Future<void>
+    +onIntent(intent : PlayerIntent)
+    +onUndo()
+    +onRedo()
+    +onPause()
+    +onResume()
+  }
+  class ResultViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA {
+    +/result : SaveProgressResult [0..1] {readOnly}
+    +/won : bool {readOnly}
+    --
+    +retry()
+  }
+  class LeaderboardViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA {
+    -getLeaderboard : GetLeaderboardUseCase {readOnly}
+    +/entries : List<LeaderboardEntry> {readOnly}
+    --
+    +load(gameId : GameId, levelId : LevelId [0..1]) : Future<void>
+  }
+  class SettingsViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA {
+    -getPreferences : GetPreferencesUseCase {readOnly}
+    -updatePreferences : UpdatePreferencesUseCase {readOnly}
+    +/preferences : Preferences [0..1] {readOnly}
+    --
+    +load() : Future<void>
+    +changeMusic(on : bool) : Future<void>
+    +changeEffects(on : bool) : Future<void>
+    +changeLanguage(language : LanguageCode) : Future<void>
+  }
+  class AccountViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA {
+    -register : RegisterUseCase {readOnly}
+    -signIn : SignInUseCase {readOnly}
+    -signOut : SignOutUseCase {readOnly}
+    -syncProgress : SyncProgressUseCase {readOnly}
+    +/user : UserId [0..1] {readOnly}
+    --
+    +submitRegister(credentials : Credentials) : Future<void>
+    +submitSignIn(credentials : Credentials) : Future<void>
+    +submitSignOut() : Future<void>
+  }
+}
+package "hexablock_application / variants" {
+  interface PlayableSession << (■,#7E57C2) interface >> #ECE2F7
+  interface ISaveableSession << (■,#7E57C2) interface >> #ECE2F7
+  class VariantRegistry << (■,#7E57C2) >> #ECE2F7
+}
+package "hexablock_engine / core/events" {
+  interface IStateListener<TState> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/engine" {
+  class GameEngine<TCell, TMove, TState> << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_application / session" {
+  class SessionEffect << (■,#7E57C2) Value Object >> #ECE2F7
+  class ProgressRecord << (■,#7E57C2) Value Object >> #ECE2F7
+  class LeaderboardEntry << (■,#7E57C2) Value Object >> #ECE2F7
+}
+package "hexablock_application / ports/output" {
+  interface ILevelRepository << (►,#2E8B57) interface >> #DDF2E1
+  interface IProgressRepository << (►,#2E8B57) interface >> #DDF2E1
+  interface ISavedGameRepository << (►,#2E8B57) interface >> #DDF2E1
+  interface IPreferencesRepository << (►,#2E8B57) interface >> #DDF2E1
+  interface ISessionStore << (►,#2E8B57) interface >> #DDF2E1
+  interface IProgressGateway << (►,#2E8B57) interface >> #DDF2E1
+  interface ILeaderboardGateway << (►,#2E8B57) interface >> #DDF2E1
+  interface IAccountGateway << (►,#2E8B57) interface >> #DDF2E1
+  interface ILevelGateway << (►,#2E8B57) interface >> #DDF2E1
+  interface ISeedSource << (►,#2E8B57) interface >> #DDF2E1
+  interface IAudioOutput << (►,#2E8B57) interface >> #DDF2E1
+}
+package "hexablock_engine / core/levels" {
+  class LevelHeader << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / variants/hexa_lines" {
+  class PieceCatalog << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/time" {
+  interface Clock << (►,#2E8B57) interface >> #DDF2E1
+}
+package "hexablock_application / ports/input" {
+  interface ListLevelsUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface StartGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface ApplyMoveUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface UndoMoveUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface RedoMoveUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface PauseGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface ResumeGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface SaveProgressUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface GetLeaderboardUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface GetPreferencesUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface UpdatePreferencesUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface RegisterUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface SignInUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface SignOutUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+  interface SyncProgressUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1
+}
+
+hide PlayableSession members
+hide IStateListener members
+hide ISaveableSession members
+hide GameEngine members
+hide SessionEffect members
+hide ILevelRepository members
+hide LevelHeader members
+hide PieceCatalog members
+hide IProgressRepository members
+hide ISavedGameRepository members
+hide IPreferencesRepository members
+hide ISessionStore members
+hide ProgressRecord members
+hide IProgressGateway members
+hide ILeaderboardGateway members
+hide LeaderboardEntry members
+hide IAccountGateway members
+hide ILevelGateway members
+hide Clock members
+hide ISeedSource members
+hide VariantRegistry members
+hide ListLevelsUseCase members
+hide StartGameUseCase members
+hide ApplyMoveUseCase members
+hide UndoMoveUseCase members
+hide RedoMoveUseCase members
+hide PauseGameUseCase members
+hide ResumeGameUseCase members
+hide SaveProgressUseCase members
+hide IAudioOutput members
+hide GetLeaderboardUseCase members
+hide GetPreferencesUseCase members
+hide UpdatePreferencesUseCase members
+hide RegisterUseCase members
+hide SignInUseCase members
+hide SignOutUseCase members
+hide SyncProgressUseCase members
+GameSessionAdapter ..|> PlayableSession
+GameSessionAdapter ..|> IStateListener
+GameSessionAdapter ..|> ISaveableSession
+GameSessionAdapter --> "1" GameEngine : engine
+GameSessionAdapter --> "1" IIntentTranslator : translator
+GameSessionAdapter --> "1" ISessionPresenter : presenter
+GameSessionAdapter --> "0..1" IStateCodec : codec
+GameSessionAdapter ..> SessionEffect : <<create>>
+LocalLevelRepository ..|> ILevelRepository
+LocalLevelRepository ..|> ILevelDtoSource
+LocalLevelRepository --> "1" IAssetReader : assets
+LocalLevelRepository --> "1" LevelHeaderMapper : headers
+LevelHeaderMapper ..> LevelDto : <<use>>
+LevelHeaderMapper ..> LevelHeader : <<create>>
+LinesCatalogMapper --> "1" IAssetReader : assets
+LinesCatalogMapper ..> PieceCatalog : <<create>>
+SqliteProgressRepository ..|> IProgressRepository
+SqliteProgressRepository --> "1" ProgressMapper : mapper
+SqliteSavedGameRepository ..|> ISavedGameRepository
+SqlitePreferencesRepository ..|> IPreferencesRepository
+SecureSessionStore ..|> ISessionStore
+ProgressMapper ..> ProgressDto : <<create>>
+ProgressMapper ..> ProgressRecord : <<create>>
+HttpProgressGateway ..|> IProgressGateway
+HttpProgressGateway --> "1" ProgressMapper : mapper
+HttpLeaderboardGateway ..|> ILeaderboardGateway
+HttpLeaderboardGateway --> "1" LeaderboardMapper : mapper
+LeaderboardMapper ..> LeaderboardEntryDto : <<use>>
+LeaderboardMapper ..> LeaderboardEntry : <<create>>
+HttpAccountGateway ..|> IAccountGateway
+HttpLevelGateway ..|> ILevelGateway
+HttpLevelGateway --> "1" LevelHeaderMapper : headers
+SystemClock ..|> Clock
+SecureSeedSource ..|> ISeedSource
+SoundCueMap o--> "0..*" SoundCue : cues
+HomeViewModel --> "1" VariantRegistry : registry
+LevelSelectViewModel --> "1" ListLevelsUseCase : listLevels
+GameViewModel --> "1" StartGameUseCase : startGame
+GameViewModel --> "1" ApplyMoveUseCase : applyMove
+GameViewModel --> "1" UndoMoveUseCase : undoMove
+GameViewModel --> "1" RedoMoveUseCase : redoMove
+GameViewModel --> "1" PauseGameUseCase : pauseGame
+GameViewModel --> "1" ResumeGameUseCase : resumeGame
+GameViewModel --> "1" SaveProgressUseCase : saveProgress
+GameViewModel --> "1" IAudioOutput : audio
+LeaderboardViewModel --> "1" GetLeaderboardUseCase : getLeaderboard
+SettingsViewModel --> "1" GetPreferencesUseCase : getPreferences
+SettingsViewModel --> "1" UpdatePreferencesUseCase : updatePreferences
+AccountViewModel --> "1" RegisterUseCase : register
+AccountViewModel --> "1" SignInUseCase : signIn
+AccountViewModel --> "1" SignOutUseCase : signOut
+AccountViewModel --> "1" SyncProgressUseCase : syncProgress
+
+note right of GameSessionAdapter : Adapter: adapter\nObserver: concrete observer
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

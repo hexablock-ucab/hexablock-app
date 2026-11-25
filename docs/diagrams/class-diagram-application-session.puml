@@ -1,0 +1,277 @@
+@startuml class-diagram-application-session
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Use cases — variant contract and neutral session data (hexablock_application)
+
+package "hexablock_application / variants" {
+  interface VariantModule << (■,#7E57C2) interface >> #ECE2F7 {
+    +gameId : GameId {readOnly}
+    +texts : VariantTexts {readOnly}
+    +resumable : IResumableVariant [0..1] {readOnly}
+    --
+    +startSession(request : SessionRequest) : Future<PlayableSession>
+  }
+  interface IResumableVariant << (■,#7E57C2) interface >> #ECE2F7 {
+    --
+    +resumeSession(saved : SavedGame) : PlayableSession
+  }
+  class VariantRegistry << (■,#7E57C2) >> #ECE2F7 {
+    -modules : Map<GameId, VariantModule>
+    --
+    +register(module : VariantModule)
+    +moduleFor(gameId : GameId) : VariantModule
+    +all() : List<VariantModule>
+  }
+  class VariantTexts << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +nameKey : String {readOnly}
+    +rulesKey : String {readOnly}
+    --
+  }
+  interface PlayableSession << (■,#7E57C2) interface >> #ECE2F7 {
+    +gameId : GameId {readOnly}
+    +levelId : LevelId [0..1] {readOnly}
+    +/view : SessionView {readOnly}
+    +capabilities : CapabilitySet {readOnly}
+    +progressModel : IProgressModel {readOnly}
+    +saving : ISaveableSession [0..1] {readOnly}
+    +updates : Stream<SessionUpdate> {readOnly}
+    --
+    +submit(intent : PlayerIntent) : MoveValidation
+    +pause()
+    +resume()
+    +outcome() : GameOutcome
+  }
+  interface ISaveableSession << (■,#7E57C2) interface >> #ECE2F7 {
+    --
+    +save() : SavedGame
+  }
+  class StartGameRequest << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +gameId : GameId {readOnly}
+    +levelId : LevelId [0..1] {readOnly}
+    +seed : Seed [0..1] {readOnly}
+    --
+  }
+  class SessionRequest << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +gameId : GameId {readOnly}
+    +levelId : LevelId [0..1] {readOnly}
+    +seed : Seed {readOnly}
+    --
+  }
+}
+package "hexablock_application / session" {
+  abstract class PlayerIntent << (■,#7E57C2) >> #ECE2F7 {
+    --
+  }
+  class TapCell << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +at : Coordinate {readOnly}
+    --
+  }
+  class DropPiece << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +piece : PieceRef {readOnly}
+    +at : Coordinate {readOnly}
+    --
+  }
+  class Swipe << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +direction : Direction {readOnly}
+    --
+  }
+  class RotatePiece << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +piece : PieceRef {readOnly}
+    --
+  }
+  class LiftPiece << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +at : Coordinate {readOnly}
+    --
+  }
+  class PieceRef << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +index : int {readOnly}
+    --
+  }
+  class SessionView << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +board : BoardView {readOnly}
+    +tray : List<PieceView> {readOnly}
+    +stats : List<StatLine> {readOnly}
+    +phase : PhaseKind {readOnly}
+    --
+  }
+  class BoardView << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +topology : ITopology {readOnly}
+    +cells : List<CellView> {readOnly}
+    --
+  }
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +coordinate : Coordinate {readOnly}
+    +fills : List<ColorToken> {readOnly}
+    +label : String [0..1] {readOnly}
+    --
+  }
+  class ColorToken << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +key : String {readOnly}
+    --
+  }
+  class PieceView << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +ref : PieceRef {readOnly}
+    +cells : Set<Coordinate> {readOnly}
+    +fill : ColorToken {readOnly}
+    --
+  }
+  class StatLine << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +labelKey : String {readOnly}
+    +value : String {readOnly}
+    --
+  }
+  class SessionUpdate << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +view : SessionView {readOnly}
+    +effects : List<SessionEffect> {readOnly}
+    +phase : PhaseKind {readOnly}
+    --
+  }
+  class SessionEffect << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +kind : EventKind {readOnly}
+    +cells : List<Coordinate> {readOnly}
+    --
+  }
+  class SavedGame << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +gameId : GameId {readOnly}
+    +payload : String {readOnly}
+    --
+  }
+  class ProgressRecord << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +gameId : GameId {readOnly}
+    +levelId : LevelId [0..1] {readOnly}
+    +best : GameResult {readOnly}
+    +synced : bool {readOnly}
+    --
+  }
+  class SaveProgressResult << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +record : ProgressRecord {readOnly}
+    +isNewBest : bool {readOnly}
+    --
+  }
+  class DownloadedLevel << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +header : LevelHeader {readOnly}
+    +payload : String {readOnly}
+    --
+  }
+  class LeaderboardEntry << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +position : int {readOnly}
+    +userId : UserId {readOnly}
+    +displayName : String {readOnly}
+    +result : GameResult {readOnly}
+    --
+  }
+  class UserId << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +value : String {readOnly}
+    --
+  }
+  class Credentials << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +email : Email {readOnly}
+    +password : Password {readOnly}
+    --
+  }
+  class Email << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +value : String {readOnly}
+    --
+  }
+  class Password << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +value : String {readOnly}
+    --
+  }
+  class AuthSession << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +userId : UserId {readOnly}
+    +token : AccessToken {readOnly}
+    --
+  }
+  class AccessToken << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +value : String {readOnly}
+    --
+  }
+  class Preferences << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +musicOn : bool {readOnly}
+    +effectsOn : bool {readOnly}
+    +language : LanguageCode {readOnly}
+    --
+  }
+  class LanguageCode << (■,#7E57C2) Value Object >> #ECE2F7 {
+    +value : String {readOnly}
+    --
+  }
+}
+package "hexablock_engine / core/capabilities" {
+  class CapabilitySet << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/progress" {
+  interface IProgressModel << (▲,#D4A300) interface >> #FFF4C2
+  class GameResult << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/events" {
+  class EventKind << (▲,#D4A300) Value Object >> #FFF4C2
+}
+
+hide CapabilitySet members
+hide IProgressModel members
+hide EventKind members
+hide GameResult members
+VariantModule --> "1" VariantTexts : texts
+VariantModule --> "0..1" IResumableVariant : resumable
+VariantModule ..> PlayableSession : <<create>>
+VariantRegistry o--> "0..*" VariantModule : modules
+PlayableSession --> "1" CapabilitySet : capabilities
+PlayableSession --> "1" IProgressModel : progressModel
+PlayableSession --> "0..1" ISaveableSession : saving
+PlayableSession ..> SessionView : <<use>>
+PlayableSession ..> SessionUpdate : <<use>>
+PlayableSession ..> PlayerIntent : <<use>>
+TapCell --|> PlayerIntent
+DropPiece --|> PlayerIntent
+DropPiece --> "1" PieceRef : piece
+Swipe --|> PlayerIntent
+RotatePiece --|> PlayerIntent
+RotatePiece --> "1" PieceRef : piece
+LiftPiece --|> PlayerIntent
+SessionView *--> "1" BoardView : board
+SessionView *--> "0..*" PieceView : tray
+SessionView *--> "0..*" StatLine : stats
+BoardView *--> "1..*" CellView : cells
+CellView o--> "0..*" ColorToken : fills
+PieceView --> "1" PieceRef : ref
+SessionUpdate --> "1" SessionView : view
+SessionUpdate *--> "0..*" SessionEffect : effects
+SessionEffect --> "1" EventKind : kind
+ProgressRecord --> "1" GameResult : best
+SaveProgressResult --> "1" ProgressRecord : record
+LeaderboardEntry --> "1" UserId : userId
+LeaderboardEntry --> "1" GameResult : result
+Credentials --> "1" Email : email
+Credentials --> "1" Password : password
+AuthSession --> "1" UserId : userId
+AuthSession --> "1" AccessToken : token
+Preferences --> "1" LanguageCode : language
+
+note right of VariantRegistry : Single instance: single instance
+note right of PlayableSession : Adapter: target
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml
