@@ -2,7 +2,7 @@
 
 - **Status:** In progress
 - **Owner:** Eduard Velasco
-- **Branch / PR:** `docs/domain-model` · #—
+- **Branch / PR:** `docs/domain-model` · #24
 - **Requirements:** C-06, C-11a, C-19, C-20, C-21, C-22, C-32, NFR-01, NFR-02, NFR-04, NFR-05; rules of `docs/game-rules.md` (LINES-*, FIT-*, SORT-*, MERGE-*, SCORE-*, RANK-*, LEVEL-*); FR-16 (pending in the requirements baseline)
 - **ADRs:** 0003 (Proposed), 0004 (as accepted in PR #23; not changed here), 0006 (Proposed)
 
@@ -117,7 +117,7 @@ The model as designed on 2026-11-25, before any deliverable was written. Names a
 
 ## Next step
 
-Team review of the documents (fill "Team modifications" and the PR number in `AI_USAGE.md`); then the PR through the `ship` skill when the user asks.
+Team review of PR #24; fill "Team modifications" in `AI_USAGE.md` before merge.
 
 ## Log
 
@@ -187,3 +187,4 @@ Team review of the documents (fill "Team modifications" and the PR number in `AI
 - 2026-11-25 — Claude: `docs/adr/0004-grid-topology-extension-point.md` restored to `main` (this branch no longer touches it; PR #23 owns its text). Model: new `TopologyId` (VO, the `board.topology` name) and `TopologyRegistry` (engine, single instance: `register`, `isRegistered`, `resolve`); `ITopology` gains `+id`; `FitLevelBuilder` and `SortLevelBuilder` hold the registry, gain `withTopology(id)` and refuse an unregistered topology with `InvalidLevelError` (check `board.topology`); `FitLevelBuilder.withPiece` takes cells and builds the shapes in the resolved topology; `FitLevel` and `SortLevel` hold their topology, so `HexaFitFactory`, `HexaSortFactory` and their modules lose `-topology`; the level mappers hold the registry; `CompositionRoot` creates the registry and registers `HexTopology`; Lines and Merge (no level file) keep the topology of their mode injected. Doc §4 (new bullet "Where the topology comes from", changed "Changing the shape"), §10, §12, status line, glossary (+2 rows). Regenerated: 299 classes, 0 warnings, `-checkonly` OK, 13 PNGs. Explorer version 5. `AI_USAGE.md` updated (prompt, team modification, AI error).
 - 2026-11-25 — Verdict (`architecture-reviewer`, second pass): request changes. B1–B4, B6, B7 fixed; B5 partly. Blockers: (1) `LinesStateMapper`/`MergeStateMapper` cannot rebuild board and source; (2) "only the topology reads `Coordinate`" is false for the mappers; (3) `FitLevelBuilder` claims F5; (4) `BoardView` and `FitPiece` invariants not checkable by their constructor. Dependency rule, JSON/views/document consistency and the fifth variant confirmed.
 - 2026-11-25 — Claude: fixed the four blockers: the two codecs hold topology, random source factory and catalog/odds; `Coordinate` and §4 say the mappers copy the integers without interpreting them; `FitLevelBuilder` checks F1–F4 and gives unique ids (F5 stays with the API validator and a bundled-level test), `FitLevel` invariant traces F3 to FR-40; `BoardView` "no two cell views share a coordinate", `FitPiece` uniqueness moved to `FitLevel`. Non-blocking taken: `TopologyId` only "non-empty", mappers turn a refused name into `InvalidLevelError (board.topology)`, Sort levels only regular shape, §4 "One topology per build" (the composition root picks topology and renderer together), diagrams README no longer claims the three "cannot disagree". Regenerated (299 classes, 0 warnings, `-checkonly` OK, PNGs). Not re-reviewed a third time.
+- 2026-11-25 — Claude: committed (2 commits, through the `ship` steps), pushed `docs/domain-model` and opened PR #24.

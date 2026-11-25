@@ -111,7 +111,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 
 ### 2026-11-24 to 2026-11-25 — Domain model (D1) and class diagram (D7) (odd/tasks/0005-domain-model.md)
 
-- **Pull request:** TODO(team): number assigned when the PR opens.
+- **Pull request:** #24
 
 - **Author:** Eduard Velasco
 - **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5 for the main session; sub-agents `odd-explore`, `odd-verify` and `architecture-reviewer` with the models their agent files pin. PlantUML 1.2025.2 run locally with Java 21 to render the diagrams.
