@@ -1,8 +1,8 @@
 # 0001 — Bootstrap the Dart workspace on the quality gates
 
-- **Status:** In review — draft pull request open; S5 waits for CI
+- **Status:** In review — draft pull request #25, CI green
 - **Owner:** Eduard Velasco
-- **Branch / PR:** `chore/bootstrap-workspace` · #
+- **Branch / PR:** `chore/bootstrap-workspace` · #25 (stacked on #23)
 - **Requirements:** C-02, C-05, C-13, C-23, NFR-03
 - **ADRs:** 0002 (Flutter and Dart), 0003 (one package per layer), 0007 (local data and view models), 0008 (iOS from a Mac)
 
@@ -43,7 +43,7 @@ There is no code yet. Every later task needs the package layout, the dependency 
 - [x] **T1** (S1, S2) Create the workspace root `pubspec.yaml` and the four packages (`dart create -t package` for the layers, `flutter create` for `app/`).
 - [x] **T2** (S3) Shared `analysis_options.yaml` with strict casts, inference and raw types.
 - [x] **T3** (S4) One smoke test per package.
-- [ ] **T4** (S5) CI green on the pull request.
+- [x] **T4** (S5) CI green on the pull request.
 - [x] **T5** (S6) README *Getting Started* and *Running Tests*.
 - [x] **T6** `log-ai-usage` entry.
 
@@ -67,7 +67,7 @@ node tool/check-coverage.mjs
 | S2 | Application → engine; adapters → engine, application and `drift` (no Flutter, no app); `app/` → the three packages plus `flutter_secure_storage` and `shared_preferences` (ADR-0007). | Pass |
 | S3 | Temporary `packages/hexablock_engine/lib/probe.dart` importing `package:flutter/material.dart`: `check-architecture` exit 1 (`[domain-is-pure-dart] The domain must not depend on Flutter.`); `flutter analyze --fatal-infos --fatal-warnings` exit 1 (`depend_on_referenced_packages`). File removed. | Pass |
 | S4 | Four tests, one per package, all `should_…_when_…`, Arrange – Act – Assert; `check-test-names`: "Test names OK (4 tests checked)". | Pass |
-| S5 | Locally: format, analyze ("No issues found"), `run-tests` (4 ran, 0 failed), coverage, architecture (3 of 4 rules applied) and test names all exit 0. CI on the pull request: pending. | Pending CI |
+| S5 | Locally and in CI run 45682789103 on #25: `quality`, `commits` and `pr-title` pass; the log shows "Tests ran in total: 4", "Test names OK (4 tests checked)", "No issues found!" and the architecture rules OK. | Pass |
 | S6 | README *Getting Started*: Flutter 3.47.8, Dart 3.13.7; CI pins `flutter-version: 3.47.8`. | Pass |
 | S7 | `tool/run-tests.mjs` prints the tests that ran per package and in total. With `packages/hexablock_engine/test` moved away it exits 1: "has production code in lib/ but no *_test.dart file". It also fails when `flutter test` passes with zero tests. | Pass |
 
@@ -77,7 +77,7 @@ node tool/check-coverage.mjs
 
 ## Next step
 
-1. CI green on the draft pull request (S5); retarget it to `main` once #23 merges.
+1. Retarget #25 to `main` once #23 merges.
 2. Valentina does the early test installation on an iPhone from her Mac (ADR-0008) and records the result here.
 3. The team answers the open question and marks the pull request ready for review.
 
@@ -104,3 +104,4 @@ node tool/check-coverage.mjs
   - CI pins Flutter 3.47.8 so local and CI analysis agree.
   - `tool/check-test-names.mjs` read one line at a time and missed tests whose name `dart format` moves to the next line (2 of 4 checked). It now matches across lines; a probe with a bad name on its own line fails.
   - Verdicts: S1–S4, S6, S7 pass locally (evidence above); S5 waits for CI.
+- 2026-11-25 — Draft pull request #25 opened against `docs/accept-adrs`; CI run 45682789103 green (S5 pass). All specs pass.

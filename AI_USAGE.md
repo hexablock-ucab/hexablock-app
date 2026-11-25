@@ -179,7 +179,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 ### 2026-11-25 — App skeleton: pub workspace, composition root and CI (odd/tasks/0001-bootstrap-workspace.md)
 
 - **Author:** Eduard Velasco
-- **Pull request:** draft, stacked on #23
+- **Pull request:** #25 (draft, stacked on #23)
 - **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
 - **Task:** Create the Dart pub workspace of ADR-0003 (three layer packages and the Flutter app for Android and iOS), an empty composition root wired by hand (ADR-0007), the CI of every pull request and one smoke test per package (C-02, C-05, C-13, C-23, NFR-03).
 - **Prompts (faithful paraphrase; original in Spanish, verbatim in the task log):**
@@ -187,7 +187,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Result:** Root `pubspec.yaml` with the workspace; `packages/hexablock_engine`, `packages/hexablock_application`, `packages/hexablock_adapters` and `app/` (Flutter 3.47.8, Android and iOS); `CompositionRoot` and a placeholder home screen; `tool/run-tests.mjs`, which fails when a package with code runs no test (S7); CI pinned to Flutter 3.47.8; README *Getting Started* and *Running Tests*.
 - **Team modifications:** TODO(team): record what the team changes in review, including the answer to the open question on where the plugin-backed adapters live.
 - **Errors and corrections:** The test-name check written in the setup session read one line at a time, so it silently skipped two of the four tests after `dart format` wrapped their names. The AI detected it by comparing the count it printed with the number of tests that ran, and fixed it in this task.
-- **Verification:** Format, `flutter analyze --fatal-infos --fatal-warnings`, `node tool/run-tests.mjs` (4 tests ran), coverage, architecture and test-name checks, all exit 0; probes for S3 (a Flutter import in the engine fails both the analyzer and the architecture check) and S7 (a package with code and no tests fails the test gate). CI result: see the pull request.
+- **Verification:** Format, `flutter analyze --fatal-infos --fatal-warnings`, `node tool/run-tests.mjs` (4 tests ran), coverage, architecture and test-name checks, all exit 0; probes for S3 (a Flutter import in the engine fails both the analyzer and the architecture check) and S7 (a package with code and no tests fails the test gate). CI run 45682789103 on #25 green, with 4 tests reported.
 - **Lessons:** A quality gate should print what it checked; a count that does not match reality is how a silent gap shows up.
 
 ## Critical evaluation
