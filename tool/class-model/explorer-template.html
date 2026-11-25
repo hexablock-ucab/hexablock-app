@@ -1,0 +1,367 @@
+<title>HexaBlock Class Model</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{
+  --bg:#f6f5f1;--panel:#ffffff;--fg:#1d1f24;--muted:#5d6470;--line:#dcdad3;--chip:#efede7;--accent:#1f5fa8;
+  --dom:#fff2b8;--dom-ink:#8a6a00;--app:#e9ddf8;--app-ink:#5b3a99;--infra:#d9e8fa;--infra-ink:#25589a;--port-ink:#1f6e43;
+  --warn:#b4471a;--warn-bg:#fdeee6;--edge:#7b8190;--bind:#c2410c;--sel:#e11d48;--group:#f0eee8;--group-line:#cfcabd;--ok:#1f6e43;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15171b;--panel:#1d2025;--fg:#e8e9ec;--muted:#9aa1ad;--line:#30343c;--chip:#272b32;--accent:#7fb2ff;
+  --dom:#4a3f12;--dom-ink:#f5d466;--app:#3a2c55;--app-ink:#cdb4ff;--infra:#1f3552;--infra-ink:#9cc6ff;--port-ink:#8fe0ae;
+  --warn:#ff9e6b;--warn-bg:#3a2318;--edge:#8b92a1;--bind:#ff8a4c;--sel:#ff5c86;--group:#22262d;--group-line:#3d434d;--ok:#8fe0ae;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15171b;--panel:#1d2025;--fg:#e8e9ec;--muted:#9aa1ad;--line:#30343c;--chip:#272b32;--accent:#7fb2ff;
+  --dom:#4a3f12;--dom-ink:#f5d466;--app:#3a2c55;--app-ink:#cdb4ff;--infra:#1f3552;--infra-ink:#9cc6ff;--port-ink:#8fe0ae;
+  --warn:#ff9e6b;--warn-bg:#3a2318;--edge:#8b92a1;--bind:#ff8a4c;--sel:#ff5c86;--group:#22262d;--group-line:#3d434d;--ok:#8fe0ae;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
+.mono,code{font-family:ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;font-size:12.5px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px;margin-bottom:10px}
+header p{margin:0;color:var(--muted)}
+.stats{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.stats b{color:var(--fg);font-variant-numeric:tabular-nums}
+.controls{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-right:4px}
+.group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+input[type=search],select{font:inherit;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:7px;padding:6px 9px}
+input[type=search]{width:220px;max-width:100%}
+.chip{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
+.chip[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tabs button{font:inherit;font-size:13px;border:0;background:var(--panel);color:var(--fg);padding:6px 12px;cursor:pointer}
+.tabs button+button{border-left:1px solid var(--line)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--panel);font-weight:600}
+.btn{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:7px;padding:5px 10px;cursor:pointer}
+.btn:hover,.chip:hover{border-color:var(--accent)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:10px}
+#graphWrap{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;height:72vh;min-height:460px;overflow:hidden}
+#cy{position:absolute;inset:0}
+#graphNote{position:absolute;left:10px;bottom:8px;font-size:12px;color:var(--muted);background:var(--panel);padding:3px 7px;border-radius:6px;pointer-events:none;max-width:calc(100% - 20px)}
+#listWrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;height:72vh;min-height:460px;overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;background:var(--panel);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:pointer;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--chip)}
+tbody tr.on{outline:2px solid var(--sel);outline-offset:-2px}
+aside{display:flex;flex-direction:column;gap:10px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+#detail{max-height:72vh;overflow:auto}
+#detail h2{font-size:17px;overflow-wrap:anywhere}
+.tag{display:inline-block;font-size:11.5px;border-radius:5px;padding:1px 7px;margin:2px 4px 2px 0;background:var(--chip);color:var(--fg)}
+.tag.domain{background:var(--dom);color:var(--dom-ink)}.tag.application{background:var(--app);color:var(--app-ink)}
+.tag.adapters,.tag.frameworks{background:var(--infra);color:var(--infra-ink)}
+.sec{margin-top:10px}
+.sec h3{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;font-weight:600}
+.sec ul{margin:0;padding:0;list-style:none}
+.sec li{padding:2px 0;border-bottom:1px dashed var(--line);overflow-wrap:anywhere}
+.sec li:last-child{border-bottom:0}
+.sum{line-height:1.5;margin:8px 0 0;max-width:65ch}
+.inv{background:var(--chip);border-radius:6px;padding:6px 8px;margin-top:8px;font-size:13px}
+a.cls{color:var(--accent);cursor:pointer;text-decoration:none;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+a.cls:hover{text-decoration:underline}
+.ro,.empty{color:var(--muted)}
+#warnings h2{font-size:15px;display:flex;justify-content:space-between}
+#warnList{list-style:none;margin:8px 0 0;padding:0;max-height:24vh;overflow:auto}
+#warnList li{background:var(--warn-bg);border-left:3px solid var(--warn);border-radius:5px;padding:5px 8px;margin-bottom:5px;font-size:13px}
+.ok{color:var(--ok)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);margin-top:8px}
+.sw{display:inline-block;width:22px;height:0;border-top:2px solid var(--edge);vertical-align:middle;margin-right:4px}
+.sw.d{border-top-style:dashed}.sw.b{border-top:2px dashed var(--bind)}
+@media (max-width:900px){main{grid-template-columns:minmax(0,1fr)}#graphWrap,#listWrap{height:60vh}#detail{max-height:none}}
+</style>
+<!--BODY-->
+<header>
+  <h1>HexaBlock Class Model</h1>
+  <p>Generic engine, four variants and the layers around them, from <code>docs/diagrams/class-model.json</code>.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<section class="controls" aria-label="View and filters">
+  <div class="tabs" role="tablist" aria-label="View">
+    <button role="tab" data-view="graph" aria-selected="true">Classes</button>
+    <button role="tab" data-view="packages" aria-selected="false">Packages</button>
+    <button role="tab" data-view="list" aria-selected="false">List</button>
+  </div>
+  <div class="group"><input type="search" id="q" placeholder="Search class, member, trace…" aria-label="Search"></div>
+  <div class="group" id="layers"><span class="lbl">Layer</span></div>
+  <div class="group" id="scopes"><span class="lbl">Scope</span></div>
+  <div class="group"><label class="lbl" for="pattern">Pattern</label><select id="pattern"><option value="">All</option></select></div>
+  <div class="group" id="rels"><span class="lbl">Relations</span></div>
+  <div class="group"><button class="btn" id="fit">Fit view</button><button class="btn" id="all">Show everything</button><button class="btn" id="reset">Generic engine</button></div>
+</section>
+
+<main>
+  <div>
+    <div id="graphWrap"><div id="cy" role="img" aria-label="Class graph"></div><div id="graphNote"></div></div>
+    <div id="listWrap" hidden><table><thead><tr>
+      <th data-k="name">Class</th><th data-k="kind">Kind</th><th data-k="layer">Layer</th><th data-k="where">Package / folder</th><th data-k="scope">Scope</th><th data-k="patterns">Patterns</th><th data-k="traces">Traces</th>
+    </tr></thead><tbody id="rows"></tbody></table></div>
+  </div>
+  <aside>
+    <div class="card" id="detail"><p class="empty">Click a class to see its attributes, operations, layer, pattern and traces. In the graph, the view centers on the class and its direct relations. In Packages, click a package to expand it into its classes.</p></div>
+    <div class="card" id="warnings"><h2>Warnings <span id="warnCount" class="mono"></span></h2><ul id="warnList"></ul></div>
+  </aside>
+</main>
+<div class="legend" aria-label="Legend">
+  <span><i class="sw"></i>association, aggregation, composition, generalization</span><span><i class="sw d"></i>realization, dependency</span><span><i class="sw b"></i>«bind»</span>
+  <span>▲ domain · ■ application · ◄ input port · ► output port · ● adapters and frameworks · dashed border: interface or abstract</span>
+</div>
+
+<script>/*CYTOSCAPE*/</script>
+<script type="application/json" id="model">/*MODEL*/</script>
+<script>
+(function(){
+'use strict';
+const LAYERS=[['domain','▲','Domain'],['application','■','Application'],['adapters','●','Adapters'],['frameworks','●','Frameworks']];
+const LORDER={domain:0,application:1,adapters:2,frameworks:3};
+const SCOPES=['generic','hexa-lines','hexa-fit','hexa-sort','hexa-merge'];
+const RELS=['generalization','realization','association','aggregation','composition','dependency','bind'];
+const SPANISH=/(tablero|celda|pieza|ficha|jugada|movimiento|partida|juego|nivel|puntaje|estrella|pila|bandeja|linea|reloj|semilla|estado|evento|regla|fabrica|usuario|progreso|tiempo|deshacer|rehacer|pausa|ganad|perdid|[áéíóúñ])/i;
+const START={layers:['domain'],scopes:['generic']};
+const st={view:'graph',layers:new Set(START.layers),scopes:new Set(START.scopes),rels:new Set(RELS.filter(r=>r!=='dependency')),pattern:'',q:'',sel:null,expanded:new Set(),sort:['layer',1]};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tok=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const mark=c=>c.port==='input'?'◄':c.port==='output'?'►':{domain:'▲',application:'■'}[c.layer]||'●';
+const role=r=>(r||'').replace(/([a-z])([A-Z])/g,'$1 $2').toLowerCase();
+const sig=c=>c.name+(c.typeParameters.length?'<'+c.typeParameters.map(p=>p.name+(p.bound?' extends '+p.bound:'')).join(', ')+'>':'');
+const vis=v=>({public:'+',private:'-',protected:'#',package:'~'}[v]);
+const folderKey=c=>c.package+' / '+c.folder;
+const pkgKey=c=>c.package+' · '+(c.scope==='generic'?'generic':c.scope);
+let model,byName,cy=null;
+
+function warnings(){
+  const out=[],realized=new Set(),bound=new Set();
+  model.classes.forEach(c=>c.relations.forEach(r=>{if(r.type==='realization'||(r.type==='generalization'&&c.kind==='interface'))realized.add(r.target);if(r.type==='bind')bound.add(c.scope)}));
+  model.classes.forEach(c=>{
+    if(!c.traces.length)out.push(['class without requirement',c.name,'No requirement or rule traces this class.']);
+    if(c.stereotypes.includes('Value Object')){const bad=c.operations.filter(o=>/^set[A-Z]/.test(o.name)).map(o=>o.name+'()');if(bad.length)out.push(['value object with setter',c.name,bad.join(', ')])}
+    c.relations.forEach(r=>{const t=byName.get(r.target);if(t&&LORDER[c.layer]<LORDER[t.layer])out.push(['inner → outer dependency',c.name,c.layer+' depends on '+t.layer+': '+r.type+' to '+t.name])});
+    if(c.kind==='interface'&&!realized.has(c.name))out.push(['interface without implementation',c.name,'Nothing realizes it.']);
+    const es=[c.name,...c.attributes.map(a=>a.name),...c.operations.map(o=>o.name)].filter(w=>SPANISH.test(w)&&!/Color/i.test(w));
+    if(es.length)out.push(['Spanish name',c.name,es.join(', ')]);
+  });
+  SCOPES.filter(s=>s!=='generic'&&!bound.has(s)).forEach(s=>out.push(['variant without «bind»',s,'No class of this variant binds GameEngine.']));
+  return out;
+}
+
+function visible(c){
+  if(!st.layers.has(c.layer)||!st.scopes.has(c.scope))return false;
+  if(st.pattern&&!c.patterns.some(p=>p.pattern===st.pattern))return false;
+  if(st.q){const q=st.q.toLowerCase();const hay=[c.name,c.summary||'',c.folder,...c.traces,...c.attributes.map(a=>a.name+' '+a.type),...c.operations.map(o=>o.name),...c.patterns.map(p=>p.pattern)].join(' ').toLowerCase();if(!hay.includes(q))return false}
+  return true;
+}
+
+// ---------------------------------------------------------------- deterministic layout
+// Groups go in rows by layer; inside an open group, classes go in a grid. No physics, so the
+// layout never drifts off screen and is the same on every open.
+const NODE_H=30,GAP_X=18,GAP_Y=16,PAD=22,HEAD=26,ROW_GAP=60,COL_GAP=40;
+const textW=s=>Math.max(70,s.length*7.1+22);
+function placeGroups(groups){ // groups: [{key,layer,open,classes,label}]
+  const pos=new Map(),boxes=[];let y=0;
+  const size=g=>{if(!g.open)return [Math.max(190,textW(g.label)),64];const cw=Math.min(300,Math.max(...g.classes.map(c=>textW(mark(c)+" "+c.name))))+GAP_X;const cols=Math.max(1,Math.min(g.classes.length,Math.ceil(Math.sqrt(g.classes.length*1.4))));return [cols*cw+PAD*2,Math.ceil(g.classes.length/cols)*(NODE_H+GAP_Y)+PAD*2+HEAD]};
+  // Row width follows the panel shape, so Fit view fills it instead of a thin strip.
+  const el=document.getElementById("cy"),ratio=Math.max(.8,(el.clientWidth||900)/(el.clientHeight||600));
+  const area=groups.reduce((a,g)=>{const [w,h]=size(g);return a+(w+COL_GAP)*(h+ROW_GAP)},0);
+  const MAX_ROW=Math.max(...groups.map(g=>size(g)[0]),Math.sqrt(area*ratio));
+  for(const L of LAYERS.map(l=>l[0])){
+    const row=groups.filter(g=>g.layer===L);if(!row.length)continue;
+    let x=0,rowH=0,line=[];
+    const flush=()=>{line.forEach(b=>{b.y=y;boxes.push(b)});y+=rowH+ROW_GAP;x=0;rowH=0;line=[]};
+    for(const g of row){
+      let w,h,cells=[];
+      if(g.open){
+        const cw=Math.min(300,Math.max(...g.classes.map(c=>textW(mark(c)+' '+c.name))))+GAP_X;
+        const cols=Math.max(1,Math.min(g.classes.length,Math.ceil(Math.sqrt(g.classes.length*1.4))));
+        const rows=Math.ceil(g.classes.length/cols);
+        w=cols*cw+PAD*2-GAP_X;h=rows*(NODE_H+GAP_Y)-GAP_Y+PAD*2+HEAD;
+        g.classes.forEach((c,i)=>cells.push([c.name,PAD+(i%cols)*cw+cw/2-GAP_X/2,HEAD+PAD+Math.floor(i/cols)*(NODE_H+GAP_Y)+NODE_H/2]));
+      }else{w=Math.max(190,textW(g.label));h=64}
+      if(x>0&&x+w>MAX_ROW)flush();
+      line.push({g,x,w,h,cells});x+=w+COL_GAP;rowH=Math.max(rowH,h);
+    }
+    flush();
+  }
+  for(const b of boxes){
+    if(b.g.open)b.cells.forEach(([n,cx,cy])=>pos.set(n,{x:b.x+cx,y:b.y+cy}));
+    else pos.set('G:'+b.g.key,{x:b.x+b.w/2,y:b.y+b.h/2});
+  }
+  return pos;
+}
+
+function buildElements(){
+  const vc=model.classes.filter(visible);
+  const byKey=new Map();
+  const keyOf=st.view==='packages'?pkgKey:folderKey;
+  for(const c of vc){const k=keyOf(c);if(!byKey.has(k))byKey.set(k,{key:k,layer:c.layer,classes:[],label:''});byKey.get(k).classes.push(c)}
+  const groups=[...byKey.values()].sort((a,b)=>LORDER[a.layer]-LORDER[b.layer]||SCOPES.indexOf(a.classes[0].scope)-SCOPES.indexOf(b.classes[0].scope)||a.key.localeCompare(b.key));
+  groups.forEach(g=>{g.open=st.view==='graph'||st.expanded.has(g.key);g.label=g.key+'\n'+g.classes.length+(g.classes.length===1?' class':' classes')});
+  const pos=placeGroups(groups);
+  const els=[],nodeOf=new Map();
+  for(const g of groups){
+    const gid='G:'+g.key;
+    if(g.open){
+      els.push({group:'nodes',data:{id:gid,label:g.key,box:true,lk:g.layer}});
+      for(const c of g.classes){const label=mark(c)+' '+c.name;
+        els.push({group:'nodes',data:{id:c.name,label,parent:gid,lk:c.layer,w:Math.min(300,textW(label)),abs:['abstract','interface','sealed'].includes(c.kind)},position:pos.get(c.name)});
+        nodeOf.set(c.name,c.name)}
+    }else{
+      els.push({group:'nodes',data:{id:gid,label:g.label,pkg:true,lk:g.layer,w:Math.max(190,textW(g.key))},position:pos.get(gid)});
+      g.classes.forEach(c=>nodeOf.set(c.name,gid));
+    }
+  }
+  const agg=new Map();
+  for(const c of vc)c.relations.forEach((r,i)=>{
+    if(!st.rels.has(r.type))return;
+    const s=nodeOf.get(c.name),t=nodeOf.get(r.target);
+    if(!s||!t||s===t)return;
+    if(s===c.name&&t===r.target){els.push({group:'edges',data:{id:c.name+'#'+i,source:s,target:t,rt:r.type,label:r.type==='bind'?'«bind»':''}});return}
+    const k=s+'→'+t;const e=agg.get(k)||{s,t,n:0,types:new Set()};e.n++;e.types.add(r.type);agg.set(k,e);
+  });
+  for(const [k,e] of agg)els.push({group:'edges',data:{id:'A:'+k,source:e.s,target:e.t,rt:e.types.size===1?[...e.types][0]:'mixed',label:String(e.n),n:e.n,agg:true}});
+  return {els,count:vc.length,groups:groups.length};
+}
+
+function style(){
+  const fill={domain:tok('--dom'),application:tok('--app'),adapters:tok('--infra'),frameworks:tok('--infra')};
+  const ink={domain:tok('--dom-ink'),application:tok('--app-ink'),adapters:tok('--infra-ink'),frameworks:tok('--infra-ink')};
+  return [
+    {selector:'node',style:{'shape':'round-rectangle','width':'data(w)','height':NODE_H,'label':'data(label)','font-size':11.5,'font-family':'ui-monospace, Consolas, monospace','text-valign':'center','text-halign':'center','color':tok('--fg'),'border-width':1}},
+    ...Object.keys(fill).map(k=>({selector:`node[lk="${k}"]`,style:{'background-color':fill[k],'border-color':ink[k]}})),
+    {selector:'node[?abs]',style:{'border-style':'dashed','border-width':1.5}},
+    {selector:'node[?pkg]',style:{'height':64,'text-wrap':'wrap','font-size':13,'font-weight':600,'border-width':2,'font-family':'system-ui, sans-serif'}},
+    {selector:'node[?box]',style:{'shape':'round-rectangle','background-color':tok('--group'),'background-opacity':1,'border-color':tok('--group-line'),'label':'data(label)','text-valign':'top','text-halign':'center','font-size':12,'font-weight':600,'color':tok('--muted'),'font-family':'system-ui, sans-serif','padding':0}},
+    {selector:'edge',style:{'width':1.2,'curve-style':'bezier','line-color':tok('--edge'),'target-arrow-color':tok('--edge'),'source-arrow-color':tok('--edge'),'target-arrow-shape':'vee','arrow-scale':.9,'opacity':.7}},
+    {selector:'edge[rt="generalization"]',style:{'target-arrow-shape':'triangle','target-arrow-fill':'hollow','arrow-scale':1.3}},
+    {selector:'edge[rt="realization"]',style:{'line-style':'dashed','target-arrow-shape':'triangle','target-arrow-fill':'hollow','arrow-scale':1.3}},
+    {selector:'edge[rt="aggregation"]',style:{'source-arrow-shape':'diamond','source-arrow-fill':'hollow'}},
+    {selector:'edge[rt="composition"]',style:{'source-arrow-shape':'diamond','source-arrow-fill':'filled'}},
+    {selector:'edge[rt="dependency"],edge[rt="mixed"]',style:{'line-style':'dashed'}},
+    {selector:'edge[?agg]',style:{'label':'data(label)','font-size':11,'color':tok('--muted'),'text-background-color':tok('--panel'),'text-background-opacity':1,'text-background-padding':2,'width':'mapData(n, 1, 40, 1.2, 5)'}},
+    {selector:'edge[rt="bind"]',style:{'line-style':'dashed','line-color':tok('--bind'),'target-arrow-color':tok('--bind'),'width':2,'label':'data(label)','font-size':10,'color':tok('--bind'),'text-background-color':tok('--panel'),'text-background-opacity':1,'opacity':1}},
+    {selector:'.faded',style:{'opacity':.1}},
+    {selector:'node.hl',style:{'border-color':tok('--sel'),'border-width':3}},
+    {selector:'node.focus',style:{'border-color':tok('--sel'),'border-width':4}},
+    {selector:'edge.hl',style:{'line-color':tok('--sel'),'target-arrow-color':tok('--sel'),'source-arrow-color':tok('--sel'),'opacity':1,'width':2.2}},
+  ];
+}
+
+// Handle for browser tests driven through the DevTools protocol; the page itself never reads it.
+window.classExplorer={cy:()=>cy,state:()=>st};
+function render(){
+  const graph=st.view!=='list';
+  $('graphWrap').hidden=!graph;$('listWrap').hidden=graph;
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===st.view)));
+  if(!graph){renderList();return}
+  if(typeof cytoscape==='undefined'){$('graphNote').textContent='The graph library did not load; use the List view.';return}
+  const {els,count,groups}=buildElements();
+  if(!cy){
+    cy=cytoscape({container:$('cy'),elements:[],style:style(),layout:{name:'preset'},wheelSensitivity:.3,minZoom:.02,maxZoom:3,boxSelectionEnabled:false,autoungrabify:false});
+    cy.on('tap','node',e=>{const n=e.target;
+      if(n.data('pkg')){st.expanded.add(n.id().slice(2));render();focusGroup(n.id());return}
+      if(n.data('box')){if(st.view==='packages'){st.expanded.delete(n.id().slice(2));render()}return}
+      show(n.id())});
+    cy.on('tap',e=>{if(e.target===cy)clearFocus()});
+  }
+  cy.batch(()=>{cy.elements().remove();cy.add(els)});
+  cy.layout({name:'preset',fit:false}).run();
+  const hint=st.view==='packages'?' · click a package to open it, click its frame to close it':' · drag to pan, scroll to zoom';
+  $('graphNote').textContent=count?`${count} classes in ${groups} ${st.view==='packages'?'packages':'folders'}${hint}`:'No class matches the filters.';
+  if(st.sel&&cy.getElementById(st.sel).nonempty())focus(st.sel);else fit();
+}
+function fit(){if(cy)cy.fit(cy.elements(),30)}
+function clearFocus(){if(cy)cy.elements().removeClass('hl faded focus')}
+function focus(name){
+  const node=cy.getElementById(name);if(node.empty())return;
+  clearFocus();
+  const hood=node.closedNeighborhood();
+  cy.elements().not(hood).not(hood.parents()).addClass('faded');
+  hood.addClass('hl');node.addClass('focus');
+  cy.animate({fit:{eles:hood,padding:60}},{duration:300});
+}
+function focusGroup(id){const n=cy.getElementById(id);if(n.nonempty())cy.animate({fit:{eles:n.union(n.children()),padding:60}},{duration:300})}
+
+// ---------------------------------------------------------------- list view
+function renderList(){
+  const [k,dir]=st.sort;
+  const val=c=>({name:c.name,kind:c.kind+(c.stereotypes.length?' '+c.stereotypes.join(' '):''),layer:LORDER[c.layer]+c.layer,where:folderKey(c),scope:SCOPES.indexOf(c.scope)+c.scope,patterns:c.patterns.map(p=>p.pattern).join(', '),traces:c.traces.join(', ')}[k]);
+  const rows=model.classes.filter(visible).sort((a,b)=>String(val(a)).localeCompare(String(val(b)))*dir||a.name.localeCompare(b.name));
+  $('rows').innerHTML=rows.map(c=>`<tr data-go="${esc(c.name)}" class="${c.name===st.sel?'on':''}"><td class="mono">${esc(mark(c)+' '+sig(c))}</td><td>${esc(c.kind)}${c.stereotypes.filter(s=>s!=='interface').map(s=>' «'+esc(s)+'»').join('')}</td><td>${esc(c.layer)}${c.port?' · '+c.port+' port':''}</td><td class="mono">${esc(folderKey(c))}</td><td>${esc(c.scope)}</td><td>${esc(c.patterns.map(p=>p.pattern+' ('+role(p.role)+')').join(', '))}</td><td class="mono">${esc(c.traces.join(', '))}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No class matches the filters.</td></tr>';
+}
+
+// ---------------------------------------------------------------- detail
+function link(n){return byName.has(n)?`<a class="cls" data-go="${esc(n)}">${esc(n)}</a>`:`<span class="mono">${esc(n)}</span>`}
+function typeHtml(t){return esc(t).replace(/\b([A-Z][A-Za-z0-9]+)\b/g,m=>byName.has(m)?`<a class="cls" data-go="${m}">${m}</a>`:m)}
+function show(name){
+  const c=byName.get(name);if(!c)return;st.sel=name;
+  const incoming=[];model.classes.forEach(o=>o.relations.forEach(r=>{if(r.target===name)incoming.push([o.name,r])}));
+  const rel=r=>`${esc(r.type==='dependency'?'«'+r.label+'»':r.type)} ${r.bindings&&r.bindings.some(b=>b.parameter!==b.argument)?typeHtml(r.targetType):link(r.target)}${r.multiplicity?' <span class="ro">['+esc(r.multiplicity)+']</span>':''}${r.role?' <span class="ro">'+esc(r.role)+'</span>':''}`;
+  $('detail').innerHTML=`
+    <h2 class="mono">${esc(sig(c))}</h2>
+    <div style="margin-top:6px"><span class="tag ${c.layer}">${mark(c)} ${esc(c.layer)}${c.port?' · '+c.port+' port':''}</span><span class="tag">${esc(c.kind)}</span>${c.stereotypes.filter(s=>s!=='interface').map(s=>`<span class="tag">«${esc(s)}»</span>`).join('')}<span class="tag">${esc(c.scope)}</span><span class="tag mono">${esc(folderKey(c))}</span></div>
+    ${st.view==='list'?'<p style="margin:8px 0 0"><button class="btn" id="toGraph">Show in the class graph</button></p>':''}
+    ${c.summary?`<p class="sum">${esc(c.summary)}</p>`:''}
+    ${c.invariant?`<div class="inv"><b>Invariant.</b> ${esc(c.invariant)}</div>`:''}
+    <div class="sec"><h3>Patterns</h3>${c.patterns.length?c.patterns.map(p=>`<span class="tag">${esc(p.pattern)}: ${esc(role(p.role))}</span>`).join(''):'<span class="empty">None</span>'}</div>
+    <div class="sec"><h3>Traces</h3>${c.traces.map(t=>`<span class="tag mono">${esc(t)}</span>`).join('')||'<span class="empty">None</span>'}</div>
+    ${c.typeParameters.length?`<div class="sec"><h3>Type parameters</h3><ul>${c.typeParameters.map(p=>`<li class="mono">${esc(p.name)}${p.bound?' extends '+typeHtml(p.bound):''}${p.boundReason?`<div class="ro">${esc(p.boundReason)}</div>`:''}</li>`).join('')}</ul></div>`:''}
+    ${c.literals.length?`<div class="sec"><h3>Literals</h3><ul>${c.literals.map(l=>`<li class="mono">${esc(l)}</li>`).join('')}</ul></div>`:''}
+    <div class="sec"><h3>Attributes</h3>${c.attributes.length?`<ul>${c.attributes.map(a=>`<li class="mono">${vis(a.visibility)}${a.derived?'/':''}${esc(a.name)}: ${typeHtml(a.type)} ${a.readOnly?'<span class="ro">{readOnly}</span>':''}</li>`).join('')}</ul>`:'<span class="empty">None</span>'}</div>
+    <div class="sec"><h3>Operations</h3>${c.operations.length?`<ul>${c.operations.map(o=>`<li class="mono">${o.abstract?'<i>':''}${vis(o.visibility)}${esc(o.name)}(${o.parameters.map(p=>esc(p.name)+': '+typeHtml(p.type)).join(', ')})${o.returns!=='void'?': '+typeHtml(o.returns):''}${o.abstract?'</i>':''}</li>`).join('')}</ul>`:'<span class="empty">None</span>'}</div>
+    <div class="sec"><h3>Relations out</h3>${c.relations.length?`<ul>${c.relations.map(r=>`<li>${rel(r)}</li>`).join('')}</ul>`:'<span class="empty">None</span>'}</div>
+    <div class="sec"><h3>Relations in</h3>${incoming.length?`<ul>${incoming.map(([n,r])=>`<li>${link(n)} <span class="ro">${esc(r.type==='dependency'?'«'+r.label+'»':r.type)}</span></li>`).join('')}</ul>`:'<span class="empty">None</span>'}</div>`;
+  if(st.view==='list'){renderList();const b=$('toGraph');if(b)b.onclick=()=>{st.view='graph';reveal(c);render()};return}
+  if(!visible(c)){reveal(c);render();return}
+  if(st.view==='packages'&&!st.expanded.has(pkgKey(c))){st.expanded.add(pkgKey(c));render();return}
+  focus(name);
+}
+function reveal(c){
+  if(visible(c))return;
+  st.layers.add(c.layer);st.scopes.add(c.scope);
+  if(st.pattern&&!c.patterns.some(p=>p.pattern===st.pattern)){st.pattern='';$('pattern').value=''}
+  if(st.q&&!visible(c)){st.q='';$('q').value=''}
+  syncChips();
+}
+
+// ---------------------------------------------------------------- controls
+const chips=[];
+function chip(container,key,label,set){
+  const b=document.createElement('button');b.className='chip';b.textContent=label;
+  b.onclick=()=>{set.has(key)?set.delete(key):set.add(key);syncChips();render()};
+  chips.push([b,key,set]);container.appendChild(b);
+}
+function syncChips(){chips.forEach(([b,k,s])=>b.setAttribute('aria-pressed',String(s.has(k))))}
+
+function init(){
+  model=JSON.parse($('model').textContent);
+  byName=new Map(model.classes.map(c=>[c.name,c]));
+  const ws=warnings();
+  $('stats').innerHTML=`<span><b>${model.classes.length}</b> classes</span>${LAYERS.map(l=>`<span>${l[1]} <b>${model.classes.filter(c=>c.layer===l[0]).length}</b> ${l[2].toLowerCase()}</span>`).join('')}<span><b>${model.classes.reduce((n,c)=>n+c.relations.length,0)}</b> relations</span>`;
+  LAYERS.forEach(l=>chip($('layers'),l[0],l[1]+' '+l[2],st.layers));
+  SCOPES.forEach(s=>chip($('scopes'),s,s,st.scopes));
+  RELS.forEach(r=>chip($('rels'),r,r,st.rels));
+  syncChips();
+  [...new Set(model.classes.flatMap(c=>c.patterns.map(p=>p.pattern)))].sort().forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;$('pattern').appendChild(o)});
+  $('warnCount').textContent=ws.length;
+  $('warnList').innerHTML=ws.length?ws.map(w=>`<li><b>${esc(w[0])}</b> ${link(w[1])}: ${esc(w[2])}</li>`).join(''):'<li class="ok" style="background:none;border:0">No warnings.</li>';
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{st.view=b.dataset.view;render()});
+  document.querySelectorAll('th[data-k]').forEach(th=>th.onclick=()=>{st.sort=[th.dataset.k,st.sort[0]===th.dataset.k?-st.sort[1]:1];renderList()});
+  document.addEventListener('click',e=>{const a=e.target.closest('[data-go]');if(a){e.preventDefault();show(a.dataset.go)}});
+  let t;$('q').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{st.q=e.target.value.trim();render()},250)});
+  $('pattern').onchange=e=>{st.pattern=e.target.value;render()};
+  $('fit').onclick=()=>{clearFocus();fit()};
+  $('all').onclick=()=>{LAYERS.forEach(l=>st.layers.add(l[0]));SCOPES.forEach(s=>st.scopes.add(s));st.pattern='';$('pattern').value='';st.q='';$('q').value='';st.sel=null;syncChips();render()};
+  $('reset').onclick=()=>{st.layers.clear();START.layers.forEach(l=>st.layers.add(l));st.scopes.clear();START.scopes.forEach(s=>st.scopes.add(s));st.expanded.clear();st.sel=null;st.view='graph';syncChips();render()};
+  const restyle=()=>{if(cy)cy.style(style())};
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',restyle);
+  new MutationObserver(restyle).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  render();
+}
+try{init()}catch(e){$('detail').innerHTML='<p class="empty">Could not start the explorer: '+esc(e.message)+'</p>'}
+})();
+</script>
