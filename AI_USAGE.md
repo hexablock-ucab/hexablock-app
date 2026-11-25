@@ -23,9 +23,26 @@ The team works with **ODD (Organic Driven Development)** and requirement traceab
 
 Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 
+### What each entry records
+
+- **One entry per significant AI use**, not one per prompt. The full prompts of a task stay in its task document in [odd/tasks/](odd/tasks/).
+- **Prompt policy:** prompts that led to a design decision or exposed an AI error are quoted **verbatim**, in their original language. Routine prompts are summarized as a faithful paraphrase.
+- **Verification:** each entry names the tests, commands or reviews that checked the AI's output.
+- **Traceability:** each entry names its pull request. AI-assisted commits carry a `Co-Authored-By` trailer that names the model, so the history shows which commits had AI assistance.
+- **Completion:** an entry is complete before its pull request is merged; no field stays pending. If something is still open, the entry says what and who closes it.
+- **AI-generated content** (for example levels): the entry also states how many items were generated, how each one was checked and what was adjusted by hand.
+
 ## Usage log
 
 <!-- Entries are added with the log-ai-usage skill. Newest last. -->
+
+| Date | Entry |
+|---|---|
+| 2026-10-27 to 2026-10-28 | [Project foundation: course analysis, repositories, tooling and documentation](#2026-10-27-to-2026-10-28--project-foundation-course-analysis-repositories-tooling-and-documentation-setup-no-task-document) |
+| 2026-11-08 | [Professor's answers of 2026-11-05 applied to the requirements](#2026-11-08--professors-answers-of-2026-11-05-applied-to-the-requirements-docs-no-task-document) |
+| 2026-11-08 | [Document the game rules the assignment leaves open](#2026-11-08--document-the-game-rules-the-assignment-leaves-open-oddtasks0002-game-rulesmd-pr-13) |
+| 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
+| 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -65,8 +82,9 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 ### 2026-11-08 — Document the game rules the assignment leaves open (odd/tasks/0002-game-rules.md, PR #13)
 
 - **Author:** Eduard Velasco
+- **Pull request:** #13
 - **Tool / model:** Claude Code 2.1.312 — Sonnet 5.5 for the main session, `odd-explore` and `odd-verify`; Opus for `odd-worker` (models pinned in `.claude/agents/`).
-- **Task:** Design task D2: decide and document the Hexa Sort cascade, what a Hexa Lines line is, the Hexa Fit figure, the score and stars of each variant, and the leaderboard order and tie-breaks. Output: `docs/game-rules.md`. Requirements: C-33 (pending in PR #12), FR-05, FR-22, FR-33, FR-34, FR-44, FR-52 to FR-54, FR-65.
+- **Task:** Design task D2: decide and document the Hexa Sort cascade, what a Hexa Lines line is, the Hexa Fit figure, the score and stars of each variant, and the leaderboard order and tie-breaks. Output: `docs/game-rules.md`. Requirements: C-33, FR-05, FR-22, FR-33, FR-34, FR-44, FR-52 to FR-54, FR-65.
 - **Prompts (originals in Spanish):**
   - "Tarea de diseño D2 … reglas de juego que el enunciado deja abiertas … Es documentación, no código. … Sigue ODD: crea la rama con ship, explora con odd-explore y hazme las preguntas que falten una por una, cerradas, con tu recomendación y las alternativas. No decidas reglas sin preguntarme. Después crea el documento de la tarea en odd/tasks/ con specs ligadas a requisitos y espera mi aprobación antes de escribir docs/game-rules.md." (full text in the task log)
   - "apruebo todo" — approval of the specs S1 to S16 and the proposals O1 to O5.
@@ -80,12 +98,53 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
   - `odd-verify` found the Sort tray parameters only as examples (S7), and left unclear the rotation count, whether a rotation starts the Fit clock, and the hole definition at the board edge — three were settled with new questions; the Sort parameters were named without a question.
   - Two clarifications were added without asking (SORT-4 also applies to a stack arriving with a block of 10 or more; the SORT-3 example now says why no pair remains); they follow from earlier decisions.
   - The four fixes made after the verdict were not re-run through `odd-verify`.
+- **Verification:** `odd-verify` verdict per spec (15 PASS, 1 PARTIAL, then fixed) and a simulation of the Hexa Sort cascade on 200,000 random boards; Eduard reviewed the document.
 - **Lessons:** Closed questions with a recommendation made the decisions fast, but the AI's option wording can hide a contradiction, so reread the options before answering. A verifier that simulates a rule finds more than one that only reads it. Details added by the worker need an explicit list for the team to confirm.
+
+### 2026-11-09 — README and AI usage log adjusted after reviewing reference repositories (docs; no task document)
+
+- **Author:** Eduard Velasco
+- **Pull request:** #15, paired with hexablock-api #14
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
+- **Task:** Compare the reference repositories from the previous semester that the course shared with this project's documents and with this semester's assignment, then apply the README and AI usage changes the team approved (C-09, C-10, C-18).
+- **Prompts (faithful paraphrase; originals in Spanish):**
+  - "Analyze in depth the reference repositories the professor sent and compare them with what the team has or plans. Describe each topic with evidence, classify each finding, and list proposed changes for the README and AI_USAGE.md and points for the team to review. Do not copy text or code from those repositories, do not invent, and do not assume something is right because they did it."
+  - "I approve everything in the first list; make the pull requests."
+- **Result:** An internal comparison kept in the team workspace (not in this repository) and, in this pull request: a "Must not depend on" column in the architecture table, the *Offline play and sync*, *Levels*, *Install on a phone* and *Team* sections of the README; the "What each entry records" rules, the entry index and the running error table in this file; the *Verification* field and the completion rule in the `log-ai-usage` skill, the pull request template and `CONTRIBUTING.md`.
+- **Team modifications:** Eduard reviewed the proposed changes and approved them; the design points the comparison raised were left for the team to decide in the ADRs and design tasks.
+- **Errors and corrections:** None detected in this change.
+- **Verification:** Each edit was applied by exact text replacement that fails if the original text is not found once; the diff was reviewed in the pull request, and commitlint and CI run on it.
+- **Lessons:** Reference projects help with documentation and process, but every finding was checked against this semester's assignment before adopting it; none of them had a generic engine to learn from.
+
+### 2026-11-09 — Domain modeling rules for DDD tactical patterns (docs; no task document)
+
+- **Author:** Eduard Velasco
+- **Pull request:** #16, paired with hexablock-api #15
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
+- **Task:** Write down how the domain model uses DDD tactical patterns before the domain model (D1) and the code exist, so that every agent and teammate follows the same rules (C-05, C-32).
+- **Prompts (faithful paraphrase; originals in Spanish):**
+  - "Are we using value objects, entities, aggregate roots, domain services, repositories and factories where they are needed? No plain getters and setters: rich names in the ubiquitous language that say the business intent. Distinguish clearly when something is a DDD tactical pattern and when it is not."
+  - "Make the linked pull requests, and review carefully that there is no anemic code or other anti-patterns."
+- **Result:** A *Domain model (DDD tactical patterns)* subsection in `AGENTS.md` §4 (rich model, tell-don't-ask, value objects, aggregates, domain services, domain events, and a table that tells DDD roles apart from GoF patterns and Clean Architecture parts), and a *Domain model* question in the `architecture-reviewer` agent.
+- **Team modifications:** Eduard asked for the rules and approved the plan; the team reviews the wording in this pull request.
+- **Errors and corrections:** A first draft used examples (an email value object, a registration command) that no requirement backs; the AI replaced them with examples taken from the requirements before committing.
+- **Verification:** The rules were checked against Esposito (2024), chapter 6 (aggregates, methods over properties, anemic model) and the course's Clean Architecture class; the diff was reviewed in the pull request, and commitlint and CI run on it.
+- **Lessons:** Writing the modeling rules before the domain model gives the reviewer agent something concrete to check, and the table of roles prepares the answer to "is this a DDD pattern or a GoF pattern?" in the defense.
 
 ## Critical evaluation
 
 - **Approximate share of code with AI assistance:** TODO (updated at the end of the project).
-- **Cases where the AI was wrong or suboptimal, and how we detected them:** see the *Errors and corrections* field of each entry; summary TODO.
+- **Cases where the AI was wrong or suboptimal, and how we detected them:** the *Errors and corrections* field of each entry has the details. The table below collects them and is updated at every milestone, not only at the end.
+
+| Date | What the AI got wrong | How it was detected | Category |
+|---|---|---|---|
+| 2026-10-28 | First commits authored as the AI, with the attribution line glued to the subject | Eduard reviewed the commit metadata | Process |
+| 2026-10-28 | Proposed architecture written as binding rules | Eduard's review | Design |
+| 2026-10-28 | Repository folders placed inside the course folder, then nested | Eduard's review | Process |
+| 2026-10-28 | Nine requirements misclassified as non-functional; rows bundling several requirements | Eduard questioned the classification | Requirements |
+| 2026-10-28 | Commit bodies over 100 characters | The `commits` check in CI | Tooling |
+| 2026-10-28 | Dependabot commits rejected by commitlint | CI | Tooling |
+| 2026-11-08 | Could not run speech recognition on the meeting audio; corrected the existing transcription from context instead | The AI reported the limitation itself and listed the passages to check by ear | Tooling |
 - **Impact on productivity and quality:** TODO.
 
 ## Effective prompts
