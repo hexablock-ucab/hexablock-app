@@ -102,6 +102,30 @@ package "hexablock_engine / core/geometry" {
   class HexTopology << (▲,#D4A300) >> #FFF4C2
   class TopologyRegistry << (▲,#D4A300) >> #FFF4C2
 }
+package "hexablock_adapters / variants/hexa_lines" {
+  class HexaLinesModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_adapters / variants/hexa_fit" {
+  class HexaFitModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_adapters / variants/hexa_sort" {
+  class HexaSortModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_adapters / variants/hexa_merge" {
+  class HexaMergeModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_lines" {
+  class LinesCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_fit" {
+  class FitCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_sort" {
+  class SortCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_merge" {
+  class MergeCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
 package "hexablock_engine / core/random" {
   class Mulberry32Factory << (▲,#D4A300) >> #FFF4C2
 }
@@ -119,6 +143,14 @@ hide IAssetReader members
 hide VariantRegistry members
 hide HexTopology members
 hide TopologyRegistry members
+hide HexaLinesModule members
+hide HexaFitModule members
+hide HexaSortModule members
+hide HexaMergeModule members
+hide LinesCellPainter members
+hide FitCellPainter members
+hide SortCellPainter members
+hide MergeCellPainter members
 hide Mulberry32Factory members
 hide SystemClock members
 hide GameSessionService members
@@ -136,6 +168,15 @@ CompositionRoot --> "1" VariantRegistry : registry
 CompositionRoot --> "1" CellPainterRegistry : painters
 CompositionRoot ..> HexTopology : <<create>>
 CompositionRoot ..> TopologyRegistry : <<create>>
+CompositionRoot ..> SoundCueMap : <<create>>
+CompositionRoot ..> HexaLinesModule : <<create>>
+CompositionRoot ..> HexaFitModule : <<create>>
+CompositionRoot ..> HexaSortModule : <<create>>
+CompositionRoot ..> HexaMergeModule : <<create>>
+CompositionRoot ..> LinesCellPainter : <<create>>
+CompositionRoot ..> FitCellPainter : <<create>>
+CompositionRoot ..> SortCellPainter : <<create>>
+CompositionRoot ..> MergeCellPainter : <<create>>
 CompositionRoot ..> Mulberry32Factory : <<create>>
 CompositionRoot ..> SystemClock : <<create>>
 CompositionRoot ..> AudioManager : <<create>>

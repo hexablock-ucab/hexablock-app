@@ -22,7 +22,8 @@ Proposed stack: Flutter and Dart ([ADR-0002](docs/adr/0002-flutter-and-dart.md))
 | [docs/requirements.md](docs/requirements.md) | Requirement catalog: constraints, functional and non-functional requirements with stable IDs |
 | [docs/adr/](docs/adr/) | Architecture Decision Records |
 | [docs/EXTENSIBILITY.md](docs/EXTENSIBILITY.md) | How to add a fifth variant without touching the engine |
-| [docs/diagrams/](docs/diagrams/) | Class, Clean layers and extensibility diagrams (image and editable source) |
+| [docs/domain-model.md](docs/domain-model.md) | Domain model (D1): every class of the engine, the variants and the layers, with its role, invariant and traces |
+| [docs/diagrams/](docs/diagrams/) | Class, Clean layers and extensibility diagrams (image and editable source). Start with the [package overview](docs/diagrams/class-diagram.png) and the [interactive class explorer](docs/diagrams/class-explorer.html); [how to view the model](docs/diagrams/README.md#how-to-view-the-model) lists every format |
 | [odd/](odd/) | One document per substantial task: specs, verification and log |
 | [AGENTS.md](AGENTS.md) | Rules every contributor and AI agent follows |
 

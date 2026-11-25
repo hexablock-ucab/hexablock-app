@@ -83,12 +83,6 @@ package "hexablock_adapters / levels" {
     --
     +readText(path : String) : Future<String>
   }
-  class LinesCatalogMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
-    -assets : IAssetReader {readOnly}
-    -topology : ITopology {readOnly}
-    --
-    +load() : Future<PieceCatalog>
-  }
 }
 package "hexablock_adapters / persistence" {
   class SqliteProgressRepository << (●,#2F6DB5) >> #DCEBFA {
@@ -303,9 +297,6 @@ package "hexablock_application / ports/output" {
 package "hexablock_engine / core/levels" {
   class LevelHeader << (▲,#D4A300) Value Object >> #FFF4C2
 }
-package "hexablock_engine / variants/hexa_lines" {
-  class PieceCatalog << (▲,#D4A300) Value Object >> #FFF4C2
-}
 package "hexablock_engine / core/time" {
   interface Clock << (►,#2E8B57) interface >> #DDF2E1
 }
@@ -334,7 +325,6 @@ hide GameEngine members
 hide SessionEffect members
 hide ILevelRepository members
 hide LevelHeader members
-hide PieceCatalog members
 hide IProgressRepository members
 hide ISavedGameRepository members
 hide IPreferencesRepository members
@@ -378,8 +368,6 @@ LocalLevelRepository --> "1" IAssetReader : assets
 LocalLevelRepository --> "1" LevelHeaderMapper : headers
 LevelHeaderMapper ..> LevelDto : <<use>>
 LevelHeaderMapper ..> LevelHeader : <<create>>
-LinesCatalogMapper --> "1" IAssetReader : assets
-LinesCatalogMapper ..> PieceCatalog : <<create>>
 SqliteProgressRepository ..|> IProgressRepository
 SqliteProgressRepository --> "1" ProgressMapper : mapper
 SqliteSavedGameRepository ..|> ISavedGameRepository

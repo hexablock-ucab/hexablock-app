@@ -210,6 +210,9 @@ package "hexablock_adapters / levels" {
 package "app / rendering" {
   interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
 }
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
+}
 
 hide GameEngine members
 hide IGameFactory members
@@ -238,6 +241,7 @@ hide ISessionPresenter members
 hide TopologyId members
 hide LevelDto members
 hide ICellPainter members
+hide CellView members
 HexaFitEngine ..> GameEngine : <<bind>>\n<TCell -> PieceId, TMove -> FitMove, TState -> FitState>
 HexaFitFactory ..|> IGameFactory : <TCell -> PieceId, TMove -> FitMove, TState -> FitState>
 HexaFitFactory --> "1" FitLevel : level
@@ -286,6 +290,7 @@ FitLevelMapper ..> FitLevelBuilder : <<create>>
 FitLevelMapper ..> TopologyId : <<create>>
 FitLevelMapper ..> LevelDto : <<use>>
 FitCellPainter ..|> ICellPainter
+FitCellPainter ..> CellView : <<use>>
 
 note right of HexaFitFactory : Abstract Factory: concrete factory
 note right of FitState : Memento: originator

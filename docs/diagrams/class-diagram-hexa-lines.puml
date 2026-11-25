@@ -148,6 +148,12 @@ package "hexablock_adapters / variants/hexa_lines" {
     --
     +present(state : LinesState, phase : PhaseKind) : SessionView
   }
+  class LinesCatalogMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    -assets : IAssetReader {readOnly}
+    -topology : ITopology {readOnly}
+    --
+    +load() : Future<PieceCatalog>
+  }
   class LinesStateMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
     -topology : ITopology {readOnly}
     -randomSources : IRandomSourceFactory {readOnly}
@@ -213,8 +219,14 @@ package "hexablock_adapters / session" {
   interface ISessionPresenter<TCell, TState> << (●,#2F6DB5) interface >> #DCEBFA
   interface IStateCodec<TState> << (●,#2F6DB5) interface >> #DCEBFA
 }
+package "hexablock_adapters / levels" {
+  interface IAssetReader << (●,#2F6DB5) interface >> #DCEBFA
+}
 package "app / rendering" {
   interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
 }
 
 hide GameEngine members
@@ -242,8 +254,10 @@ hide GameAssembler members
 hide GameSessionAdapter members
 hide IIntentTranslator members
 hide ISessionPresenter members
+hide IAssetReader members
 hide IStateCodec members
 hide ICellPainter members
+hide CellView members
 HexaLinesEngine ..> GameEngine : <<bind>>\n<TCell -> ColorId, TMove -> LinesMove, TState -> LinesState>
 HexaLinesFactory ..|> IGameFactory : <TCell -> ColorId, TMove -> LinesMove, TState -> LinesState>
 HexaLinesFactory --> "1" PieceCatalog : catalog
@@ -288,11 +302,14 @@ HexaLinesModule ..> GameSessionAdapter : <<create>>
 HexaLinesModule --> "1" LinesStateMapper : codec
 LinesIntentTranslator ..|> IIntentTranslator : <TMove -> LinesMove, TState -> LinesState>
 LinesPresenter ..|> ISessionPresenter : <TCell -> ColorId, TState -> LinesState>
+LinesCatalogMapper --> "1" IAssetReader : assets
+LinesCatalogMapper ..> PieceCatalog : <<create>>
 LinesStateMapper ..|> IStateCodec : <TState -> LinesState>
 LinesStateMapper --> "1" ITopology : topology
 LinesStateMapper --> "1" IRandomSourceFactory : randomSources
 LinesStateMapper --> "1" PieceCatalog : catalog
 LinesCellPainter ..|> ICellPainter
+LinesCellPainter ..> CellView : <<use>>
 
 note right of HexaLinesFactory : Abstract Factory: concrete factory
 note right of CatalogRecipe : Strategy: concrete strategy

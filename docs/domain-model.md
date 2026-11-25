@@ -127,7 +127,7 @@ Each variant declares a Dart typedef that binds the template; it adds no code. I
 - **Coordinates.** `Coordinate` is a value object that holds a list of integers. The topology defines how many there are and checks them (`ITopology.isValid`). `HexTopology` reads them as axial `[q, r]` (Red Blob Games, cited in the class). Only the topology and the board renderer of the same topology (`HexBoardRenderer`, through `HexLayout`, in layer 4) interpret the numbers; the layer-3 mappers (level mappers and saved-game codecs) copy them to and from JSON without interpreting them. Rules, shapes and the board ask the topology for neighbors, axes, directions, rotation and the fixed order of cells (ADR-0004, game-rules *Terms*).
 - **Board.** `Board<TCell>` is generic only in its content; it receives its topology when it is built, and it is the Strategy context of `ITopology`. The assignment's `HexBoard<TCell>` is a `Board<TCell>` built with a `HexTopology`. `BoardBuilder` builds a regular board (`regular(radius)`) or an arbitrary one (a Fit figure) and checks it (ADR-0006).
 - **Rows and order.** `rowsAlong(axis, cells)` gives the maximal straight rows of a set of cells (LINES-1), `inFixedOrder` the order of the game rules (SORT-3, Merge spawn), `orderedTowards(direction, cells)` the order of a slide (MERGE-2†).
-- **Where the topology comes from.** Each level file names its topology in `board.topology` (the API level format requires the field). The composition root creates one `TopologyRegistry`, registers `HexTopology` (id `"hex"`) and injects the registry into the level mappers. `FitLevelMapper` and `SortLevelMapper` pass the name to their builder as a `TopologyId`; the builder resolves it in the registry and refuses the level with `InvalidLevelError` (check `board.topology`) when it is not registered, before the checks L1, L2 and the variant's own. The level then holds its topology, and its factory builds the board with it, so the factories of Fit and Sort receive no topology of their own. Hexa Lines and Hexa Merge have no level file: the composition root injects the topology of their mode, taken from the same registry, into their modules and their saved-game codecs (ADR-0004, ADR-0006, FR-04). A name that `TopologyId` refuses also ends as `InvalidLevelError` (`board.topology`) in the mapper.
+- **Where the topology comes from.** Each level file names its topology in `board.topology` (the API level format requires the field). The composition root creates one `TopologyRegistry`, registers `HexTopology` (id `"hex"`) and injects the registry into the level mappers. `FitLevelMapper` and `SortLevelMapper` pass the name to their builder as a `TopologyId`; the builder resolves it in the registry and refuses the level with `InvalidLevelError` (check `board.topology`) when it is not registered, before the checks L1, L2 and the variant's own. ADR-0004 says the level builder resolves the topology "through a factory"; that factory is implemented as `TopologyRegistry`, a lookup by id of the instances the composition root registered, because a topology holds no per-level state to build. The level then holds its topology, and its factory builds the board with it, so the factories of Fit and Sort receive no topology of their own. Hexa Lines and Hexa Merge have no level file: the composition root injects the topology of their mode, taken from the same registry, into their modules and their saved-game codecs (ADR-0004, ADR-0006, FR-04). A name that `TopologyId` refuses also ends as `InvalidLevelError` (`board.topology`) in the mapper.
 - **One topology per build.** `GameScreen` holds one `IBoardRenderer`. The composition root registers a topology and picks the renderer of that same topology together, so a build draws every level it accepts; a level that names another topology is refused by its builder before it reaches the screen.
 - **Changing the shape (C-31, NFR-02).** Square cells need a `SquareTopology` (`ITopology`, id `"square"`) registered by the composition root, a `SquareBoardRenderer` (`IBoardRenderer`) and the value `"square"` in the level schema of the API. Levels that keep `"hex"` stay valid. No rule, state, use case or screen changes.
 
@@ -249,10 +249,10 @@ The rest of the app sees a variant only through `VariantModule`, which has no ty
 | Registration, intent translation, state presentation, saved-game codec or level mapper | variant | 3 | `<Variant>Module`, `<Variant>IntentTranslator`, `<Variant>Presenter`, `<Variant>StateMapper` or `<Variant>LevelMapper` |
 | Drawing of one cell | variant | 4 | `<Variant>CellPainter`, registered in `CellPainterRegistry` by game id |
 | Texts | variant | 4 (i18n files) | keys named in `VariantTexts` and `StatLine` |
-| Sounds | variant | 3 | entries in `SoundCueMap` for its `EventKind`s |
+| Sounds | variant | 4 | its `EventKind` → `SoundCue` entries, added to `SoundCueMap` (layer 3) by `CompositionRoot` |
 | Wiring | app | 4 | `CompositionRoot`, the only place that names the variants |
 
-**A fifth variant adds** a `variants/<id>/` folder in the domain (rules, state, move, factory, typedef, and a level builder and progress model if it needs them), a `variants/<id>/` folder in the adapters (module, translator, presenter, and a codec or level mapper if it saves or uses levels), a cell painter in the app, its translations, its sound entries, its level files if it has levels, and two registration lines in `CompositionRoot`.
+**A fifth variant adds** a `variants/<id>/` folder in the domain (rules, state, move, factory, typedef, and a level builder and progress model if it needs them), a `variants/<id>/` folder in the adapters (module, translator, presenter, and a codec or level mapper if it saves or uses levels), a cell painter in the app, its translations, its level files if it has levels (and its `gameId` as a new value in the API level schema), and three wiring lines in `CompositionRoot`: register the module, register the painter, add its sound entries to `SoundCueMap`.
 
 **It does not touch** `GameEngine`, `IGameRules`, `IGameFactory`, `GameAssembler`, the phases, the events, the histories, the generator, `Board`, the topology and its registry, any use case or service, `PlayableSession`, `GameSessionAdapter`, `GameViewModel`, `GameScreen` or `IBoardRenderer` (C-20, C-22, NFR-01), as long as it uses the gestures and the kinds of result that exist. Its events reach the screen and the audio as kind and cells, and its progress model comes from its own factory.
 
@@ -345,22 +345,22 @@ Every value object, with the invariant it checks when created (generated):
 | `Board` | domain · generic | Every coordinate is valid in the topology; contents only on board coordinates. | C-19, C-19f, ADR-0004, NFR-04, C-32 |
 | `MoveValidation` | domain · generic | reason is present exactly when the move is rejected. | C-19c, FR-03, FR-32, FR-41 |
 | `RejectionReason` | domain · generic | code is a non-empty key in kebab case, prefixed by the game id or "engine". | C-32, FR-10, C-19c |
-| `Resolution` | domain · generic | events may be empty, never null. | C-19c |
-| `GameOutcome` | domain · generic | end is present. | C-19e, FR-05, FR-06, FIT-3, SORT-7, SCORE-1, SCORE-2, LINES-3 |
-| `PreparedGame` | domain · generic | engine, capabilities and progressModel present. | C-21, C-20, C-19e |
+| `Resolution` | domain · generic | — | C-19c |
+| `GameOutcome` | domain · generic | — | C-19e, FR-05, FR-06, FIT-3, SORT-7, SCORE-1, SCORE-2, LINES-3 |
+| `PreparedGame` | domain · generic | — | C-21, C-20, C-19e |
 | `SlideResult` | domain · generic | merged is empty when changed is false. | FR-62, FR-65, MERGE-3† |
 | `LineClear` | domain · generic | clearedCells is the union of the cells of lines. | LINES-2, LINES-3 |
 | `EventKind` | domain · generic | name is non-empty kebab case. | C-32, FR-09 |
-| `StateChange` | domain · generic | events is never null. | C-19c, FIT-5, FR-45 |
+| `StateChange` | domain · generic | — | C-19c, FIT-5, FR-45 |
 | `CapabilitySet` | domain · generic | redo is present only if undo is present. | C-21, C-20, C-22 |
-| `SeedRecord` | domain · generic | seed is present. | NFR-05, SORT-6 |
+| `SeedRecord` | domain · generic | — | NFR-05, SORT-6 |
 | `HistoryCapacity` | domain · generic | steps >= 1 when limited. | C-32, FR-45, FR-66 |
-| `RandomDraw` | domain · generic | value and next present. | NFR-05 |
+| `RandomDraw` | domain · generic | — | NFR-05 |
 | `Seed` | domain · generic | 0 <= value <= 2^32 - 1. | C-32, NFR-05, SORT-6 |
 | `GeneratorState` | domain · generic | 0 <= value <= 2^32 - 1. | C-32, FR-16†, MERGE-4† |
-| `PieceDraw` | domain · generic | piece and rest present. | NFR-05 |
-| `SeededPieceSource` | domain · generic | random and recipe are present. | NFR-05, SORT-6, FR-31, FR-63, FR-16† |
-| `FixedPieceSource` | domain · generic | pieces never null (empty when exhausted). | FR-40 |
+| `PieceDraw` | domain · generic | — | NFR-05 |
+| `SeededPieceSource` | domain · generic | — | NFR-05, SORT-6, FR-31, FR-63, FR-16† |
+| `FixedPieceSource` | domain · generic | — | FR-40 |
 | `ElapsedTime` | domain · generic | seconds >= 0. | C-32, FIT-3, FIT-5, RANK-1 |
 | `GameResult` | domain · generic | score or stars is present. | FR-08, FR-12, RANK-1, RANK-2 |
 | `Score` | domain · generic | points >= 0. | C-32, FR-05, LINES-3, SCORE-1, SCORE-2 |
@@ -376,11 +376,11 @@ Every value object, with the invariant it checks when created (generated):
 | `LevelHeader` | domain · generic | id starts with gameId and ends with number (check L1). | FR-04, FR-14, FR-23, LEVEL-2† |
 | `LevelCatalog` | domain · generic | one header per level id; all of the same game. | FR-02, FR-14, LEVEL-1† |
 | `LevelAccess` | domain · generic | a completed level is unlocked. | FR-02, LEVEL-1† |
-| `LevelPar` | domain · generic | both present. | FIT-3, FR-44 |
+| `LevelPar` | domain · generic | — | FIT-3, FR-44 |
 | `MoveThresholds` | domain · generic | first > second. | SORT-7 |
 | `ColorId` | domain · generic | key is a non-empty lowercase word. | C-32, FR-31, FR-50, C-31 |
 | `LinesState` | domain · hexa-lines | score >= 0. | FR-31, FR-32, FR-34, FR-35, FR-36, FR-16†, LINES-3 |
-| `LinesMove` | domain · hexa-lines | slot and at are present. | FR-32 |
+| `LinesMove` | domain · hexa-lines | — | FR-32 |
 | `Tray` | domain · hexa-lines | exactly 3 slots; each holds a piece or nothing. | FR-31 |
 | `TrayRefill` | domain · hexa-lines | tray is full. | FR-31, NFR-05 |
 | `TraySlot` | domain · hexa-lines | 0 <= index <= 2. | C-32, FR-31 |
@@ -391,56 +391,56 @@ Every value object, with the invariant it checks when created (generated):
 | `Figure` | domain · hexa-fit | connected through neighbors and without interior holes, checked on the unbounded grid (FIT-1). | FR-40, FIT-1 |
 | `PieceId` | domain · hexa-fit | value >= 0 (position in the level). | C-32, FIT-2 |
 | `FitState` | domain · hexa-fit | a piece is either placed (one placement) or free; the board holds exactly the cells of the placed pieces. | FR-41, FR-42, FR-43, FIT-4, FR-45 |
-| `FitSnapshot` | domain · hexa-fit | all parts present. | FIT-4, FR-45 |
-| `PiecePlacement` | domain · hexa-fit | at present. | FR-41 |
-| `PlaceFitPiece` | domain · hexa-fit | at present. | FR-41, FIT-4 |
-| `RemoveFitPiece` | domain · hexa-fit | piece present. | FR-41, FIT-4 |
+| `FitSnapshot` | domain · hexa-fit | — | FIT-4, FR-45 |
+| `PiecePlacement` | domain · hexa-fit | — | FR-41 |
+| `PlaceFitPiece` | domain · hexa-fit | — | FR-41, FIT-4 |
+| `RemoveFitPiece` | domain · hexa-fit | — | FR-41, FIT-4 |
 | `RotateFitPiece` | domain · hexa-fit | by.count >= 1. | FR-42, FIT-2, FIT-4 |
-| `TrayParams` | domain · hexa-sort | at least 2 colors. | SORT-6 |
-| `StackSizeRange` | domain · hexa-sort | 1 <= min <= max. | SORT-6, SORT-4 |
+| `TrayParams` | domain · hexa-sort | at least 2 colors, no color repeated (level format). | SORT-6 |
+| `StackSizeRange` | domain · hexa-sort | 1 <= min <= max <= 9 (S1 and the level format). | SORT-6, SORT-4 |
 | `ColorStack` | domain · hexa-sort | at least one tile. | FR-50, FR-52, SORT-1 |
 | `TopBlock` | domain · hexa-sort | size >= 1. | SORT-1, SORT-4, FR-53 |
 | `SortState` | domain · hexa-sort | goals, moves and score >= 0. | FR-51, FR-53, FR-54, SORT-5, SORT-6, SORT-7, SCORE-1 |
-| `SortMove` | domain · hexa-sort | at present. | FR-51, SORT-7 |
+| `SortMove` | domain · hexa-sort | — | FR-51, SORT-7 |
 | `SortTurn` | domain · hexa-sort | every removed block has size >= 10. | SCORE-1, SORT-4 |
 | `CascadeResult` | domain · hexa-sort | every removed block has size >= 10. | SORT-3, SORT-4 |
 | `TileValue` | domain · hexa-merge | value is a power of 2 and >= 2. | C-32, FR-60, FR-62, C-19f |
 | `MergeState` | domain · hexa-merge | score >= 0. | FR-60, FR-64, FR-65, FR-66, FR-16†, SCORE-2 |
-| `MergeSnapshot` | domain · hexa-merge | all parts present. | SCORE-2, MERGE-4†, FR-66 |
-| `MergeMove` | domain · hexa-merge | direction present. | FR-61 |
+| `MergeSnapshot` | domain · hexa-merge | — | SCORE-2, MERGE-4†, FR-66 |
+| `MergeMove` | domain · hexa-merge | — | FR-61 |
 | `MergeTurn` | domain · hexa-merge | merged may be empty. | SCORE-2, FR-63 |
 | `TileSpawn` | domain · hexa-merge | value is 2 or 4. | FR-63 |
 | `SpawnSlot` | domain · hexa-merge | 0 <= draw <= 2^32 - 1. | FR-63, NFR-05, game-rules Terms |
 | `SpawnOdds` | domain · hexa-merge | 0 <= fourPerHundred <= 100. | FR-63 |
 | `VariantTexts` | application · generic | keys non-empty. | FR-01, FR-10 |
 | `StartGameRequest` | application · generic | levelId belongs to gameId when present. | FR-03, NFR-05 |
-| `SessionRequest` | application · generic | seed present. | NFR-05, C-20 |
-| `TapCell` | application · generic | at present. | FR-51 |
-| `DropPiece` | application · generic | both present. | FR-32, FR-41 |
-| `Swipe` | application · generic | direction present. | FR-61 |
-| `RotatePiece` | application · generic | piece present. | FR-42 |
-| `LiftPiece` | application · generic | at present. | FR-41 |
+| `SessionRequest` | application · generic | — | NFR-05, C-20 |
+| `TapCell` | application · generic | — | FR-51 |
+| `DropPiece` | application · generic | — | FR-32, FR-41 |
+| `Swipe` | application · generic | — | FR-61 |
+| `RotatePiece` | application · generic | — | FR-42 |
+| `LiftPiece` | application · generic | — | FR-41 |
 | `PieceRef` | application · generic | index >= 0. | C-20 |
-| `SessionView` | application · generic | all parts present. | C-20, C-22, FR-03 |
+| `SessionView` | application · generic | — | C-20, C-22, FR-03 |
 | `BoardView` | application · generic | no two cell views share a coordinate; each coordinate is valid in the topology. | C-20, ADR-0004 |
-| `CellView` | application · generic | coordinate present. | C-20 |
+| `CellView` | application · generic | — | C-20 |
 | `ColorToken` | application · generic | key non-empty. | C-20, C-31 |
 | `PieceView` | application · generic | cells non-empty. | C-20 |
 | `StatLine` | application · generic | labelKey non-empty. | FR-03, FR-10 |
-| `SessionUpdate` | application · generic | view present. | FR-09, C-19c |
-| `SessionEffect` | application · generic | kind present; cells may be empty. | FR-09, C-19c, C-20 |
+| `SessionUpdate` | application · generic | — | FR-09, C-19c |
+| `SessionEffect` | application · generic | — | FR-09, C-19c, C-20 |
 | `SavedGame` | application · generic | payload non-empty. | FR-16† |
 | `ProgressRecord` | application · generic | levelId belongs to gameId when present. | FR-08, FR-12, FR-21 |
-| `SaveProgressResult` | application · generic | record present. | FR-06, FR-08 |
+| `SaveProgressResult` | application · generic | — | FR-06, FR-08 |
 | `DownloadedLevel` | application · generic | payload non-empty. | FR-14, FR-23 |
 | `LeaderboardEntry` | application · generic | position >= 1. | FR-13, RANK-1, RANK-2 |
 | `UserId` | application · generic | non-empty. | FR-11, RANK-1 |
 | `Credentials` | application · generic | both valid. | FR-11 |
 | `Email` | application · generic | one @ and a dot in the domain. | FR-11, C-32 |
 | `Password` | application · generic | at least 8 characters. | FR-11, NFR-06 |
-| `AuthSession` | application · generic | both present. | FR-11, FR-20 |
+| `AuthSession` | application · generic | — | FR-11, FR-20 |
 | `AccessToken` | application · generic | non-empty. | FR-20, NFR-06 |
-| `Preferences` | application · generic | language present. | FR-09, FR-10 |
+| `Preferences` | application · generic | — | FR-09, FR-10 |
 | `LanguageCode` | application · generic | "es" or "en". | FR-10 |
 | `SoundCue` | adapters · generic | asset path non-empty. | FR-09 |
 
@@ -521,7 +521,7 @@ The name of a topology as the level format writes it in board.topology ("hex").
 
 domain · `hexablock_engine` · `core/geometry` · Single instance (single instance) · Traces: ADR-0004, C-31, NFR-02, FR-04
 
-The topologies the app knows, keyed by id. The composition root registers them; the level builders resolve the topology a level declares here, which is the factory of ADR-0004. A level that names a topology not registered is refused. One instance, injected.
+The topologies the app knows, keyed by id. The composition root registers them; the level builders resolve the topology a level declares here. It implements the "factory" through which ADR-0004 resolves the topology of a level: a lookup by id of the instances the composition root registered, because a topology has no per-level state to build. A level that names a topology not registered is refused. One instance, injected.
 
 - **Invariant:** one topology per id.
 - **Attributes:** `-topologies: Map<TopologyId, ITopology> {readOnly}`
@@ -699,7 +699,6 @@ domain · `hexablock_engine` · `core/engine` · Traces: C-19c
 
 What resolve returns: the settled state and the variant events it produced (lines cleared, cascades, merges).
 
-- **Invariant:** events may be empty, never null.
 - **Attributes:** `+state: TState {readOnly}`, `+events: List<GameEvent> {readOnly}`
 - **Relations:** aggregation `GameEvent` [0..*] events
 
@@ -717,7 +716,6 @@ domain · `hexablock_engine` · `core/engine` · Traces: C-19e, FR-05, FR-06, FI
 
 What a finished game measured, for its progress model. Each variant fills only what it has: Lines and Merge a score; Fit the moves and (from the timer capability) the time; Sort score and moves. What a level demands (par, thresholds) lives in the progress model, not here.
 
-- **Invariant:** end is present.
 - **Attributes:** `+end: GameEnd {readOnly}`, `+score: Score [0..1] {readOnly}`, `+moves: MoveCount [0..1] {readOnly}`, `+time: ElapsedTime [0..1] {readOnly}`
 - **Operations:** `+withTime(time : ElapsedTime) : GameOutcome`
 - **Relations:** association `GameEnd` [1] end; association `Score` [0..1] score; association `MoveCount` [0..1] moves; association `ElapsedTime` [0..1] time
@@ -747,7 +745,6 @@ domain · `hexablock_engine` · `core/engine` · Traces: C-21, C-20, C-19e
 
 A ready game: the engine, the optional capabilities of its variant and the progress model of this game (with its level's par or thresholds).
 
-- **Invariant:** engine, capabilities and progressModel present.
 - **Attributes:** `+engine: GameEngine<TCell, TMove, TState> {readOnly}`, `+capabilities: CapabilitySet {readOnly}`, `+progressModel: IProgressModel {readOnly}`
 - **Relations:** association `GameEngine` [1] engine; association `CapabilitySet` [1] capabilities; association `IProgressModel` [1] progressModel
 
@@ -935,7 +932,6 @@ domain · `hexablock_engine` · `core/events` · Traces: C-19c, FIT-5, FR-45
 
 One notification: the state before and after, why it changed, the events and the phase after. Listeners decide on cause and phase, never on the class of an event.
 
-- **Invariant:** events is never null.
 - **Attributes:** `+before: TState {readOnly}`, `+after: TState {readOnly}`, `+cause: ChangeCause {readOnly}`, `+events: List<GameEvent> {readOnly}`, `+phase: PhaseKind {readOnly}`
 - **Relations:** association `ChangeCause` [1] cause; aggregation `GameEvent` [0..*] events
 
@@ -1000,7 +996,6 @@ domain · `hexablock_engine` · `core/capabilities` · Traces: NFR-05, SORT-6
 
 The seeded capability of a game: the seed it started from.
 
-- **Invariant:** seed is present.
 - **Relations:** realization `IRandomSeeded`; association `Seed` [1] seed
 
 **Folder `core/memento`**
@@ -1088,7 +1083,6 @@ domain · `hexablock_engine` · `core/random` · Traces: NFR-05
 
 A drawn value and the source to draw the next one from.
 
-- **Invariant:** value and next present.
 - **Attributes:** `+value: T {readOnly}`, `+next: IRandomSource {readOnly}`
 - **Relations:** association `IRandomSource` [1] next
 
@@ -1127,7 +1121,6 @@ domain · `hexablock_engine` · `core/pieces` · Traces: NFR-05
 
 A piece and the source that gives the following ones.
 
-- **Invariant:** piece and rest present.
 - **Attributes:** `+piece: TPiece {readOnly}`, `+rest: TSource {readOnly}`
 
 #### `IPieceRecipe<TPiece>` — interface
@@ -1145,7 +1138,6 @@ domain · `hexablock_engine` · `core/pieces` · Strategy (context) · Traces: N
 
 A piece source driven by a random source and a recipe. Same seed and recipe give the same pieces.
 
-- **Invariant:** random and recipe are present.
 - **Attributes:** `-random: IRandomSource {readOnly}`, `-recipe: IPieceRecipe<TPiece> {readOnly}`, `+/generatorState: GeneratorState {readOnly}`
 - **Operations:** `+next() : PieceDraw<TPiece, SeededPieceSource<TPiece>>`
 - **Relations:** realization `IPieceSource`; association `IRandomSource` [1] random; association `IPieceRecipe` [1] recipe
@@ -1156,7 +1148,6 @@ domain · `hexablock_engine` · `core/pieces` · Traces: FR-40
 
 A piece source over a fixed list, delivered in order. Hexa Fit's factory builds one from the level's pieces and hands them all out at the start with drawAll.
 
-- **Invariant:** pieces never null (empty when exhausted).
 - **Attributes:** `-pieces: List<TPiece> {readOnly}`, `+/isExhausted: bool {readOnly}`
 - **Operations:** `+next() : PieceDraw<TPiece, FixedPieceSource<TPiece>>`, `+drawAll() : List<TPiece>`
 - **Relations:** realization `IPieceSource`
@@ -1364,7 +1355,6 @@ domain · `hexablock_engine` · `core/levels` · Traces: FIT-3, FR-44
 
 The move par and time par of a Fit level.
 
-- **Invariant:** both present.
 - **Attributes:** `+moves: MoveCount {readOnly}`, `+time: ElapsedTime {readOnly}`
 - **Operations:** `+starsFor(moves : MoveCount, time : ElapsedTime) : StarCount`
 - **Relations:** association `MoveCount` [1] moves; association `ElapsedTime` [1] time
@@ -1428,7 +1418,6 @@ domain · `hexablock_engine` · `variants/hexa_lines` · Traces: FR-32
 
 Place the piece of one tray slot with its origin at a cell.
 
-- **Invariant:** slot and at are present.
 - **Attributes:** `+slot: TraySlot {readOnly}`, `+at: Coordinate {readOnly}`
 - **Relations:** association `TraySlot` [1] slot; association `Coordinate` [1] at
 
@@ -1627,7 +1616,6 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Memento (memento) · Trac
 
 Memento of Hexa Fit: board, placements and orientations. No move count and no clock: undo and redo never change them (FIT-4). Only FitState reads it.
 
-- **Invariant:** all parts present.
 - **Attributes:** `+board: Board<PieceId> {readOnly}`, `+placements: Map<PieceId, PiecePlacement> {readOnly}`, `+orientations: Map<PieceId, RotationSteps> {readOnly}`
 - **Relations:** association `Board` [1] board
 
@@ -1637,7 +1625,6 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Traces: FR-41
 
 Where a placed piece sits. Its rotation lives only in FitState.orientations.
 
-- **Invariant:** at present.
 - **Attributes:** `+at: Coordinate {readOnly}`
 - **Relations:** association `Coordinate` [1] at
 
@@ -1656,7 +1643,6 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Traces: FR-41, FIT-4
 
 Place a free piece, in its current orientation, with its origin at a cell.
 
-- **Invariant:** at present.
 - **Attributes:** `+at: Coordinate {readOnly}`
 - **Relations:** generalization `FitMove`
 
@@ -1666,7 +1652,6 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Traces: FR-41, FIT-4
 
 Take a placed piece off the figure.
 
-- **Invariant:** piece present.
 - **Relations:** generalization `FitMove`
 
 #### `RotateFitPiece` — value object
@@ -1745,7 +1730,7 @@ domain · `hexablock_engine` · `variants/hexa_sort` · Traces: SORT-6
 
 What the tray generator may draw in one level: the seed, the colors in play and the size range of a stack.
 
-- **Invariant:** at least 2 colors.
+- **Invariant:** at least 2 colors, no color repeated (level format).
 - **Attributes:** `+seed: Seed {readOnly}`, `+colors: List<ColorId> {readOnly}`, `+stackSize: StackSizeRange {readOnly}`
 - **Relations:** association `Seed` [1] seed; aggregation `ColorId` [2..*] colors; association `StackSizeRange` [1] stackSize
 
@@ -1753,9 +1738,9 @@ What the tray generator may draw in one level: the seed, the colors in play and 
 
 domain · `hexablock_engine` · `variants/hexa_sort` · Traces: SORT-6, SORT-4
 
-The minimum and maximum tiles of a drawn stack.
+The minimum and maximum tiles of a drawn stack. At most 9, so a drawn stack never arrives already holding a block of 10 to remove.
 
-- **Invariant:** 1 <= min <= max.
+- **Invariant:** 1 <= min <= max <= 9 (S1 and the level format).
 - **Attributes:** `+min: int {readOnly}`, `+max: int {readOnly}`
 
 #### `SortLevelBuilder` — class
@@ -1807,7 +1792,6 @@ domain · `hexablock_engine` · `variants/hexa_sort` · Traces: FR-51, SORT-7
 
 Place the offered stack on an empty cell.
 
-- **Invariant:** at present.
 - **Attributes:** `+at: Coordinate {readOnly}`
 - **Relations:** association `Coordinate` [1] at
 
@@ -1946,7 +1930,6 @@ domain · `hexablock_engine` · `variants/hexa_merge` · Memento (memento) · Tr
 
 Memento of Hexa Merge: board, score, the tile source with its generator state, and whether the target was reached. Undo brings back the same next tile (MERGE-4). Only MergeState reads it.
 
-- **Invariant:** all parts present.
 - **Attributes:** `+board: Board<TileValue> {readOnly}`, `+score: Score {readOnly}`, `+source: SeededPieceSource<TileSpawn> {readOnly}`, `+targetReached: bool {readOnly}`
 - **Relations:** association `Board` [1] board; association `Score` [1] score
 
@@ -1956,7 +1939,6 @@ domain · `hexablock_engine` · `variants/hexa_merge` · Traces: FR-61
 
 Swipe in one of the topology's directions.
 
-- **Invariant:** direction present.
 - **Attributes:** `+direction: Direction {readOnly}`
 - **Relations:** association `Direction` [1] direction
 
@@ -2466,7 +2448,6 @@ application · `hexablock_application` · `variants` · Traces: NFR-05, C-20
 
 What a module receives to start a session: the seed is always resolved (from the request, the level or ISeedSource).
 
-- **Invariant:** seed present.
 - **Attributes:** `+gameId: GameId {readOnly}`, `+levelId: LevelId [0..1] {readOnly}`, `+seed: Seed {readOnly}`
 
 **Folder `session`**
@@ -2484,7 +2465,6 @@ application · `hexablock_application` · `session` · Traces: FR-51
 
 Tap on a cell (Sort).
 
-- **Invariant:** at present.
 - **Attributes:** `+at: Coordinate {readOnly}`
 - **Relations:** generalization `PlayerIntent`
 
@@ -2494,7 +2474,6 @@ application · `hexablock_application` · `session` · Traces: FR-32, FR-41
 
 Drop a tray piece on a cell (Lines, Fit).
 
-- **Invariant:** both present.
 - **Attributes:** `+piece: PieceRef {readOnly}`, `+at: Coordinate {readOnly}`
 - **Relations:** generalization `PlayerIntent`; association `PieceRef` [1] piece
 
@@ -2504,7 +2483,6 @@ application · `hexablock_application` · `session` · Traces: FR-61
 
 Swipe in a direction (Merge).
 
-- **Invariant:** direction present.
 - **Attributes:** `+direction: Direction {readOnly}`
 - **Relations:** generalization `PlayerIntent`
 
@@ -2514,7 +2492,6 @@ application · `hexablock_application` · `session` · Traces: FR-42
 
 Rotate a tray piece one step (Fit).
 
-- **Invariant:** piece present.
 - **Attributes:** `+piece: PieceRef {readOnly}`
 - **Relations:** generalization `PlayerIntent`; association `PieceRef` [1] piece
 
@@ -2524,7 +2501,6 @@ application · `hexablock_application` · `session` · Traces: FR-41
 
 Lift a placed piece off a cell (Fit).
 
-- **Invariant:** at present.
 - **Attributes:** `+at: Coordinate {readOnly}`
 - **Relations:** generalization `PlayerIntent`
 
@@ -2543,7 +2519,6 @@ application · `hexablock_application` · `session` · Traces: C-20, C-22, FR-03
 
 Everything the game screen draws, the same for every variant.
 
-- **Invariant:** all parts present.
 - **Attributes:** `+board: BoardView {readOnly}`, `+tray: List<PieceView> {readOnly}`, `+stats: List<StatLine> {readOnly}`, `+phase: PhaseKind {readOnly}`
 - **Relations:** composition `BoardView` [1] board; composition `PieceView` [0..*] tray; composition `StatLine` [0..*] stats
 
@@ -2563,7 +2538,6 @@ application · `hexablock_application` · `session` · Traces: C-20
 
 One cell to draw: its fills bottom to top and an optional label (a tile value).
 
-- **Invariant:** coordinate present.
 - **Attributes:** `+coordinate: Coordinate {readOnly}`, `+fills: List<ColorToken> {readOnly}`, `+label: String [0..1] {readOnly}`
 - **Relations:** aggregation `ColorToken` [0..*] fills
 
@@ -2601,7 +2575,6 @@ application · `hexablock_application` · `session` · Traces: FR-09, C-19c
 
 What a session sends after each change: the new view, one effect per event (for sound and animation) and the phase.
 
-- **Invariant:** view present.
 - **Attributes:** `+view: SessionView {readOnly}`, `+effects: List<SessionEffect> {readOnly}`, `+phase: PhaseKind {readOnly}`
 - **Relations:** association `SessionView` [1] view; composition `SessionEffect` [0..*] effects
 
@@ -2611,7 +2584,6 @@ application · `hexablock_application` · `session` · Traces: FR-09, C-19c, C-2
 
 One event as the screen and the audio see it: its kind and the cells it affects, in order. The session adapter builds it from any event without asking its class.
 
-- **Invariant:** kind present; cells may be empty.
 - **Attributes:** `+kind: EventKind {readOnly}`, `+cells: List<Coordinate> {readOnly}`
 - **Relations:** association `EventKind` [1] kind
 
@@ -2640,7 +2612,6 @@ application · `hexablock_application` · `session` · Traces: FR-06, FR-08
 
 The result of a finished game and whether it became the new best.
 
-- **Invariant:** record present.
 - **Attributes:** `+record: ProgressRecord {readOnly}`, `+isNewBest: bool {readOnly}`
 - **Relations:** association `ProgressRecord` [1] record
 
@@ -2706,7 +2677,6 @@ application · `hexablock_application` · `session` · Traces: FR-11, FR-20
 
 A signed-in session: the user and the access token.
 
-- **Invariant:** both present.
 - **Attributes:** `+userId: UserId {readOnly}`, `+token: AccessToken {readOnly}`
 - **Relations:** association `UserId` [1] userId; association `AccessToken` [1] token
 
@@ -2725,7 +2695,6 @@ application · `hexablock_application` · `session` · Traces: FR-09, FR-10
 
 Sound and language preferences.
 
-- **Invariant:** language present.
 - **Attributes:** `+musicOn: bool {readOnly}`, `+effectsOn: bool {readOnly}`, `+language: LanguageCode {readOnly}`
 - **Relations:** association `LanguageCode` [1] language
 
@@ -2820,16 +2789,6 @@ adapters · `hexablock_adapters` · `levels` · Traces: FR-04, NFR-02
 Reads a bundled text asset. Declared in layer 3; the Flutter app implements it, so this package does not import Flutter.
 
 - **Operations:** `+readText(path : String) : Future<String>`
-
-#### `LinesCatalogMapper` — mapper
-
-adapters · `hexablock_adapters` · `levels` · Traces: FR-31, LINES-5†, C-31
-
-Reads the fixed Hexa Lines piece catalog from its configuration asset.
-
-- **Attributes:** `-assets: IAssetReader {readOnly}`, `-topology: ITopology {readOnly}`
-- **Operations:** `+load() : Future<PieceCatalog>`
-- **Relations:** association `IAssetReader` [1] assets; «create» `PieceCatalog`
 
 **Folder `persistence`**
 
@@ -2975,7 +2934,7 @@ New seeds from dart:math Random.secure.
 
 adapters · `hexablock_adapters` · `audio` · Traces: FR-09, C-20
 
-Which sound each event kind plays. Variants add their entries; unknown kinds play nothing.
+Which sound each event kind plays; unknown kinds play nothing. CompositionRoot builds it with the entries of every variant (one with() line per entry), so a variant names its sounds there.
 
 - **Attributes:** `-cues: Map<EventKind, SoundCue> {readOnly}`
 - **Operations:** `+cueFor(kind : EventKind) : SoundCue [0..1]`, `+with(kind : EventKind, cue : SoundCue) : SoundCueMap`
@@ -3092,6 +3051,16 @@ Hexa Lines: board colors, the three tray pieces, score and streak.
 
 - **Operations:** `+present(state : LinesState, phase : PhaseKind) : SessionView`
 - **Relations:** realization `ISessionPresenter<ColorId, LinesState>`
+
+#### `LinesCatalogMapper` — mapper
+
+adapters · `hexablock_adapters` · `variants/hexa_lines` · Traces: FR-31, LINES-5†, C-31
+
+Reads the fixed Hexa Lines piece catalog from its configuration asset.
+
+- **Attributes:** `-assets: IAssetReader {readOnly}`, `-topology: ITopology {readOnly}`
+- **Operations:** `+load() : Future<PieceCatalog>`
+- **Relations:** association `IAssetReader` [1] assets; «create» `PieceCatalog`
 
 #### `LinesStateMapper` — mapper
 
@@ -3322,7 +3291,7 @@ Creates every single instance (topology registry, generator factory, clock, vari
 
 - **Attributes:** `+registry: VariantRegistry {readOnly}`, `+painters: CellPainterRegistry {readOnly}`
 - **Operations:** `+build() : Future<void>`
-- **Relations:** association `VariantRegistry` [1] registry; association `CellPainterRegistry` [1] painters; «create» `HexTopology`; «create» `TopologyRegistry`; «create» `Mulberry32Factory`; «create» `SystemClock`; «create» `AudioManager`; «create» `GameSessionService`
+- **Relations:** association `VariantRegistry` [1] registry; association `CellPainterRegistry` [1] painters; «create» `HexTopology`; «create» `TopologyRegistry`; «create» `SoundCueMap`; «create» `HexaLinesModule`; «create» `HexaFitModule`; «create» `HexaSortModule`; «create» `HexaMergeModule`; «create» `LinesCellPainter`; «create» `FitCellPainter`; «create» `SortCellPainter`; «create» `MergeCellPainter`; «create» `Mulberry32Factory`; «create» `SystemClock`; «create» `AudioManager`; «create» `GameSessionService`
 
 ### Hexa Lines (app)
 
@@ -3335,7 +3304,7 @@ frameworks · `app` · `variants/hexa_lines` · Strategy (concrete strategy) · 
 Paints a filled hexagon in the cell color.
 
 - **Operations:** `+paint(canvas : Canvas, cell : CellView, outline : Path)`
-- **Relations:** realization `ICellPainter`
+- **Relations:** realization `ICellPainter`; «use» `CellView`
 
 ### Hexa Fit (app)
 
@@ -3348,7 +3317,7 @@ frameworks · `app` · `variants/hexa_fit` · Strategy (concrete strategy) · Tr
 Paints the cell in the color of the piece that covers it, figure cells outlined.
 
 - **Operations:** `+paint(canvas : Canvas, cell : CellView, outline : Path)`
-- **Relations:** realization `ICellPainter`
+- **Relations:** realization `ICellPainter`; «use» `CellView`
 
 ### Hexa Sort (app)
 
@@ -3361,7 +3330,7 @@ frameworks · `app` · `variants/hexa_sort` · Strategy (concrete strategy) · T
 Paints a stack as layered tiles, bottom to top.
 
 - **Operations:** `+paint(canvas : Canvas, cell : CellView, outline : Path)`
-- **Relations:** realization `ICellPainter`
+- **Relations:** realization `ICellPainter`; «use» `CellView`
 
 ### Hexa Merge (app)
 
@@ -3374,7 +3343,7 @@ frameworks · `app` · `variants/hexa_merge` · Strategy (concrete strategy) · 
 Paints a tile with its value and a color per value.
 
 - **Operations:** `+paint(canvas : Canvas, cell : CellView, outline : Path)`
-- **Relations:** realization `ICellPainter`
+- **Relations:** realization `ICellPainter`; «use» `CellView`
 
 
 <!-- END GENERATED CLASS-REFERENCE -->

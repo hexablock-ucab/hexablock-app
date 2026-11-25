@@ -212,6 +212,9 @@ package "hexablock_adapters / session" {
 package "app / rendering" {
   interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
 }
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
+}
 
 hide GameEngine members
 hide IGameFactory members
@@ -240,6 +243,7 @@ hide IIntentTranslator members
 hide ISessionPresenter members
 hide IStateCodec members
 hide ICellPainter members
+hide CellView members
 HexaMergeEngine ..> GameEngine : <<bind>>\n<TCell -> TileValue, TMove -> MergeMove, TState -> MergeState>
 HexaMergeFactory ..|> IGameFactory : <TCell -> TileValue, TMove -> MergeMove, TState -> MergeState>
 HexaMergeFactory --> "1" IRandomSourceFactory : randomSources
@@ -290,6 +294,7 @@ MergeStateMapper --> "1" ITopology : topology
 MergeStateMapper --> "1" IRandomSourceFactory : randomSources
 MergeStateMapper --> "1" SpawnOdds : odds
 MergeCellPainter ..|> ICellPainter
+MergeCellPainter ..> CellView : <<use>>
 
 note right of HexaMergeFactory : Abstract Factory: concrete factory
 note right of MergeState : Memento: originator

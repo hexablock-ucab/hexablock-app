@@ -247,6 +247,9 @@ package "hexablock_adapters / levels" {
 package "app / rendering" {
   interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
 }
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
+}
 
 hide GameEngine members
 hide IGameFactory members
@@ -280,6 +283,7 @@ hide ISessionPresenter members
 hide TopologyId members
 hide LevelDto members
 hide ICellPainter members
+hide CellView members
 HexaSortEngine ..> GameEngine : <<bind>>\n<TCell -> ColorStack, TMove -> SortMove, TState -> SortState>
 HexaSortFactory ..|> IGameFactory : <TCell -> ColorStack, TMove -> SortMove, TState -> SortState>
 HexaSortFactory --> "1" SortLevel : level
@@ -342,6 +346,7 @@ SortLevelMapper ..> SortLevelBuilder : <<create>>
 SortLevelMapper ..> TopologyId : <<create>>
 SortLevelMapper ..> LevelDto : <<use>>
 SortCellPainter ..|> ICellPainter
+SortCellPainter ..> CellView : <<use>>
 
 note right of HexaSortFactory : Abstract Factory: concrete factory
 note right of SortLevelBuilder : Builder: builder

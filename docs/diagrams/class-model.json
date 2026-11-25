@@ -526,7 +526,7 @@
         "FR-04"
       ],
       "invariant": "one topology per id.",
-      "summary": "The topologies the app knows, keyed by id. The composition root registers them; the level builders resolve the topology a level declares here, which is the factory of ADR-0004. A level that names a topology not registered is refused. One instance, injected."
+      "summary": "The topologies the app knows, keyed by id. The composition root registers them; the level builders resolve the topology a level declares here. It implements the \"factory\" through which ADR-0004 resolves the topology of a level: a lookup by id of the instances the composition root registered, because a topology has no per-level state to build. A level that names a topology not registered is refused. One instance, injected."
     },
     {
       "name": "Direction",
@@ -2026,7 +2026,7 @@
       "traces": [
         "C-19c"
       ],
-      "invariant": "events may be empty, never null.",
+      "invariant": null,
       "summary": "What resolve returns: the settled state and the variant events it produced (lines cleared, cascades, merges)."
     },
     {
@@ -2172,7 +2172,7 @@
         "SCORE-2",
         "LINES-3"
       ],
-      "invariant": "end is present.",
+      "invariant": null,
       "summary": "What a finished game measured, for its progress model. Each variant fills only what it has: Lines and Merge a score; Fit the moves and (from the timer capability) the time; Sort score and moves. What a level demands (par, thresholds) lives in the progress model, not here."
     },
     {
@@ -2505,7 +2505,7 @@
         "C-20",
         "C-19e"
       ],
-      "invariant": "engine, capabilities and progressModel present.",
+      "invariant": null,
       "summary": "A ready game: the engine, the optional capabilities of its variant and the progress model of this game (with its level's par or thresholds)."
     },
     {
@@ -3611,7 +3611,7 @@
         "FIT-5",
         "FR-45"
       ],
-      "invariant": "events is never null.",
+      "invariant": null,
       "summary": "One notification: the state before and after, why it changed, the events and the phase after. Listeners decide on cause and phase, never on the class of an event."
     },
     {
@@ -3955,7 +3955,7 @@
         "NFR-05",
         "SORT-6"
       ],
-      "invariant": "seed is present.",
+      "invariant": null,
       "summary": "The seeded capability of a game: the seed it started from."
     },
     {
@@ -4646,7 +4646,7 @@
       "traces": [
         "NFR-05"
       ],
-      "invariant": "value and next present.",
+      "invariant": null,
       "summary": "A drawn value and the source to draw the next one from."
     },
     {
@@ -4819,7 +4819,7 @@
       "traces": [
         "NFR-05"
       ],
-      "invariant": "piece and rest present.",
+      "invariant": null,
       "summary": "A piece and the source that gives the following ones."
     },
     {
@@ -4986,7 +4986,7 @@
         "FR-63",
         "FR-16†"
       ],
-      "invariant": "random and recipe are present.",
+      "invariant": null,
       "summary": "A piece source driven by a random source and a recipe. Same seed and recipe give the same pieces."
     },
     {
@@ -5066,7 +5066,7 @@
       "traces": [
         "FR-40"
       ],
-      "invariant": "pieces never null (empty when exhausted).",
+      "invariant": null,
       "summary": "A piece source over a fixed list, delivered in order. Hexa Fit's factory builds one from the level's pieces and hands them all out at the start with drawAll."
     },
     {
@@ -6490,7 +6490,7 @@
         "FIT-3",
         "FR-44"
       ],
-      "invariant": "both present.",
+      "invariant": null,
       "summary": "The move par and time par of a Fit level."
     },
     {
@@ -7150,7 +7150,7 @@
       "traces": [
         "FR-32"
       ],
-      "invariant": "slot and at are present.",
+      "invariant": null,
       "summary": "Place the piece of one tray slot with its origin at a cell."
     },
     {
@@ -8837,7 +8837,7 @@
         "FIT-4",
         "FR-45"
       ],
-      "invariant": "all parts present.",
+      "invariant": null,
       "summary": "Memento of Hexa Fit: board, placements and orientations. No move count and no clock: undo and redo never change them (FIT-4). Only FitState reads it."
     },
     {
@@ -8879,7 +8879,7 @@
       "traces": [
         "FR-41"
       ],
-      "invariant": "at present.",
+      "invariant": null,
       "summary": "Where a placed piece sits. Its rotation lives only in FitState.orientations."
     },
     {
@@ -8964,7 +8964,7 @@
         "FR-41",
         "FIT-4"
       ],
-      "invariant": "at present.",
+      "invariant": null,
       "summary": "Place a free piece, in its current orientation, with its origin at a cell."
     },
     {
@@ -8998,7 +8998,7 @@
         "FR-41",
         "FIT-4"
       ],
-      "invariant": "piece present.",
+      "invariant": null,
       "summary": "Take a placed piece off the figure."
     },
     {
@@ -9892,7 +9892,7 @@
       "traces": [
         "SORT-6"
       ],
-      "invariant": "at least 2 colors.",
+      "invariant": "at least 2 colors, no color repeated (level format).",
       "summary": "What the tray generator may draw in one level: the seed, the colors in play and the size range of a stack."
     },
     {
@@ -9933,8 +9933,8 @@
         "SORT-6",
         "SORT-4"
       ],
-      "invariant": "1 <= min <= max.",
-      "summary": "The minimum and maximum tiles of a drawn stack."
+      "invariant": "1 <= min <= max <= 9 (S1 and the level format).",
+      "summary": "The minimum and maximum tiles of a drawn stack. At most 9, so a drawn stack never arrives already holding a block of 10 to remove."
     },
     {
       "name": "SortLevelBuilder",
@@ -10589,7 +10589,7 @@
         "FR-51",
         "SORT-7"
       ],
-      "invariant": "at present.",
+      "invariant": null,
       "summary": "Place the offered stack on an empty cell."
     },
     {
@@ -11945,7 +11945,7 @@
         "MERGE-4†",
         "FR-66"
       ],
-      "invariant": "all parts present.",
+      "invariant": null,
       "summary": "Memento of Hexa Merge: board, score, the tile source with its generator state, and whether the target was reached. Undo brings back the same next tile (MERGE-4). Only MergeState reads it."
     },
     {
@@ -11987,7 +11987,7 @@
       "traces": [
         "FR-61"
       ],
-      "invariant": "direction present.",
+      "invariant": null,
       "summary": "Swipe in one of the topology's directions."
     },
     {
@@ -15626,7 +15626,7 @@
         "NFR-05",
         "C-20"
       ],
-      "invariant": "seed present.",
+      "invariant": null,
       "summary": "What a module receives to start a session: the seed is always resolved (from the request, the level or ISeedSource)."
     },
     {
@@ -15691,7 +15691,7 @@
       "traces": [
         "FR-51"
       ],
-      "invariant": "at present.",
+      "invariant": null,
       "summary": "Tap on a cell (Sort)."
     },
     {
@@ -15751,7 +15751,7 @@
         "FR-32",
         "FR-41"
       ],
-      "invariant": "both present.",
+      "invariant": null,
       "summary": "Drop a tray piece on a cell (Lines, Fit)."
     },
     {
@@ -15793,7 +15793,7 @@
       "traces": [
         "FR-61"
       ],
-      "invariant": "direction present.",
+      "invariant": null,
       "summary": "Swipe in a direction (Merge)."
     },
     {
@@ -15844,7 +15844,7 @@
       "traces": [
         "FR-42"
       ],
-      "invariant": "piece present.",
+      "invariant": null,
       "summary": "Rotate a tray piece one step (Fit)."
     },
     {
@@ -15886,7 +15886,7 @@
       "traces": [
         "FR-41"
       ],
-      "invariant": "at present.",
+      "invariant": null,
       "summary": "Lift a placed piece off a cell (Fit)."
     },
     {
@@ -16004,7 +16004,7 @@
         "C-22",
         "FR-03"
       ],
-      "invariant": "all parts present.",
+      "invariant": null,
       "summary": "Everything the game screen draws, the same for every variant."
     },
     {
@@ -16113,7 +16113,7 @@
       "traces": [
         "C-20"
       ],
-      "invariant": "coordinate present.",
+      "invariant": null,
       "summary": "One cell to draw: its fills bottom to top and an optional label (a tile value)."
     },
     {
@@ -16313,7 +16313,7 @@
         "FR-09",
         "C-19c"
       ],
-      "invariant": "view present.",
+      "invariant": null,
       "summary": "What a session sends after each change: the new view, one effect per event (for sound and animation) and the phase."
     },
     {
@@ -16365,7 +16365,7 @@
         "C-19c",
         "C-20"
       ],
-      "invariant": "kind present; cells may be empty.",
+      "invariant": null,
       "summary": "One event as the screen and the audio see it: its kind and the cells it affects, in order. The session adapter builds it from any event without asking its class."
     },
     {
@@ -16524,7 +16524,7 @@
         "FR-06",
         "FR-08"
       ],
-      "invariant": "record present.",
+      "invariant": null,
       "summary": "The result of a finished game and whether it became the new best."
     },
     {
@@ -16860,7 +16860,7 @@
         "FR-11",
         "FR-20"
       ],
-      "invariant": "both present.",
+      "invariant": null,
       "summary": "A signed-in session: the user and the access token."
     },
     {
@@ -16952,7 +16952,7 @@
         "FR-09",
         "FR-10"
       ],
-      "invariant": "language present.",
+      "invariant": null,
       "summary": "Sound and language preferences."
     },
     {
@@ -17774,77 +17774,6 @@
       ],
       "invariant": null,
       "summary": "Reads a bundled text asset. Declared in layer 3; the Flutter app implements it, so this package does not import Flutter."
-    },
-    {
-      "name": "LinesCatalogMapper",
-      "kind": "class",
-      "stereotypes": [
-        "Mapper"
-      ],
-      "layer": "adapters",
-      "port": null,
-      "package": "hexablock_adapters",
-      "folder": "levels",
-      "scope": "generic",
-      "typeParameters": [],
-      "attributes": [
-        {
-          "name": "assets",
-          "type": "IAssetReader",
-          "visibility": "private",
-          "readOnly": true,
-          "static": false,
-          "derived": false
-        },
-        {
-          "name": "topology",
-          "type": "ITopology",
-          "visibility": "private",
-          "readOnly": true,
-          "static": false,
-          "derived": false
-        }
-      ],
-      "operations": [
-        {
-          "name": "load",
-          "parameters": [],
-          "returns": "Future<PieceCatalog>",
-          "visibility": "public",
-          "static": false,
-          "abstract": false,
-          "kind": "query"
-        }
-      ],
-      "literals": [],
-      "relations": [
-        {
-          "type": "association",
-          "target": "IAssetReader",
-          "targetType": "IAssetReader",
-          "label": null,
-          "multiplicity": "1",
-          "role": "assets",
-          "bindings": null
-        },
-        {
-          "type": "dependency",
-          "target": "PieceCatalog",
-          "targetType": "PieceCatalog",
-          "label": "create",
-          "multiplicity": null,
-          "role": null,
-          "bindings": null
-        }
-      ],
-      "patterns": [],
-      "traces": [
-        "FR-31",
-        "LINES-5†",
-        "C-31"
-      ],
-      "invariant": null,
-      "summary": "Reads the fixed Hexa Lines piece catalog from its configuration asset."
     },
     {
       "name": "SqliteProgressRepository",
@@ -18967,7 +18896,7 @@
         "C-20"
       ],
       "invariant": null,
-      "summary": "Which sound each event kind plays. Variants add their entries; unknown kinds play nothing."
+      "summary": "Which sound each event kind plays; unknown kinds play nothing. CompositionRoot builds it with the entries of every variant (one with() line per entry), so a variant names its sounds there."
     },
     {
       "name": "SoundCue",
@@ -20079,6 +20008,77 @@
       ],
       "invariant": null,
       "summary": "Hexa Lines: board colors, the three tray pieces, score and streak."
+    },
+    {
+      "name": "LinesCatalogMapper",
+      "kind": "class",
+      "stereotypes": [
+        "Mapper"
+      ],
+      "layer": "adapters",
+      "port": null,
+      "package": "hexablock_adapters",
+      "folder": "variants/hexa_lines",
+      "scope": "hexa-lines",
+      "typeParameters": [],
+      "attributes": [
+        {
+          "name": "assets",
+          "type": "IAssetReader",
+          "visibility": "private",
+          "readOnly": true,
+          "static": false,
+          "derived": false
+        },
+        {
+          "name": "topology",
+          "type": "ITopology",
+          "visibility": "private",
+          "readOnly": true,
+          "static": false,
+          "derived": false
+        }
+      ],
+      "operations": [
+        {
+          "name": "load",
+          "parameters": [],
+          "returns": "Future<PieceCatalog>",
+          "visibility": "public",
+          "static": false,
+          "abstract": false,
+          "kind": "query"
+        }
+      ],
+      "literals": [],
+      "relations": [
+        {
+          "type": "association",
+          "target": "IAssetReader",
+          "targetType": "IAssetReader",
+          "label": null,
+          "multiplicity": "1",
+          "role": "assets",
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "PieceCatalog",
+          "targetType": "PieceCatalog",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        }
+      ],
+      "patterns": [],
+      "traces": [
+        "FR-31",
+        "LINES-5†",
+        "C-31"
+      ],
+      "invariant": null,
+      "summary": "Reads the fixed Hexa Lines piece catalog from its configuration asset."
     },
     {
       "name": "LinesStateMapper",
@@ -22068,6 +22068,87 @@
         },
         {
           "type": "dependency",
+          "target": "SoundCueMap",
+          "targetType": "SoundCueMap",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "HexaLinesModule",
+          "targetType": "HexaLinesModule",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "HexaFitModule",
+          "targetType": "HexaFitModule",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "HexaSortModule",
+          "targetType": "HexaSortModule",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "HexaMergeModule",
+          "targetType": "HexaMergeModule",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "LinesCellPainter",
+          "targetType": "LinesCellPainter",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "FitCellPainter",
+          "targetType": "FitCellPainter",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "SortCellPainter",
+          "targetType": "SortCellPainter",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "MergeCellPainter",
+          "targetType": "MergeCellPainter",
+          "label": "create",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
           "target": "Mulberry32Factory",
           "targetType": "Mulberry32Factory",
           "label": "create",
@@ -22163,6 +22244,15 @@
           "multiplicity": null,
           "role": null,
           "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "CellView",
+          "targetType": "CellView",
+          "label": "use",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
         }
       ],
       "patterns": [
@@ -22220,6 +22310,15 @@
           "target": "ICellPainter",
           "targetType": "ICellPainter",
           "label": null,
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "CellView",
+          "targetType": "CellView",
+          "label": "use",
           "multiplicity": null,
           "role": null,
           "bindings": null
@@ -22283,6 +22382,15 @@
           "multiplicity": null,
           "role": null,
           "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "CellView",
+          "targetType": "CellView",
+          "label": "use",
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
         }
       ],
       "patterns": [
@@ -22340,6 +22448,15 @@
           "target": "ICellPainter",
           "targetType": "ICellPainter",
           "label": null,
+          "multiplicity": null,
+          "role": null,
+          "bindings": null
+        },
+        {
+          "type": "dependency",
+          "target": "CellView",
+          "targetType": "CellView",
+          "label": "use",
           "multiplicity": null,
           "role": null,
           "bindings": null
