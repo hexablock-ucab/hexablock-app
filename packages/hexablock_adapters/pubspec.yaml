@@ -1,0 +1,19 @@
+name: hexablock_adapters
+description: Layer 3 (interface adapters) of HexaBlock Suite. View models, repository implementations, mappers and DTOs, in pure Dart (ADR-0003, ADR-0007).
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  # Typed SQLite access for the progress, level and saved-game repositories (ADR-0007).
+  drift: ^2.35.4
+  hexablock_application:
+    path: ../hexablock_application
+  hexablock_engine:
+    path: ../hexablock_engine
+
+dev_dependencies:
+  test: ^1.31.1
+  yaml: ^3.1.4

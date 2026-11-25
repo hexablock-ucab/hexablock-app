@@ -1,0 +1,17 @@
+# Dart pub workspace (ADR-0003): one package per Clean Architecture layer.
+# Run `flutter pub get` here, at the root; every member shares one resolution.
+name: hexablock_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - packages/hexablock_engine
+  - packages/hexablock_application
+  - packages/hexablock_adapters
+  - app
+
+dev_dependencies:
+  # Lint set included by the shared analysis_options.yaml.
+  flutter_lints: ^6.0.0

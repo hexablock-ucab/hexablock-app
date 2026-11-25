@@ -1,0 +1,13 @@
+name: hexablock_engine
+description: Layer 1 (entities) of HexaBlock Suite. The generic engine, in pure Dart (ADR-0003).
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+# No runtime dependencies: the domain uses only the Dart core libraries.
+
+dev_dependencies:
+  test: ^1.31.1
+  yaml: ^3.1.4
