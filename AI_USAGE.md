@@ -42,6 +42,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-08 | [Professor's answers of 2026-11-05 applied to the requirements](#2026-11-08--professors-answers-of-2026-11-05-applied-to-the-requirements-docs-no-task-document) |
 | 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
+| 2026-11-24 to 2026-11-25 | [Domain model (D1) and class diagram (D7)](#2026-11-24-to-2026-11-25--domain-model-d1-and-class-diagram-d7-oddtasks0005-domain-modelmd) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -108,6 +109,33 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Verification:** The rules were checked against Esposito (2024), chapter 6 (aggregates, methods over properties, anemic model) and the course's Clean Architecture class; the diff was reviewed in the pull request, and commitlint and CI run on it.
 - **Lessons:** Writing the modeling rules before the domain model gives the reviewer agent something concrete to check, and the table of roles prepares the answer to "is this a DDD pattern or a GoF pattern?" in the defense.
 
+### 2026-11-24 to 2026-11-25 — Domain model (D1) and class diagram (D7) (odd/tasks/0005-domain-model.md)
+
+- **Pull request:** TODO(team): number assigned when the PR opens.
+
+- **Author:** Eduard Velasco
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5 for the main session; sub-agents `odd-explore`, `odd-verify` and `architecture-reviewer` with the models their agent files pin. PlantUML 1.2025.2 run locally with Java 21 to render the diagrams.
+- **Task:** Write the domain model of the app and the first class diagram: every class of the generic engine, the four variants and the layers around them, with type parameters and bounds, value objects, phases, events, capabilities, undo snapshots, the seeded generator and the engine/variant boundary (C-06, C-11a, C-19 to C-22, C-32, NFR-01, NFR-02, NFR-04, NFR-05).
+- **Prompts:** The full request is quoted in the task document's log. The parts that fixed the design, verbatim:
+  - "Solo documentos, sin código." / "No escribas código de producción en esta sesión."
+  - "Decisiones ya tomadas (no las reabras; si encuentras que alguna contradice el enunciado, dímelo antes de seguir)", followed by the list: no DDD building blocks, read-only attributes and no setters, Memento without Command, the four phases, a concrete `GameEngine` with Strategy, an injected seeded generator, `Coordinate` as a value object read only by the topology, `Board<TCell>`.
+  - "Puntos abiertos que decido yo. Preséntamelos todos juntos en una sola ronda […]. Después de mi respuesta no me pidas más confirmaciones: escribe todo y solo para si encuentras una contradicción con el enunciado."
+  - "El .puml y el JSON salen del mismo modelo y no pueden diferir."
+  - "PlantUML no está instalado; si no lo puedes correr localmente con Java, pregúntame antes de usar un servicio web para renderizar."
+  - After the reviews: "sigue cuando terminen los revisores" and "ya compacté, aplica las correcciones".
+  - On the topology: "los niveles declaran su topología (el formato de la api lo exige en board.topology) y la raíz de composición inyecta las topologías registradas; el LevelBuilder resuelve la del nivel en ese registro y rechaza un nivel cuya topología no esté registrada. Así no cambia ni el formato ni ADR-0004 de app #23. Modélalo así."
+- **Result:** `docs/domain-model.md` (narrative sections plus sections generated from the model); `docs/diagrams/class-model.json` (299 classes); 13 PlantUML views (`class-diagram*.puml`) and their PNGs at 2x; `docs/diagrams/README.md` updated (legend without DDD stereotypes, the views, the JSON schema); ADR-0004 is not changed (the model follows the text that PR #23 accepts). The AI wrote the model in a small script outside the repository that generates the JSON, the views and the generated sections, so the three cannot disagree. It also published a private interactive explorer of the model (graph, filters, computed warnings) that is not part of the repository.
+- **Team modifications:** Eduard took the design decisions listed in the request and answered the open points in one round: a type-erased `VariantModule` and `PlayableSession` as the boundary, a `CapabilitySet` with typed optional fields, scoring per move separate from the progress model, Fit's stopwatch in the domain behind a `Clock` port, immutable states with closed move types, one `IPieceSource<TPiece>` for random and fixed sources, Mulberry32 as the generator, and only the diagrams README fixed in this branch. Eduard rejected the AI's amendment of ADR-0004 (one topology injected, no topology in the level files): levels declare their topology in `board.topology`, as the API level format requires, and a `TopologyRegistry` filled by the composition root resolves it in the level builders, which refuse a level whose topology is not registered. TODO(team): before merging, the team reviews the document and the diagrams and records here what it changed.
+- **Errors and corrections:**
+  - The first complete model had seven blocking defects that the `architecture-reviewer` agent found: the engine labeled as the Memento originator; a Merge invariant that undo breaks (the 2048 notice); listeners that would have to check the class of an event; a piece source with no user and an unneeded F-bound; invariants a constructor cannot check; states with no behavior of their own (anemic); and a progress design that made a fifth variant touch shared classes. All seven were fixed in the model and the document, and the document now says what a fifth variant does touch (a new kind of gesture or of result).
+  - `odd-verify` found the glossary without traces (S10 partial); a Traces column was added.
+  - The AI amended ADR-0004 so that one topology was injected and level files named none, arguing that a second topology does not exist yet. That contradicted the API level format, which requires `board.topology`, and the text of ADR-0004 accepted in PR #23. Eduard noticed it when reading the amendment; the amendment was dropped and the model changed to a topology registry.
+  - The second `architecture-reviewer` pass found what the AI had missed: the saved-game codecs of Lines and Merge had nothing to rebuild a board or a piece source with; the document said only the topology reads a coordinate's integers, while the mappers copy them; the Fit level builder claimed the check F5, which it cannot run; and two invariants (`BoardView`, `FitPiece`) that one object cannot check. All four were fixed in the model and the document.
+  - While applying the fixes, the planned state transitions took the points as an argument, which the scoring policy cannot give before the state after the move exists; the AI noticed it and added a separate `withPointsAdded`.
+  - Rendering: a `skinparam` block that PlantUML rejected, PNGs cut at 4096 px, and arrow glyphs missing in the diagram font. Detected with `plantuml -checkonly` and by looking at the PNGs; fixed in the generator.
+- **Verification:** `architecture-reviewer`, first pass (request changes, 7 blockers, all fixed); second pass after the fixes and the topology change (request changes: B1–B4, B6 and B7 confirmed fixed, B5 partly fixed, plus three new blockers, all fixed in the documents; not run a third time) and `odd-verify` (S1–S9 and S11–S13 pass, S10 partial and then fixed, S14 not verifiable by the agent). After the fixes: the JSON parses; `java -jar plantuml.jar -checkonly docs/diagrams/class-diagram*.puml` passes on the 13 files; the explorer computes 0 warnings; `git diff --stat main -- packages app lib test` is empty (no production code).
+- **Lessons:** Generating the diagrams and the document's tables from one model kept them consistent through two rounds of changes. An independent reviewer agent found design defects (anemic states, type checks hidden in listeners) that the agent that wrote the model had not seen.
+
 ## Critical evaluation
 
 - **Approximate share of code with AI assistance:** TODO (updated at the end of the project).
@@ -122,6 +150,9 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-10-28 | Commit bodies over 100 characters | The `commits` check in CI | Tooling |
 | 2026-10-28 | Dependabot commits rejected by commitlint | CI | Tooling |
 | 2026-11-08 | Could not run speech recognition on the meeting audio; corrected the existing transcription from context instead | The AI reported the limitation itself and listed the passages to check by ear | Tooling |
+| 2026-11-25 | Domain model with seven blocking design defects (anemic states, event type checks, uncheckable invariants, a fifth variant touching shared classes) | `architecture-reviewer` agent | Design |
+| 2026-11-25 | State transitions that needed the points before the scoring policy could compute them | The AI noticed it while applying the review fixes | Design |
+| 2026-11-25 | PlantUML files that did not parse, and PNGs cut at 4096 px | `plantuml -checkonly` and inspection of the PNGs | Tooling |
 - **Impact on productivity and quality:** TODO.
 
 ## Effective prompts
