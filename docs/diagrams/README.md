@@ -14,20 +14,20 @@ Every class in the class diagram shows its layer with a color and a shape, follo
 
 | Layer | Color | Mark | Contents |
 |---|---|---|---|
-| Domain (entities) | Yellow | Triangle | Entities, value objects, domain services, builders, rules |
+| Domain (entities) | Yellow | Triangle | Entities, value objects, builders, rules, the engine |
 | Application (use cases) | Purple | Square | Services that implement the use cases |
 | Ports | Green | — | Interfaces: input (driving) ports on the left, output (driven) ports on the right |
 | Infrastructure (interface adapters, frameworks and drivers) | Blue | Circle | View models, controllers, repository implementations, adapters to external services |
 
 The Clean layers diagram keeps the four rings the assignment requires (§3.4); the class diagram uses this legend, so blue covers both outer rings.
 
-## DDD stereotypes and UML style
+## Stereotypes and UML style
 
-- **DDD building blocks** carry their stereotype: `«Value Object»`, `«Entity»`, `«Aggregate Root»`, `«Domain Service»`, `«Repository»`, `«Factory»`, `«Domain Event»`. A class may carry two (`«Entity» «Aggregate Root»`). The role comes from `docs/domain-model.md`.
-- **Other classes** keep their architectural role: `«interface»` for ports, and `«Use Case»`, `«Adapter»`, `«DTO»`, `«Mapper»` or `«ViewModel»` where the name does not make it obvious. They never carry a DDD stereotype.
-- **GoF patterns** are named in a note attached to the participating classes (pattern and role, for example "Strategy: concrete strategy"), so they do not mix with the DDD stereotypes.
+- **Domain classes** carry one of two stereotypes, taken from `docs/domain-model.md`: `«Value Object»` or `«Entity»` (a class with identity). There are no aggregate, domain service, repository, factory or domain event stereotypes: a repository is an `«interface»` (the port) plus its `«Adapter»`, and a factory is named as a pattern in its note.
+- **Other classes** keep their architectural role: `«interface»` for ports, and `«Use Case»`, `«Adapter»`, `«DTO»`, `«Mapper»` or `«ViewModel»` where the name does not make it obvious.
+- **GoF patterns** are named in a note attached to the participating classes (pattern and role, for example "Strategy: concrete strategy"), so they do not mix with the stereotypes.
 - **Notation:** standard UML 2.5 class diagram notation.
-- **Members:** each class shows its attributes with visibility (`+` public, `-` private, `#` protected) and type, and its operations with parameters and return type. Domain classes have only private attributes (`-`, with `{readOnly}` when final) and no getters or setters, so none are drawn; their public operations are commands, domain queries and the export operation (`toSnapshot()`). Constructors and named or factory constructors are shown, with their parameters. Static members are underlined and abstract ones in italics.
+- **Members:** each class shows its attributes with visibility (`+` public, `-` private, `#` protected) and type, and its operations with parameters and return type. A read-only value is drawn as a public attribute with `{readOnly}` (UML 2.5, for example `+ value: Integer {readOnly}`), never as a `get` operation. There are no setters. The operations are the game's actions, the questions the rules ask and the Memento operations (`toSnapshot()`, `restore(snapshot)`). Constructors and named or factory constructors are shown, with their parameters. Static members are underlined and abstract ones in italics.
 - **Generics:** a generic class shows its type parameters, with their bounds, in the dashed box at its top-right corner (`TCell > Mergeable<TCell>`), and each variant's binding uses a realization or `«bind»` with the concrete type.
 - **Relations:** generalization (solid line, hollow triangle), realization of an interface (dashed line, hollow triangle), association (solid line, with navigability, multiplicities and role names), aggregation (hollow diamond), composition (filled diamond), and dependency (dashed arrow) labeled with its kind, such as `«use»` or `«create»`, for a type used only as a parameter, a return type or a local variable.
 - **Completeness:** every class of the domain and application layers appears, with the main adapters; only UI widgets are left out (C-11). When one diagram gets too large, it is split by package or variant instead of omitting classes.
