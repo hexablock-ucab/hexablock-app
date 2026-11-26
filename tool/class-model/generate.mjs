@@ -42,7 +42,8 @@ export function typeArgs(type) {
  * Generates every derived file from a parsed class model.
  * Returns { files: Map<path relative to the repository, text>, errors: string[], warnings: object[] }.
  */
-export function generate(json, { domainModel, template, cytoscape } = {}) {
+export function generate(source, { domainModel, template, cytoscape } = {}) {
+  const json = withConstructors(source);
   const classes = json.classes;
   const byName = new Map();
   const errors = [];
@@ -125,8 +126,9 @@ export function generate(json, { domainModel, template, cytoscape } = {}) {
   function opLine(o, c) {
     const abs = o.abstract && c.kind !== 'interface' ? '{abstract} ' : '';
     const ps = o.parameters.map((p) => `${p.name} : ${umlType(p.type)}`).join(', ');
-    const ret = o.returns === 'void' ? '' : ` : ${umlType(o.returns)}`;
-    return `  ${o.static ? '{static} ' : ''}${abs}${{ public: '+', private: '-', protected: '#', package: '~' }[o.visibility]}${o.name}(${ps})${ret}`;
+    const ret = o.kind === 'constructor' || o.returns === 'void' ? '' : ` : ${umlType(o.returns)}`;
+    const create = CREATES.has(o.kind) ? '«create» ' : '';
+    return `  ${o.static ? '{static} ' : ''}${abs}${{ public: '+', private: '-', protected: '#', package: '~' }[o.visibility]}${create}${o.name}(${ps})${ret}`;
   }
   function classBlock(c, full) {
     if (!full) return `${head(c)}`;
@@ -156,6 +158,13 @@ export function generate(json, { domainModel, template, cytoscape } = {}) {
       case 'bind': return `${c.name} ..> ${t} : <<bind>>\\n${bind}`;
       default: throw new Error(r.type);
     }
+  }
+  // PlantUML cannot draw UML's `T > Bound` inside the template box, so a note gives it (README).
+  function boundNote(c) {
+    const bounded = c.typeParameters.filter((p) => p.bound);
+    if (!bounded.length) return null;
+    const text = bounded.map((p) => `${p.name} > ${p.bound}`.replace(/</g, '~<')).join('\n');
+    return `note left of ${c.name} : ${text}`;
   }
   function patternNote(c) {
     if (!c.patterns.length) return null;
@@ -209,7 +218,7 @@ export function generate(json, { domainModel, template, cytoscape } = {}) {
     for (const [n, isF] of shown) if (!isF) out.push(`hide ${n} members`);
     for (const c of full) for (const r of c.relations) if (shown.has(r.target)) out.push(relLine(c, r));
     out.push('');
-    for (const c of full) { const n = patternNote(c); if (n) out.push(n); }
+    for (const c of full) for (const n of [boundNote(c), patternNote(c)]) if (n) out.push(n);
     out.push('', LEGEND, '@enduml', '');
     return { file, text: out.join('\n'), full: full.map((c) => c.name) };
   }
@@ -376,6 +385,31 @@ export function generate(json, { domainModel, template, cytoscape } = {}) {
     .filter((c) => fullCount.get(c.name) !== 1)
     .forEach((c) => errors.push(`${c.name} is shown in full in ${fullCount.get(c.name) || 0} views, not 1`));
   return { files, errors, warnings };
+}
+
+/** Operation kinds drawn with UML 2.5.1's «create»: the unnamed and the named constructors. */
+const CREATES = new Set(['constructor', 'factory']);
+
+/**
+ * The model with the unnamed constructor of every value object, derived from its attributes:
+ * one parameter per attribute that is neither static nor derived, in the order of the model.
+ * A class may set `constructorVisibility` (for example "package" for a library-private one).
+ */
+export function withConstructors(json) {
+  const classes = json.classes.map((c) => {
+    if (!c.stereotypes.includes('Value Object') || c.operations.some((o) => o.kind === 'constructor')) return c;
+    const ctor = {
+      name: c.name,
+      parameters: c.attributes.filter((a) => !a.static && !a.derived).map((a) => ({ name: a.name, type: a.type })),
+      returns: c.name,
+      visibility: c.constructorVisibility || 'public',
+      static: false,
+      abstract: false,
+      kind: 'constructor',
+    };
+    return { ...c, operations: [ctor, ...c.operations] };
+  });
+  return { ...json, classes };
 }
 
 /** The explorer: the template with Cytoscape and the model inlined, one file that opens offline. */

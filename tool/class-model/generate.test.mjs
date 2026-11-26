@@ -49,6 +49,27 @@ test('should_report_an_error_when_a_relation_targets_an_unknown_class', () => {
   assert.ok(errors.some((e) => e.includes('unknown relation target NoSuchClass')), errors.join('\n'));
 });
 
+test('should_draw_a_create_constructor_from_the_attributes_when_the_class_is_a_value_object', () => {
+  const model = loadModel();
+
+  const { files } = generate(model, {});
+
+  const view = files.get('docs/diagrams/class-diagram-engine-progress.puml');
+  assert.match(view, /\+«create» Score\(points : int\)\n/);
+  assert.match(view, /\{static\} \+«create» zero\(\) : Score\n/);
+  const board = files.get('docs/diagrams/class-diagram-engine-board.puml');
+  assert.match(board, /~«create» Board\(topology : ITopology, coordinates : List<Coordinate>, contents : Map<Coordinate, TCell>\)\n/);
+});
+
+test('should_add_a_note_with_the_uml_bound_when_a_type_parameter_has_one', () => {
+  const model = loadModel();
+
+  const { files } = generate(model, {});
+
+  const view = files.get('docs/diagrams/class-diagram-engine-cycle.puml');
+  assert.match(view, /note left of SlideMergeRule : TCell > IMergeable~<TCell>\n/);
+});
+
 test('should_split_nested_type_arguments_when_reading_a_bound_type', () => {
   const args = typeArgs('IGameRules<ColorId, Map<Coordinate, int>, LinesState>');
 
