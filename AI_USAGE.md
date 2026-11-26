@@ -40,9 +40,11 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 |---|---|
 | 2026-10-27 to 2026-10-28 | [Project foundation: course analysis, repositories, tooling and documentation](#2026-10-27-to-2026-10-28--project-foundation-course-analysis-repositories-tooling-and-documentation-setup-no-task-document) |
 | 2026-11-08 | [Professor's answers of 2026-11-05 applied to the requirements](#2026-11-08--professors-answers-of-2026-11-05-applied-to-the-requirements-docs-no-task-document) |
+| 2026-11-08 | [Document the game rules the assignment leaves open](#2026-11-08--document-the-game-rules-the-assignment-leaves-open-oddtasks0002-game-rulesmd-pr-13) |
 | 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
 | 2026-11-25 | [Domain model rules without DDD](#2026-11-25--domain-model-rules-without-ddd-docs-no-task-document) |
+| 2026-11-25 | [Game rules completed with the team decisions of 2026-11-24](#2026-11-25--game-rules-completed-with-the-team-decisions-of-2026-11-24-oddtasks0002-game-rulesmd-pr-13) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -78,6 +80,28 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Team modifications:** Pending: the team reviews the catalog before it becomes *Baseline*.
 - **Errors and corrections:** The AI could not run speech recognition on the audio in its environment, so it corrected the existing transcription from context instead of producing a new one, and listed the passages a person must check by listening (for example, whether the AOP answer refers only to the aspect).
 - **Lessons:** Quote the professor's exact words next to each decision, and keep the AI's interpretation in a separate column, so the team can tell what was said from what was inferred.
+
+### 2026-11-08 — Document the game rules the assignment leaves open (odd/tasks/0002-game-rules.md, PR #13)
+
+- **Author:** Eduard Velasco
+- **Pull request:** #13
+- **Tool / model:** Claude Code 2.1.312 — Sonnet 5.5 for the main session, `odd-explore` and `odd-verify`; Opus for `odd-worker` (models pinned in `.claude/agents/`).
+- **Task:** Design task D2: decide and document the Hexa Sort cascade, what a Hexa Lines line is, the Hexa Fit figure, the score and stars of each variant, and the leaderboard order and tie-breaks. Output: `docs/game-rules.md`. Requirements: C-33, FR-05, FR-22, FR-33, FR-34, FR-44, FR-52 to FR-54, FR-65.
+- **Prompts (originals in Spanish):**
+  - "Tarea de diseño D2 … reglas de juego que el enunciado deja abiertas … Es documentación, no código. … Sigue ODD: crea la rama con ship, explora con odd-explore y hazme las preguntas que falten una por una, cerradas, con tu recomendación y las alternativas. No decidas reglas sin preguntarme. Después crea el documento de la tarea en odd/tasks/ con specs ligadas a requisitos y espera mi aprobación antes de escribir docs/game-rules.md." (full text in the task log)
+  - "apruebo todo" — approval of the specs S1 to S16 and the proposals O1 to O5.
+  - "okey estoy de acuerdo" — acceptance of `docs/game-rules.md` after the verification.
+- **Result:** The AI asked 23 closed questions, each with a recommendation and alternatives. `odd-explore` mapped the sources. `odd-worker` wrote `docs/game-rules.md`. `odd-verify` gave a verdict per spec (15 PASS, 1 PARTIAL) and simulated the Hexa Sort cascade on 200,000 random boards to check that it terminates and is deterministic. Task document `odd/tasks/0002-game-rules.md` holds the decisions, specs and verdicts.
+- **Team modifications:** Eduard made every rule decision by answering the closed questions; he chose the recommended option each time. He also approved the specs before the document was written. No rule came from the AI without his answer, except the points listed under errors, which he accepted at the end.
+- **Errors and corrections:**
+  - The branch was cut from `main`, which lacks C-33 (it exists only in the open PR #12) — detected by `odd-explore`; C-33 is cited as pending.
+  - The first description of one option for Hexa Fit moves was self-contradictory (undo "neither adds nor subtracts" yet "follows the active timeline") — detected while reviewing the answer; a clarifying question was asked and the counter only grows.
+  - `odd-worker` made 11 detail choices the task document did not state (cascade pair order, rotation counted per step, truncation of seconds, user-id tie-break direction, and others) — it reported them; they are in the task log.
+  - `odd-verify` found the Sort tray parameters only as examples (S7), and left unclear the rotation count, whether a rotation starts the Fit clock, and the hole definition at the board edge — three were settled with new questions; the Sort parameters were named without a question.
+  - Two clarifications were added without asking (SORT-4 also applies to a stack arriving with a block of 10 or more; the SORT-3 example now says why no pair remains); they follow from earlier decisions.
+  - The four fixes made after the verdict were not re-run through `odd-verify`.
+- **Verification:** `odd-verify` verdict per spec (15 PASS, 1 PARTIAL, then fixed) and a simulation of the Hexa Sort cascade on 200,000 random boards; Eduard reviewed the document.
+- **Lessons:** Closed questions with a recommendation made the decisions fast, but the AI's option wording can hide a contradiction, so reread the options before answering. A verifier that simulates a rule finds more than one that only reads it. Details added by the worker need an explicit list for the team to confirm.
 
 ### 2026-11-09 — README and AI usage log adjusted after reviewing reference repositories (docs; no task document)
 
@@ -122,6 +146,20 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Errors and corrections:** None detected in this change.
 - **Verification:** The cited chapters were checked in the team's library before citing them (Martin 2017, ch. 20; Esposito 2024, ch. 6; the Memento and Observer chapters of the course's pattern book). Every edit replaced text found exactly once; the diff was reviewed, and commitlint and CI run on it.
 - **Lessons:** A rule set is easier to defend when each rule names the requirement it serves; the DDD rules had no requirement behind aggregates, domain services or domain events. The entry of 2026-11-09 stays as history.
+
+### 2026-11-25 — Game rules completed with the team decisions of 2026-11-24 (odd/tasks/0002-game-rules.md, PR #13)
+
+- **Author:** Eduard Velasco
+- **Pull request:** #13
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5. RANK-3 comes from the team's software requirements specification draft, which a teammate wrote with Gemini (Google); the team reviewed that draft critically on 2026-11-24 before taking the rule.
+- **Task:** Add to `docs/game-rules.md` the rules the team decided on 2026-11-24 (LINES-4 to LINES-6, MERGE-2 to MERGE-4, FIT-6, LEVEL-1, LEVEL-2, RANK-3) and three more the domain model needs (FIT-7, SORT-8, LINES-7), each with its reason and an example a test can reuse (C-23b, C-33).
+- **Prompts (original in Spanish, verbatim in the task log):**
+  - "app #13 (2.4): rebase y las reglas nuevas, más estas tres que necesita el modelo de dominio, cada una con su razón y un ejemplo que sirva de prueba: (a) en Hexa Fit una pieza solo se rota mientras está fuera del tablero (como muestra el ejemplo de FIT-4); (b) en Hexa Sort cada pila de la bandeja sortea su tamaño dentro de stackSize del nivel y el color de cada ficha entre los colores del nivel, con la semilla del nivel; (c) en Hexa Lines cada entrada del catálogo de piezas trae su color."
+- **Result:** Thirteen new rules and changes to SORT-6 (the level stores the seed), SORT-7 (why Hexa Sort has stars), FIT-2, FIT-5, RANK-1 (the date comes from the phone), the level file sections and *Out of scope*; specs S17 to S29 and decisions 25 to 39 in the task document.
+- **Team modifications:** The team took every decision (2026-11-24 change plan; FIT-7, SORT-8 and LINES-7 from Eduard on 2026-11-25). The AI wrote the reasons and the examples; a teammate reviews them in this pull request.
+- **Errors and corrections:** None detected. One deviation from the request: it asked for a rebase, and the AI merged `main` instead, because a rebase needs a force push, which `AGENTS.md` §6 forbids.
+- **Verification:** Every cited requirement ID was checked against `docs/requirements.md`; the MERGE-2 rows and the RANK-3 example were recomputed by hand; the rules were read against assignment §1.1 to §1.5 for contradictions (none found). A teammate's full review is still required before merging.
+- **Lessons:** A rule drafted by another AI tool (RANK-3) needs the same review as any other: the team checked it against FR-13 and FR-22 before adopting it.
 
 ## Critical evaluation
 
