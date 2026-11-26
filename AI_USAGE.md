@@ -42,6 +42,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-08 | [Professor's answers of 2026-11-05 applied to the requirements](#2026-11-08--professors-answers-of-2026-11-05-applied-to-the-requirements-docs-no-task-document) |
 | 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
+| 2026-11-25 | [Domain model rules without DDD](#2026-11-25--domain-model-rules-without-ddd-docs-no-task-document) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -107,6 +108,20 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Errors and corrections:** A first draft used examples (an email value object, a registration command) that no requirement backs; the AI replaced them with examples taken from the requirements before committing.
 - **Verification:** The rules were checked against Esposito (2024), chapter 6 (aggregates, methods over properties, anemic model) and the course's Clean Architecture class; the diff was reviewed in the pull request, and commitlint and CI run on it.
 - **Lessons:** Writing the modeling rules before the domain model gives the reviewer agent something concrete to check, and the table of roles prepares the answer to "is this a DDD pattern or a GoF pattern?" in the defense.
+
+### 2026-11-25 — Domain model rules without DDD (docs; no task document)
+
+- **Author:** Eduard Velasco
+- **Pull request:** this pull request, paired with the `docs/domain-model-without-ddd` pull request of hexablock-api
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
+- **Task:** Replace the DDD tactical patterns of `AGENTS.md` §4 with the modeling rules the team keeps, before the domain model (D1) is written (C-05, C-32, NFR-03, FR-45, FR-66).
+- **Prompts (faithful paraphrase; originals in Spanish):**
+  - "Apply the team's change plan of 2026-11-24: the app half of the `docs/domain-model-without-ddd` pair, following AGENTS.md, without asking me between steps; stop only if something contradicts the assignment."
+- **Result:** The *Domain model* subsection of `AGENTS.md` §4 (one name per concept, behavior with its data, immutable game state, read-only getters, value objects, classes with identity, Memento, an injected pure random generator, Observer for game events, and a table of roles without DDD); two stereotypes in `docs/diagrams/README.md` and read-only values drawn as `{readOnly}` attributes; the *Domain model* question of the `architecture-reviewer` agent.
+- **Team modifications:** The team decided on 2026-11-13 to leave DDD out and on 2026-11-24 to allow read-only getters; the AI wrote the text from that decision and the change plan. The team reviews the wording in this pull request.
+- **Errors and corrections:** None detected in this change.
+- **Verification:** The cited chapters were checked in the team's library before citing them (Martin 2017, ch. 20; Esposito 2024, ch. 6; the Memento and Observer chapters of the course's pattern book). Every edit replaced text found exactly once; the diff was reviewed, and commitlint and CI run on it.
+- **Lessons:** A rule set is easier to defend when each rule names the requirement it serves; the DDD rules had no requirement behind aggregates, domain services or domain events. The entry of 2026-11-09 stays as history.
 
 ## Critical evaluation
 
