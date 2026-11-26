@@ -1,9 +1,9 @@
 # ADR-0006: Boards and levels are assembled by a Builder in the domain
 
-- **Status:** Proposed — to review in the first team meeting
-- **Date:** 2026-11-01
+- **Status:** Accepted
+- **Date:** 2026-11-25 (proposed 2026-11-01)
 - **Proposed by:** Eduard Velasco
-- **Deciders:** —
+- **Deciders:** Eduard Velasco, Ali Dahouk, Valentina Maza
 - **Requirements:** C-05, C-06, C-19a, FR-04, FR-30, FR-40, FR-50, FR-60, NFR-02, NFR-03
 
 ## Context

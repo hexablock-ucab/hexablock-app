@@ -1,0 +1,196 @@
+@startuml class-diagram-engine-progress
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Generic engine — scoring, progress and levels
+
+package "hexablock_engine / core/progress" {
+  interface IScoringPolicy<TState> << (▲,#D4A300) interface >> #FFF4C2 {
+    --
+    +pointsFor(before : TState, after : TState) : Score
+  }
+  interface IProgressModel << (▲,#D4A300) interface >> #FFF4C2 {
+    +usesLevels : bool {readOnly}
+    --
+    +resultOf(outcome : GameOutcome, at : ResultDate) : GameResult
+    +isBetter(candidate : GameResult, best : GameResult [0..1]) : bool
+  }
+  class GameResult << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +score : Score [0..1] {readOnly}
+    +stars : StarCount [0..1] {readOnly}
+    +moves : MoveCount [0..1] {readOnly}
+    +time : ElapsedTime [0..1] {readOnly}
+    +achievedAt : ResultDate {readOnly}
+    --
+    +«create» GameResult(score : Score [0..1], stars : StarCount [0..1], moves : MoveCount [0..1], time : ElapsedTime [0..1], achievedAt : ResultDate)
+  }
+  class HighScoreProgress << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class Score << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +points : int {readOnly}
+    --
+    +«create» Score(points : int)
+    {static} +«create» zero() : Score
+    +plus(other : Score) : Score
+    +isHigherThan(other : Score) : bool
+  }
+  class StarCount << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» StarCount(value : int)
+    +isMoreThan(other : StarCount) : bool
+  }
+  class MoveCount << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» MoveCount(value : int)
+    {static} +«create» zero() : MoveCount
+    +next() : MoveCount
+    +advancedBy(steps : RotationSteps) : MoveCount
+    +atMost(limit : MoveCount) : bool
+    +isFewerThan(other : MoveCount) : bool
+  }
+  class ResultDate << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +instant : DateTime {readOnly}
+    --
+    +«create» ResultDate(instant : DateTime)
+    +isEarlierThan(other : ResultDate) : bool
+  }
+  class GoalCount << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» GoalCount(value : int)
+    {static} +«create» zero() : GoalCount
+    +plus(count : int) : GoalCount
+    +reaches(target : GoalCount) : bool
+  }
+}
+package "hexablock_engine / core/levels" {
+  class GameId << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : String {readOnly}
+    --
+    +«create» GameId(value : String)
+  }
+  class LevelId << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : String {readOnly}
+    +/gameId : GameId {readOnly}
+    --
+    +«create» LevelId(value : String)
+  }
+  class LevelNumber << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» LevelNumber(value : int)
+  }
+  class LevelVersion << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» LevelVersion(value : int)
+    +isNewerThan(other : LevelVersion) : bool
+  }
+  class Difficulty << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» Difficulty(value : int)
+  }
+  class LevelHeader << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +id : LevelId {readOnly}
+    +gameId : GameId {readOnly}
+    +number : LevelNumber {readOnly}
+    +version : LevelVersion {readOnly}
+    +difficulty : Difficulty {readOnly}
+    --
+    +«create» LevelHeader(id : LevelId, gameId : GameId, number : LevelNumber, version : LevelVersion, difficulty : Difficulty)
+  }
+  class LevelCatalog << (▲,#D4A300) Value Object >> #FFF4C2 {
+    -headers : List<LevelHeader> {readOnly}
+    --
+    +«create» LevelCatalog(headers : List<LevelHeader>)
+    +mergedWith(other : LevelCatalog) : LevelCatalog
+    +inOrder() : List<LevelHeader>
+    +accessGiven(completed : Set<LevelId>) : List<LevelAccess>
+  }
+  class LevelAccess << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +header : LevelHeader {readOnly}
+    +isUnlocked : bool {readOnly}
+    +isCompleted : bool {readOnly}
+    --
+    +«create» LevelAccess(header : LevelHeader, isUnlocked : bool, isCompleted : bool)
+  }
+  class LevelPar << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +moves : MoveCount {readOnly}
+    +time : ElapsedTime {readOnly}
+    --
+    +«create» LevelPar(moves : MoveCount, time : ElapsedTime)
+    +starsFor(moves : MoveCount, time : ElapsedTime) : StarCount
+  }
+  class MoveThresholds << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +first : MoveCount {readOnly}
+    +second : MoveCount {readOnly}
+    --
+    +«create» MoveThresholds(first : MoveCount, second : MoveCount)
+    +starsFor(moves : MoveCount) : StarCount
+  }
+  class ColorId << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +key : String {readOnly}
+    --
+    +«create» ColorId(key : String)
+  }
+}
+package "hexablock_engine / core/engine" {
+  class GameOutcome << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/time" {
+  class ElapsedTime << (▲,#D4A300) Value Object >> #FFF4C2
+}
+
+hide GameOutcome members
+hide ElapsedTime members
+IProgressModel ..> GameOutcome : <<use>>
+IProgressModel ..> GameResult : <<create>>
+GameResult --> "0..1" Score : score
+GameResult --> "0..1" StarCount : stars
+GameResult --> "0..1" MoveCount : moves
+GameResult --> "0..1" ElapsedTime : time
+GameResult --> "1" ResultDate : achievedAt
+HighScoreProgress ..|> IProgressModel
+LevelHeader --> "1" LevelId : id
+LevelHeader --> "1" GameId : gameId
+LevelHeader --> "1" LevelNumber : number
+LevelHeader --> "1" LevelVersion : version
+LevelHeader --> "1" Difficulty : difficulty
+LevelCatalog o--> "0..*" LevelHeader : headers
+LevelCatalog ..> LevelAccess : <<create>>
+LevelAccess --> "1" LevelHeader : header
+LevelPar --> "1" MoveCount : moves
+LevelPar --> "1" ElapsedTime : time
+MoveThresholds --> "2" MoveCount : thresholds
+
+note right of IScoringPolicy : Strategy: strategy
+note right of IProgressModel : Strategy: strategy
+note right of HighScoreProgress : Strategy: concrete strategy
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml
