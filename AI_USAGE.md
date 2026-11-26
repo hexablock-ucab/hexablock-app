@@ -45,6 +45,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
 | 2026-11-25 | [Domain model rules without DDD](#2026-11-25--domain-model-rules-without-ddd-docs-no-task-document) |
 | 2026-11-25 | [Game rules completed with the team decisions of 2026-11-24](#2026-11-25--game-rules-completed-with-the-team-decisions-of-2026-11-24-oddtasks0002-game-rulesmd-pr-13) |
+| 2026-11-25 | [Requirements baseline](#2026-11-25--requirements-baseline-docs-no-task-document) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -160,6 +161,20 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Errors and corrections:** None detected. One deviation from the request: it asked for a rebase, and the AI merged `main` instead, because a rebase needs a force push, which `AGENTS.md` §6 forbids.
 - **Verification:** Every cited requirement ID was checked against `docs/requirements.md`; the MERGE-2 rows and the RANK-3 example were recomputed by hand; the rules were read against assignment §1.1 to §1.5 for contradictions (none found). A teammate's full review is still required before merging.
 - **Lessons:** A rule drafted by another AI tool (RANK-3) needs the same review as any other: the team checked it against FR-13 and FR-22 before adopting it.
+
+### 2026-11-25 — Requirements baseline (docs; no task document)
+
+- **Author:** Eduard Velasco
+- **Pull request:** this pull request, paired with hexablock-api #21
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5. The requirements for the optional account (FR-11, FR-12, FR-20, FR-21) and usability (NFR-07) originate in the team's requirements specification, which a teammate drafted with Gemini (Google); the team reviewed that draft critically on 2026-11-24 before anything entered this catalog.
+- **Task:** Turn the catalog into the *Baseline* with the decisions the team took on 2026-11-10, 2026-11-11 and 2026-11-24 (C-05, C-09, C-17, C-19, C-25, FR-11, FR-12, FR-16 to FR-21, FR-23, FR-25, FR-53, NFR-06, NFR-07), and trace FIT-6 of `docs/game-rules.md` to the new FR-17.
+- **Prompts (faithful paraphrase; original in Spanish):**
+  - "The app half of `docs/requirements-baseline` (change plan 2.8, the same as api #21), with the pull request open and linked to the API one. `docs/requirements.md` must stay identical in both repositories. Follow AGENTS.md. Do not merge anything."
+- **Result:** `docs/requirements.md` is a byte-for-byte copy of the file in hexablock-api #21; the FIT-6 row of `docs/game-rules.md` cites FR-17.
+- **Verification:** `diff` between this file and the file of hexablock-api #21 prints nothing; on `main` the two catalogs were also identical before the change. commitlint and the pre-push checks.
+- **Team modifications:** Open until the merge: the three members (Eduard Velasco, Ali Dahouk, Valentina Maza) review the catalog and record their agreement in this pull request and in hexablock-api #21; any change they ask for goes into both pull requests and is listed here before merging.
+- **Errors and corrections:** None detected yet.
+- **Lessons:** Copying the reviewed file from the paired pull request, instead of editing the catalog a second time, is what keeps the two repositories identical.
 
 ## Critical evaluation
 

@@ -367,7 +367,7 @@ The leaderboard exists per `gameId` and, for level-based variants (Hexa Fit and 
 | FIT-3 | Stars | FR-44, FR-43, FR-05 |
 | FIT-4 | Counting moves | FR-44, FR-45 |
 | FIT-5 | Counting time | FR-44, NFR-05 |
-| FIT-6 | Pause | FR-44 |
+| FIT-6 | Pause | FR-44, FR-17 |
 | FIT-7 | Rotation off the board | FR-41, FR-42, FR-44 |
 | MERGE-1 | Target tile and end of game | FR-64, FR-67 |
 | MERGE-2 | Merge order | FR-62 |
