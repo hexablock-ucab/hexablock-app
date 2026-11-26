@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>14 · Game over (Hexa Merge)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="result.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--variant-merge);
+    background: radial-gradient(460px 360px at 50% 30%, rgba(255,77,109,0.16), transparent 70%), var(--bg); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="head">
+    <div class="t-label" style="color:var(--accent)">Hexa Merge</div>
+    <div class="t-display">Sin movimientos</div>
+    <div class="t-body sub">Ningún deslizamiento cambia el tablero.</div>
+    <span class="badge" style="color:var(--text)"><span data-render="target"></span>Llegaste a 2048 en esta partida</span>
+  </div>
+  <div class="board-dim"><div data-render="board"></div><span class="stamp">Fin de la partida</span></div>
+  <div class="scores">
+    <div class="card"><div class="t-label">Puntaje</div><div class="t-number" style="margin-top:8px">24 116</div></div>
+    <div class="card"><div class="t-label">Mejor</div><div class="t-number" style="margin-top:8px; color: var(--primary-text)">¡Récord!</div></div>
+  </div>
+  <div class="actions">
+    <span class="btn btn-primary"><span class="ico" data-icon="retry"></span>Jugar otra vez</span>
+    <span class="btn btn-ghost"><span class="ico" data-icon="home"></span>Inicio</span>
+  </div>
+</div>
+<div class="home-indicator"></div>
+<script>
+  // A full board where no two neighbors are equal, so no swipe in any of the six directions changes it.
+  const V = { "0,0": 2048, "1,-1": 8, "1,0": 64, "-1,0": 4, "0,-1": 32, "2,-2": 2, "-1,2": 16, "-2,1": 2, "0,2": 4, "2,0": 2, "-1,-1": 128,
+              "1,1": 8, "0,1": 256, "-1,1": 512, "2,-1": 16, "1,-2": 4, "0,-2": 16, "-2,0": 8, "-2,2": 32 };
+  function board() {
+    return HB.board({ cells: HB.hexagon(2), size: 25, gap: 2.5, fill: (q, r) => HB.MERGE.fill(V[q + "," + r]),
+      label: (q, r) => { const n = V[q + "," + r]; return { text: n, color: HB.MERGE.ink(n), size: n >= 1000 ? 12 : n >= 100 ? 15 : 18 }; } });
+  }
+  function target() {
+    return HB.board({ cells: [[0,0]], size: 11, gap: 0, fill: () => HB.MERGE.fill(2048) }).replace(/<use href="#hx-empty"[^>]*\/>/g, "");
+  }
+</script>
+</body>
+</html>

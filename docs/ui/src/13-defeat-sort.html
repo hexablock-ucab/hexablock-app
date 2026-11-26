@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>13 · Defeat (Hexa Sort)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="result.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--variant-sort);
+    background: radial-gradient(460px 360px at 50% 30%, rgba(255,77,109,0.16), transparent 70%), var(--bg); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="head">
+    <div class="t-label" style="color:var(--accent)">Hexa Sort · Nivel 4</div>
+    <div class="t-display">Tablero lleno</div>
+    <div class="t-body sub">No quedan celdas vacías y te faltó 1 meta.</div>
+  </div>
+  <div class="board-dim"><div data-render="board"></div><span class="stamp">Nivel no superado</span></div>
+  <div class="scores">
+    <div class="card"><div class="t-label">Metas</div><div class="t-number" style="margin-top:8px">2<span style="color:var(--text-muted); font-size:20px"> / 3</span></div></div>
+    <div class="card"><div class="t-label">Movimientos</div><div class="t-number" style="margin-top:8px">31</div></div>
+  </div>
+  <div class="actions">
+    <span class="btn btn-primary"><span class="ico" data-icon="retry"></span>Reintentar nivel</span>
+    <span class="btn btn-ghost"><span class="ico" data-icon="levels"></span>Niveles</span>
+  </div>
+</div>
+<div class="home-indicator"></div>
+<script>
+  const R = "var(--tile-red)", O = "var(--tile-orange)", Y = "var(--tile-yellow)", G = "var(--tile-green)", C = "var(--tile-cyan)", V = "var(--tile-violet)";
+  // Every cell holds a stack and no two neighbors share a top color, so the cascade cannot free a cell (SORT-5).
+  const TOPS = { "0,0": O, "1,-1": G, "-1,0": R, "0,-2": Y, "1,-2": C, "2,-2": R, "-1,-1": G, "-2,1": C, "0,1": Y, "2,0": C,
+                 "-1,2": R, "1,1": V, "-2,2": G, "0,-1": V, "1,0": R, "-1,1": V, "2,-1": Y, "-2,0": Y, "0,2": O };
+  const UNDER = [C, V, G, O, Y, R];
+  function board() {
+    return HB.board({ cells: HB.hexagon(2), size: 24, gap: 2.5, stack: (q, r) => {
+      const t = TOPS[q + "," + r]; const n = 1 + Math.abs(q * 2 + r * 3) % 3;
+      return [UNDER[Math.abs(q - r) % 6], ...Array(n).fill(t)];
+    }});
+  }
+</script>
+</body>
+</html>

@@ -43,6 +43,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-08 | [Document the game rules the assignment leaves open](#2026-11-08--document-the-game-rules-the-assignment-leaves-open-oddtasks0002-game-rulesmd-pr-13) |
 | 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
+| 2026-11-09 | [UI mockups of the app screens (D12)](#2026-11-09--ui-mockups-of-the-app-screens-d12-odd-tasks-0003-ui-mockupsmd-pr-14) |
 | 2026-11-24 to 2026-11-25 | [Domain model (D1) and class diagram (D7)](#2026-11-24-to-2026-11-25--domain-model-d1-and-class-diagram-d7-oddtasks0005-domain-modelmd) |
 | 2026-11-25 | [Class-model generator moved to `tool/`](#2026-11-25--class-model-generator-moved-to-tool-oddtasks0005-domain-modelmd) |
 | 2026-11-25 | [Domain model rules without DDD](#2026-11-25--domain-model-rules-without-ddd-docs-no-task-document) |
@@ -136,6 +137,43 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Errors and corrections:** A first draft used examples (an email value object, a registration command) that no requirement backs; the AI replaced them with examples taken from the requirements before committing.
 - **Verification:** The rules were checked against Esposito (2024), chapter 6 (aggregates, methods over properties, anemic model) and the course's Clean Architecture class; the diff was reviewed in the pull request, and commitlint and CI run on it.
 - **Lessons:** Writing the modeling rules before the domain model gives the reviewer agent something concrete to check, and the table of roles prepares the answer to "is this a DDD pattern or a GoF pattern?" in the defense.
+
+### 2026-11-09 — UI mockups of the app screens (D12, [odd/tasks/0003-ui-mockups.md](odd/tasks/0003-ui-mockups.md), PR #14)
+
+- **Author:** Valentina Maza
+- **Pull request:** #14
+- **Tool / model:** Claude (claude.ai agent session, Claude Opus 5.5) with access to Valentina's computer to read the team workspace and write the files; mockups rendered to PNG with headless Chrome in the agent's workspace.
+- **Task:** Set up Valentina's machine for the project, take issue #34 (D12) and produce the high-fidelity mockups of every screen: style guide, home, game select, level select, game template, the four game screens, victory, defeat and settings (FR-01 to FR-10, C-28, NFR-04).
+- **Prompts (faithful paraphrase; originals in Spanish):**
+  - "Analyze the whole organization's repositories against the assignment; the professor stresses SOLID and that a change such as the database or the cell shape must be just adding a class."
+  - "Eduard asked us to take a task from the workspace and approve the requirement PRs; how do I do it?" (followed by step-by-step help to install `gh`, clone the repositories and fix a push rejected for the wrong GitHub account).
+  - "Let's do D12." Then five closed design questions, answered with the recommended option: dark arcade neon style; portrait phone only; one shared game template with fixed zones and one mockup per variant; high fidelity; editable source plus PNG.
+  - "Approve the task document as is, and keep a report of what we did today for my teammates."
+  - "Continue with T2", "continue with T3", "continue" (T4 and T5).
+- **Result:** Task document `odd/tasks/0003-ui-mockups.md` (11 specs linked to requirements); `docs/ui/` with shared design tokens (`tokens.css`), phone frame (`screens.css`), game template zones (`game.css`) and a board-drawing helper (`hexgrid.js`), 11 screen sources with their PNG exports at 2×, a style guide and an index README with the English strings of each screen; font and algorithm credits in `THIRD_PARTY_NOTICES.md`.
+- **Team modifications:** Valentina chose the five design options and approved the task document; she reviewed each batch of screens before committing them and asked for the work to continue screen by screen.
+- **Errors and corrections:**
+  - The first commit used the scope `ui`, which the repository does not allow — detected by the commitlint hook; changed to `docs`.
+  - The first push was rejected (403) because git used an old GitHub account stored on the computer — detected from the error; the stored credential was removed and git now uses the `gh` login.
+  - The six swipe arrows of Hexa Merge were drawn as near-equilateral triangles, so the diagonal ones seemed to point sideways — detected when reviewing the rendered PNG at full size; replaced by chevrons.
+  - The first Hexa Sort board had two neighboring stacks with the same top color, a state the cascade rule (SORT-3) never leaves — detected by checking the board by hand against `docs/game-rules.md`; two stacks changed.
+  - The first Hexa Lines defeat board left full rows that would have been cleared (LINES-2) — detected by the same check; the free cells were chosen with a small search so that every row of the three axes has one free cell and no two free cells touch.
+  - Smaller visual defects found on review of each render: two yellow tiles side by side in the logo, a misaligned status bar, result chips wrapping to two lines, a squeezed icon, a faded "game over" stamp.
+- **Review round (2026-11-16):** Eduard's review of PR #14 found defects the AI had not caught; they were fixed with the same session. Prompts, verbatim: "ya voy a aprobar esto y continuamos avanzando lo mas posible"; decisions "Exacto a." (game selector on the home screen) and "Dale perfect." (light theme).
+  - The game selector was a separate screen, against assignment 5.1.1 and FR-01 — detected by Eduard (B1); moved to the home screen.
+  - Result screens covered only Hexa Fit and Hexa Lines, and the games had no pause menu or way out — detected by Eduard (B2, B3); added for every variant.
+  - Hexa Sort relied on color alone, and white numbers on bright Hexa Merge tiles had 2.3–2.9:1 contrast — detected by Eduard with the WCAG formula (B4, B5); a glyph per color and dark text were added, and the contrast was recomputed with a script.
+  - Small touch targets, a rotate button overlapping the tray, a pause button that shrank at 360 px, missing offline and error states — detected by Eduard (S1–S9) and by a script that renders every screen at 360 × 780.
+  - Adding a shared `.chip` component silently broke the color swatches of the style guide, which used the same class name — detected when looking at the rendered PNG; the swatch class was renamed.
+  - The first light theme had three accents below 4.5:1 as text — detected by computing the contrast before publishing; the colors were darkened.
+- **Both themes and the strings (2026-11-16):** prompt, verbatim: "q mas puedo adelantra? ir haciendo? acuerdate de hacer todo con sus verxipnes claras y oscuras y eso pues". Result: every screen exported in the light theme, theme and symbol settings, `docs/ui/tokens.json` and the ARB files in Spanish and English (120 keys, checked for equal keys and placeholders and parsed as ICU).
+  - The pause menu and leave confirmation drew the game behind them in the dark theme even in the light export, because the iframe did not receive `?theme` — detected when looking at the light exports; `hexgrid.js` now passes the page's query to the iframe.
+  - The style guide ignored `?theme` and printed the dark hex codes by hand — detected the same way; it now reads each value from the active theme.
+  - Settings offered no way to choose the theme or to hide the color symbols promised in B4 — detected while writing the strings; both rows added.
+- **Team decisions applied (2026-11-24):** prompt, verbatim: "sigamos". Result: review point O5 (state colors separated from tile colors), the how-to-play modal (screen 19 and the steps of the four variants in the ARB files), the Hexa Fit board hidden while paused, and the saving of endless games marked as accepted.
+  - The pause sheet behind the Hexa Fit modal lost the page's theme once the iframe got its own query (`?paused`), because `hexgrid.js` only passed the query to an iframe without one — detected while writing the change; the page's query is now appended.
+- **Verification:** every mockup rendered to PNG and reviewed at full size; a script rendered every phone screen at 360 × 780 and listed overflowing elements; the contrast of every token pair was computed with the WCAG formula; the defeat boards were checked by script against `docs/game-rules.md`; the ARB files were checked for equal keys and placeholders and parsed as ICU. Eduard reviewed the pull request.
+- **Lessons:** Render and look at every mockup at full size; diagrams that look right in code can read wrong on screen. Check example game states against the written rules, not only the visual style. Shared tokens and one template made each later screen faster and kept the four games consistent. Check a design against the assignment's exact wording and an accessibility standard before asking for review, not after.
 
 ### 2026-11-24 to 2026-11-25 — Domain model (D1) and class diagram (D7) (odd/tasks/0005-domain-model.md)
 
@@ -266,6 +304,10 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-10-28 | Commit bodies over 100 characters | The `commits` check in CI | Tooling |
 | 2026-10-28 | Dependabot commits rejected by commitlint | CI | Tooling |
 | 2026-11-08 | Could not run speech recognition on the meeting audio; corrected the existing transcription from context instead | The AI reported the limitation itself and listed the passages to check by ear | Tooling |
+| 2026-11-09 | Scope `ui` not allowed by commitlint; push rejected for an old GitHub account | commitlint hook; the 403 error | Tooling |
+| 2026-11-09 | Merge swipe arrows pointing sideways; Sort and Lines example boards impossible under the rules | Valentina's review of each render; checking boards against `docs/game-rules.md` | Design |
+| 2026-11-16 | Game selector on its own screen, missing result and pause screens, color-only cues, low contrast, small targets | Eduard's review of PR #14 | Design |
+| 2026-11-16 | Shared `.chip` class broke the style guide; light-theme exports drew dark iframes | Looking at the rendered PNGs | Design |
 | 2026-11-25 | Domain model with seven blocking design defects (anemic states, event type checks, uncheckable invariants, a fifth variant touching shared classes) | `architecture-reviewer` agent | Design |
 | 2026-11-25 | State transitions that needed the points before the scoring policy could compute them | The AI noticed it while applying the review fixes | Design |
 | 2026-11-25 | PlantUML files that did not parse, and PNGs cut at 4096 px | `plantuml -checkonly` and inspection of the PNGs | Tooling |
