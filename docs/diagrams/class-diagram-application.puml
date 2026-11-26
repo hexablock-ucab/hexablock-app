@@ -1,0 +1,297 @@
+@startuml class-diagram-application
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Use cases — input ports, services and output ports (hexablock_application)
+
+package "hexablock_application / ports/input" {
+  interface StartGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +start(request : StartGameRequest) : Future<PlayableSession>
+  }
+  interface ApplyMoveUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +apply(intent : PlayerIntent) : MoveValidation
+  }
+  interface UndoMoveUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +undo() : bool
+  }
+  interface RedoMoveUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +redo() : bool
+  }
+  interface PauseGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +pause()
+  }
+  interface ResumeGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +resume()
+  }
+  interface SaveProgressUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +save(session : PlayableSession) : Future<SaveProgressResult>
+  }
+  interface GetProgressUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +progressOf(gameId : GameId) : Future<List<ProgressRecord>>
+  }
+  interface ListLevelsUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +levelsOf(gameId : GameId) : Future<List<LevelAccess>>
+  }
+  interface DownloadLevelsUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +download(gameId : GameId) : Future<LevelCatalog>
+  }
+  interface SaveGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +saveActive() : Future<bool>
+  }
+  interface ResumeSavedGameUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +resumeSaved(gameId : GameId) : Future<PlayableSession?>
+  }
+  interface SyncProgressUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +sync() : Future<void>
+  }
+  interface GetLeaderboardUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +leaderboard(gameId : GameId, levelId : LevelId [0..1]) : Future<List<LeaderboardEntry>>
+  }
+  interface RegisterUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +register(credentials : Credentials) : Future<UserId>
+  }
+  interface SignInUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +signIn(credentials : Credentials) : Future<UserId>
+  }
+  interface SignOutUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +signOut() : Future<void>
+  }
+  interface GetPreferencesUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +current() : Future<Preferences>
+  }
+  interface UpdatePreferencesUseCase << (◄,#2E8B57) interface Use Case >> #DDF2E1 {
+    --
+    +update(preferences : Preferences) : Future<void>
+  }
+}
+package "hexablock_application / services" {
+  class ActiveSession << (■,#7E57C2) >> #ECE2F7 {
+    -session : PlayableSession [0..1]
+    +/current : PlayableSession [0..1] {readOnly}
+    --
+    +replace(session : PlayableSession)
+    +clear()
+  }
+  class GameSessionService << (■,#7E57C2) >> #ECE2F7 {
+    -registry : VariantRegistry {readOnly}
+    -seeds : ISeedSource {readOnly}
+    -active : ActiveSession {readOnly}
+    --
+    +start(request : StartGameRequest) : Future<PlayableSession>
+    +apply(intent : PlayerIntent) : MoveValidation
+    +undo() : bool
+    +redo() : bool
+    +pause()
+    +resume()
+  }
+  class ProgressService << (■,#7E57C2) >> #ECE2F7 {
+    -repository : IProgressRepository {readOnly}
+    -clock : Clock {readOnly}
+    --
+    +save(session : PlayableSession) : Future<SaveProgressResult>
+    +progressOf(gameId : GameId) : Future<List<ProgressRecord>>
+  }
+  class LevelCatalogService << (■,#7E57C2) >> #ECE2F7 {
+    -levels : ILevelRepository {readOnly}
+    -gateway : ILevelGateway {readOnly}
+    -progress : IProgressRepository {readOnly}
+    --
+    +levelsOf(gameId : GameId) : Future<List<LevelAccess>>
+    +download(gameId : GameId) : Future<LevelCatalog>
+  }
+  class SavedGameService << (■,#7E57C2) >> #ECE2F7 {
+    -registry : VariantRegistry {readOnly}
+    -repository : ISavedGameRepository {readOnly}
+    -active : ActiveSession {readOnly}
+    --
+    +saveActive() : Future<bool>
+    +resumeSaved(gameId : GameId) : Future<PlayableSession?>
+  }
+  class SyncService << (■,#7E57C2) >> #ECE2F7 {
+    -repository : IProgressRepository {readOnly}
+    -gateway : IProgressGateway {readOnly}
+    -sessions : ISessionStore {readOnly}
+    --
+    +sync() : Future<void>
+  }
+  class LeaderboardService << (■,#7E57C2) >> #ECE2F7 {
+    -gateway : ILeaderboardGateway {readOnly}
+    --
+    +leaderboard(gameId : GameId, levelId : LevelId [0..1]) : Future<List<LeaderboardEntry>>
+  }
+  class AccountService << (■,#7E57C2) >> #ECE2F7 {
+    -gateway : IAccountGateway {readOnly}
+    -sessions : ISessionStore {readOnly}
+    --
+    +register(credentials : Credentials) : Future<UserId>
+    +signIn(credentials : Credentials) : Future<UserId>
+    +signOut() : Future<void>
+  }
+  class PreferencesService << (■,#7E57C2) >> #ECE2F7 {
+    -repository : IPreferencesRepository {readOnly}
+    -audio : IAudioOutput {readOnly}
+    --
+    +current() : Future<Preferences>
+    +update(preferences : Preferences) : Future<void>
+  }
+}
+package "hexablock_application / ports/output" {
+  interface IProgressRepository << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +bestOf(gameId : GameId, levelId : LevelId [0..1]) : Future<ProgressRecord?>
+    +save(record : ProgressRecord) : Future<void>
+    +allOf(gameId : GameId) : Future<List<ProgressRecord>>
+    +unsynced() : Future<List<ProgressRecord>>
+    +markSynced(records : List<ProgressRecord>) : Future<void>
+  }
+  interface ILevelRepository << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +catalogOf(gameId : GameId) : Future<LevelCatalog>
+    +storeDownloaded(levels : List<DownloadedLevel>) : Future<void>
+  }
+  interface ISavedGameRepository << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +save(game : SavedGame) : Future<void>
+    +load(gameId : GameId) : Future<SavedGame?>
+    +discard(gameId : GameId) : Future<void>
+  }
+  interface IPreferencesRepository << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +load() : Future<Preferences>
+    +save(preferences : Preferences) : Future<void>
+  }
+  interface ISessionStore << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +current() : Future<AuthSession?>
+    +keep(session : AuthSession) : Future<void>
+    +clear() : Future<void>
+  }
+  interface IProgressGateway << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +push(records : List<ProgressRecord>, session : AuthSession) : Future<void>
+    +pull(session : AuthSession) : Future<List<ProgressRecord>>
+  }
+  interface ILeaderboardGateway << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +fetch(gameId : GameId, levelId : LevelId [0..1]) : Future<List<LeaderboardEntry>>
+  }
+  interface IAccountGateway << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +register(credentials : Credentials) : Future<AuthSession>
+    +signIn(credentials : Credentials) : Future<AuthSession>
+  }
+  interface ILevelGateway << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +fetchChanged(gameId : GameId, known : LevelCatalog) : Future<List<DownloadedLevel>>
+  }
+  interface ISeedSource << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +newSeed() : Seed
+  }
+  interface IAudioOutput << (►,#2E8B57) interface >> #DDF2E1 {
+    --
+    +play(cue : EventKind)
+    +applyPreferences(preferences : Preferences)
+  }
+}
+package "hexablock_application / variants" {
+  interface PlayableSession << (■,#7E57C2) interface >> #ECE2F7
+  class VariantRegistry << (■,#7E57C2) >> #ECE2F7
+}
+package "hexablock_engine / core/time" {
+  interface Clock << (►,#2E8B57) interface >> #DDF2E1
+}
+package "hexablock_engine / core/progress" {
+  interface IProgressModel << (▲,#D4A300) interface >> #FFF4C2
+}
+
+hide PlayableSession members
+hide VariantRegistry members
+hide Clock members
+hide IProgressModel members
+ActiveSession --> "0..1" PlayableSession : session
+GameSessionService ..|> StartGameUseCase
+GameSessionService ..|> ApplyMoveUseCase
+GameSessionService ..|> UndoMoveUseCase
+GameSessionService ..|> RedoMoveUseCase
+GameSessionService ..|> PauseGameUseCase
+GameSessionService ..|> ResumeGameUseCase
+GameSessionService --> "1" VariantRegistry : registry
+GameSessionService --> "1" ISeedSource : seeds
+GameSessionService --> "1" ActiveSession : active
+ProgressService ..|> SaveProgressUseCase
+ProgressService ..|> GetProgressUseCase
+ProgressService --> "1" IProgressRepository : repository
+ProgressService --> "1" Clock : clock
+ProgressService ..> PlayableSession : <<use>>
+ProgressService ..> IProgressModel : <<use>>
+LevelCatalogService ..|> ListLevelsUseCase
+LevelCatalogService ..|> DownloadLevelsUseCase
+LevelCatalogService --> "1" ILevelRepository : levels
+LevelCatalogService --> "1" ILevelGateway : gateway
+LevelCatalogService --> "1" IProgressRepository : progress
+SavedGameService ..|> SaveGameUseCase
+SavedGameService ..|> ResumeSavedGameUseCase
+SavedGameService --> "1" VariantRegistry : registry
+SavedGameService --> "1" ISavedGameRepository : repository
+SavedGameService --> "1" ActiveSession : active
+SyncService ..|> SyncProgressUseCase
+SyncService --> "1" IProgressRepository : repository
+SyncService --> "1" IProgressGateway : gateway
+SyncService --> "1" ISessionStore : sessions
+LeaderboardService ..|> GetLeaderboardUseCase
+LeaderboardService --> "1" ILeaderboardGateway : gateway
+AccountService ..|> RegisterUseCase
+AccountService ..|> SignInUseCase
+AccountService ..|> SignOutUseCase
+AccountService --> "1" IAccountGateway : gateway
+AccountService --> "1" ISessionStore : sessions
+PreferencesService ..|> GetPreferencesUseCase
+PreferencesService ..|> UpdatePreferencesUseCase
+PreferencesService --> "1" IPreferencesRepository : repository
+PreferencesService --> "1" IAudioOutput : audio
+
+note right of ActiveSession : Single instance: single instance
+note right of ProgressService : Strategy: context
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

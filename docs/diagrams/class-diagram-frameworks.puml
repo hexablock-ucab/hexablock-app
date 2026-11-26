@@ -1,0 +1,201 @@
+@startuml class-diagram-frameworks
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Frameworks and drivers — generic (app)
+
+package "app / game" {
+  class GameScreen << (●,#2F6DB5) >> #DCEBFA {
+    -viewModel : GameViewModel {readOnly}
+    -renderer : IBoardRenderer {readOnly}
+    -painters : CellPainterRegistry {readOnly}
+    --
+    +build(context : BuildContext) : Widget
+  }
+}
+package "app / rendering" {
+  interface IBoardRenderer << (●,#2F6DB5) interface >> #DCEBFA {
+    --
+    +paint(canvas : Canvas, board : BoardView, painter : ICellPainter)
+    +cellAt(position : Offset, board : BoardView) : Coordinate [0..1]
+    +directionOf(gesture : Offset) : Direction [0..1]
+  }
+  class HexBoardRenderer << (●,#2F6DB5) >> #DCEBFA {
+    -layout : HexLayout {readOnly}
+    --
+    +paint(canvas : Canvas, board : BoardView, painter : ICellPainter)
+    +cellAt(position : Offset, board : BoardView) : Coordinate [0..1]
+    +directionOf(gesture : Offset) : Direction [0..1]
+  }
+  class HexLayout << (●,#2F6DB5) >> #DCEBFA {
+    +cellSize : double {readOnly}
+    +origin : Offset {readOnly}
+    --
+    +toPixel(at : Coordinate) : Offset
+    +toCoordinate(point : Offset) : Coordinate
+    +corners(at : Coordinate) : List<Offset>
+  }
+  interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA {
+    --
+    +paint(canvas : Canvas, cell : CellView, outline : Path)
+  }
+  class CellPainterRegistry << (●,#2F6DB5) >> #DCEBFA {
+    -painters : Map<GameId, ICellPainter>
+    --
+    +register(gameId : GameId, painter : ICellPainter)
+    +painterFor(gameId : GameId) : ICellPainter
+  }
+}
+package "app / platform" {
+  class AudioManager << (●,#2F6DB5) >> #DCEBFA {
+    -cues : SoundCueMap {readOnly}
+    -effects : AudioPlayer {readOnly}
+    -music : AudioPlayer {readOnly}
+    -preferences : Preferences
+    --
+    +play(cue : EventKind)
+    +applyPreferences(preferences : Preferences)
+  }
+  class FlutterAssetReader << (●,#2F6DB5) >> #DCEBFA {
+    --
+    +readText(path : String) : Future<String>
+  }
+}
+package "app / composition" {
+  class CompositionRoot << (●,#2F6DB5) >> #DCEBFA {
+    +registry : VariantRegistry {readOnly}
+    +painters : CellPainterRegistry {readOnly}
+    --
+    +build() : Future<void>
+  }
+}
+package "hexablock_adapters / presentation" {
+  class GameViewModel << (●,#2F6DB5) ViewModel >> #DCEBFA
+}
+package "hexablock_application / ports/output" {
+  interface IAudioOutput << (►,#2E8B57) interface >> #DDF2E1
+}
+package "hexablock_adapters / audio" {
+  class SoundCueMap << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_adapters / levels" {
+  interface IAssetReader << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_application / variants" {
+  class VariantRegistry << (■,#7E57C2) >> #ECE2F7
+}
+package "hexablock_engine / core/geometry" {
+  class HexTopology << (▲,#D4A300) >> #FFF4C2
+  class TopologyRegistry << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_adapters / variants/hexa_lines" {
+  class HexaLinesModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_adapters / variants/hexa_fit" {
+  class HexaFitModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_adapters / variants/hexa_sort" {
+  class HexaSortModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_adapters / variants/hexa_merge" {
+  class HexaMergeModule << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_lines" {
+  class LinesCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_fit" {
+  class FitCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_sort" {
+  class SortCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
+package "app / variants/hexa_merge" {
+  class MergeCellPainter << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_engine / core/random" {
+  class Mulberry32Factory << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_adapters / system" {
+  class SystemClock << (●,#2F6DB5) >> #DCEBFA
+}
+package "hexablock_application / services" {
+  class GameSessionService << (■,#7E57C2) >> #ECE2F7
+}
+
+hide GameViewModel members
+hide IAudioOutput members
+hide SoundCueMap members
+hide IAssetReader members
+hide VariantRegistry members
+hide HexTopology members
+hide TopologyRegistry members
+hide HexaLinesModule members
+hide HexaFitModule members
+hide HexaSortModule members
+hide HexaMergeModule members
+hide LinesCellPainter members
+hide FitCellPainter members
+hide SortCellPainter members
+hide MergeCellPainter members
+hide Mulberry32Factory members
+hide SystemClock members
+hide GameSessionService members
+GameScreen --> "1" GameViewModel : viewModel
+GameScreen --> "1" IBoardRenderer : renderer
+GameScreen --> "1" CellPainterRegistry : painters
+IBoardRenderer ..> ICellPainter : <<use>>
+HexBoardRenderer ..|> IBoardRenderer
+HexBoardRenderer --> "1" HexLayout : layout
+CellPainterRegistry o--> "0..*" ICellPainter : painters
+AudioManager ..|> IAudioOutput
+AudioManager --> "1" SoundCueMap : cues
+FlutterAssetReader ..|> IAssetReader
+CompositionRoot --> "1" VariantRegistry : registry
+CompositionRoot --> "1" CellPainterRegistry : painters
+CompositionRoot ..> HexTopology : <<create>>
+CompositionRoot ..> TopologyRegistry : <<create>>
+CompositionRoot ..> SoundCueMap : <<create>>
+CompositionRoot ..> HexaLinesModule : <<create>>
+CompositionRoot ..> HexaFitModule : <<create>>
+CompositionRoot ..> HexaSortModule : <<create>>
+CompositionRoot ..> HexaMergeModule : <<create>>
+CompositionRoot ..> LinesCellPainter : <<create>>
+CompositionRoot ..> FitCellPainter : <<create>>
+CompositionRoot ..> SortCellPainter : <<create>>
+CompositionRoot ..> MergeCellPainter : <<create>>
+CompositionRoot ..> Mulberry32Factory : <<create>>
+CompositionRoot ..> SystemClock : <<create>>
+CompositionRoot ..> AudioManager : <<create>>
+CompositionRoot ..> GameSessionService : <<create>>
+
+note right of GameScreen : Strategy: context
+note right of IBoardRenderer : Strategy: strategy
+note right of HexBoardRenderer : Strategy: concrete strategy
+note right of ICellPainter : Strategy: strategy
+note right of CellPainterRegistry : Single instance: single instance
+note right of AudioManager : Facade: facade\nSingle instance: single instance
+note right of CompositionRoot : Single instance: creator
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml
