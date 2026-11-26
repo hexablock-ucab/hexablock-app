@@ -1,0 +1,323 @@
+@startuml class-diagram-hexa-merge
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Variant hexa-merge — every layer, with its «bind» to the generic engine
+
+package "hexablock_engine / variants/hexa_merge" {
+  class HexaMergeEngine << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class HexaMergeFactory << (▲,#D4A300) >> #FFF4C2 {
+    +gameId : GameId {readOnly}
+    -seed : Seed {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    -topology : ITopology {readOnly}
+    -radius : Radius {readOnly}
+    -target : TileValue {readOnly}
+    -odds : SpawnOdds {readOnly}
+    --
+    +createBoard() : Board<TileValue>
+    +createRules() : IGameRules<TileValue, MergeMove, MergeState>
+    +createInitialState(board : Board<TileValue>) : MergeState
+    +createCapabilities(engine : GameEngine<TileValue, MergeMove, MergeState>) : CapabilitySet
+    +createProgressModel() : IProgressModel
+  }
+  class TileValue << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» TileValue(value : int)
+    +canMergeWith(other : TileValue) : bool
+    +mergedWith(other : TileValue) : TileValue
+    +reaches(target : TileValue) : bool
+    +asScore() : Score
+  }
+  class MergeState << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<TileValue> {readOnly}
+    +score : Score {readOnly}
+    +source : SeededPieceSource<TileSpawn> {readOnly}
+    +targetReached : bool {readOnly}
+    +lastTurn : MergeTurn [0..1] {readOnly}
+    --
+    +«create» MergeState(board : Board<TileValue>, score : Score, source : SeededPieceSource<TileSpawn>, targetReached : bool, lastTurn : MergeTurn [0..1])
+    +toSnapshot() : MergeSnapshot
+    +restoredFrom(snapshot : MergeSnapshot) : MergeState
+    +afterSlide(result : SlideResult<TileValue>, target : TileValue) : MergeState
+    +withPointsAdded(points : Score) : MergeState
+    +withSpawn() : MergeState
+  }
+  class MergeSnapshot << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<TileValue> {readOnly}
+    +score : Score {readOnly}
+    +source : SeededPieceSource<TileSpawn> {readOnly}
+    +targetReached : bool {readOnly}
+    --
+    +«create» MergeSnapshot(board : Board<TileValue>, score : Score, source : SeededPieceSource<TileSpawn>, targetReached : bool)
+  }
+  class MergeMove << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +direction : Direction {readOnly}
+    --
+    +«create» MergeMove(direction : Direction)
+  }
+  class MergeTurn << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +merged : List<TileValue> {readOnly}
+    +spawned : TileSpawn [0..1] {readOnly}
+    --
+    +«create» MergeTurn(merged : List<TileValue>, spawned : TileSpawn [0..1])
+  }
+  class HexaMergeRules << (▲,#D4A300) >> #FFF4C2 {
+    -slide : SlideMergeRule<TileValue> {readOnly}
+    -scoring : IScoringPolicy<MergeState> {readOnly}
+    -target : TileValue {readOnly}
+    --
+    +boardOf(state : MergeState) : Board<TileValue>
+    +validate(state : MergeState, move : MergeMove) : MoveValidation
+    +apply(state : MergeState, move : MergeMove) : MergeState
+    +resolve(state : MergeState) : Resolution<MergeState>
+    +evaluate(state : MergeState) : GameEnd
+    +outcomeOf(state : MergeState) : GameOutcome
+  }
+  class TileSpawn << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : TileValue {readOnly}
+    +slot : SpawnSlot {readOnly}
+    --
+    +«create» TileSpawn(value : TileValue, slot : SpawnSlot)
+  }
+  class SpawnSlot << (▲,#D4A300) Value Object >> #FFF4C2 {
+    -draw : int {readOnly}
+    --
+    +«create» SpawnSlot(draw : int)
+    +cellIn(empty : List<Coordinate>) : Coordinate
+  }
+  class SpawnOdds << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +fourPerHundred : int {readOnly}
+    --
+    +«create» SpawnOdds(fourPerHundred : int)
+    +valueFor(draw : int) : TileValue
+  }
+  class TileSpawnRecipe << (▲,#D4A300) >> #FFF4C2 {
+    -odds : SpawnOdds {readOnly}
+    --
+    +draw(random : IRandomSource) : RandomDraw<TileSpawn>
+  }
+  class MergeScoringPolicy << (▲,#D4A300) >> #FFF4C2 {
+    --
+    +pointsFor(before : MergeState, after : MergeState) : Score
+  }
+  class TilesMerged << (▲,#D4A300) >> #FFF4C2 {
+    +values : List<TileValue> {readOnly}
+    --
+  }
+  class TileSpawned << (▲,#D4A300) >> #FFF4C2 {
+    +at : Coordinate {readOnly}
+    +value : TileValue {readOnly}
+    --
+  }
+  class TargetReached << (▲,#D4A300) >> #FFF4C2 {
+    +target : TileValue {readOnly}
+    --
+  }
+}
+package "hexablock_adapters / variants/hexa_merge" {
+  class HexaMergeModule << (●,#2F6DB5) >> #DCEBFA {
+    +gameId : GameId {readOnly}
+    +texts : VariantTexts {readOnly}
+    +resumable : IResumableVariant [0..1] {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    -topology : ITopology {readOnly}
+    -codec : MergeStateMapper {readOnly}
+    --
+    +startSession(request : SessionRequest) : Future<PlayableSession>
+    +resumeSession(saved : SavedGame) : PlayableSession
+  }
+  class MergeIntentTranslator << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +toMove(intent : PlayerIntent, state : MergeState) : MergeMove [0..1]
+  }
+  class MergePresenter << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +present(state : MergeState, phase : PhaseKind) : SessionView
+  }
+  class MergeStateMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    -topology : ITopology {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    -odds : SpawnOdds {readOnly}
+    --
+    +encode(state : MergeState) : String
+    +decode(payload : String) : MergeState
+  }
+}
+package "app / variants/hexa_merge" {
+  class MergeCellPainter << (●,#2F6DB5) >> #DCEBFA {
+    --
+    +paint(canvas : Canvas, cell : CellView, outline : Path)
+  }
+}
+package "hexablock_engine / core/engine" {
+  class GameEngine<TCell, TMove, TState> << (▲,#D4A300) >> #FFF4C2
+  interface IGameFactory<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  interface IGameRules<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  class GameAssembler << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/random" {
+  interface IRandomSourceFactory << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/geometry" {
+  interface ITopology << (▲,#D4A300) interface >> #FFF4C2
+  class Direction << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/memento" {
+  class SnapshotHistory<TState extends ISnapshotable<TState, TSnapshot>, TSnapshot> << (▲,#D4A300) >> #FFF4C2
+  interface ISnapshotable<TSelf, TSnapshot> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/capabilities" {
+  class SeedRecord << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/progress" {
+  class HighScoreProgress << (▲,#D4A300) >> #FFF4C2
+  class Score << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IScoringPolicy<TState> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/rules" {
+  interface IMergeable<T> << (▲,#D4A300) interface >> #FFF4C2
+  class SlideResult<TCell> << (▲,#D4A300) Value Object >> #FFF4C2
+  class SlideMergeRule<TCell extends IMergeable<TCell>> << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/board" {
+  class Board<TCell> << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/pieces" {
+  class SeededPieceSource<TPiece> << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IPieceRecipe<TPiece> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/events" {
+  abstract class GameEvent << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_application / variants" {
+  interface VariantModule << (■,#7E57C2) interface >> #ECE2F7
+  interface IResumableVariant << (■,#7E57C2) interface >> #ECE2F7
+}
+package "hexablock_adapters / session" {
+  class GameSessionAdapter<TCell, TMove, TState> << (●,#2F6DB5) Adapter >> #DCEBFA
+  interface IIntentTranslator<TMove, TState> << (●,#2F6DB5) interface >> #DCEBFA
+  interface ISessionPresenter<TCell, TState> << (●,#2F6DB5) interface >> #DCEBFA
+  interface IStateCodec<TState> << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "app / rendering" {
+  interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
+}
+
+hide GameEngine members
+hide IGameFactory members
+hide IRandomSourceFactory members
+hide ITopology members
+hide SnapshotHistory members
+hide SeedRecord members
+hide HighScoreProgress members
+hide IMergeable members
+hide ISnapshotable members
+hide Board members
+hide Score members
+hide SeededPieceSource members
+hide SlideResult members
+hide Direction members
+hide IGameRules members
+hide SlideMergeRule members
+hide IScoringPolicy members
+hide IPieceRecipe members
+hide GameEvent members
+hide VariantModule members
+hide IResumableVariant members
+hide GameAssembler members
+hide GameSessionAdapter members
+hide IIntentTranslator members
+hide ISessionPresenter members
+hide IStateCodec members
+hide ICellPainter members
+hide CellView members
+HexaMergeEngine ..> GameEngine : <<bind>>\n<TCell -> TileValue, TMove -> MergeMove, TState -> MergeState>
+HexaMergeFactory ..|> IGameFactory : <TCell -> TileValue, TMove -> MergeMove, TState -> MergeState>
+HexaMergeFactory --> "1" IRandomSourceFactory : randomSources
+HexaMergeFactory --> "1" ITopology : topology
+HexaMergeFactory --> "1" SpawnOdds : odds
+HexaMergeFactory ..> HexaMergeRules : <<create>>
+HexaMergeFactory ..> MergeState : <<create>>
+HexaMergeFactory ..> SnapshotHistory : <<create>>
+HexaMergeFactory ..> TileSpawnRecipe : <<create>>
+HexaMergeFactory ..> SeedRecord : <<create>>
+HexaMergeFactory ..> HighScoreProgress : <<create>>
+TileValue ..|> IMergeable : <T -> TileValue>
+MergeState ..|> ISnapshotable : <TSelf -> MergeState, TSnapshot -> MergeSnapshot>
+MergeState --> "1" Board : board
+MergeState --> "1" Score : score
+MergeState --> "1" SeededPieceSource : source
+MergeState --> "0..1" MergeTurn : lastTurn
+MergeState ..> SlideResult : <<use>>
+MergeSnapshot --> "1" Board : board
+MergeSnapshot --> "1" Score : score
+MergeMove --> "1" Direction : direction
+MergeTurn o--> "0..*" TileValue : merged
+MergeTurn --> "0..1" TileSpawn : spawned
+HexaMergeRules ..|> IGameRules : <TCell -> TileValue, TMove -> MergeMove, TState -> MergeState>
+HexaMergeRules --> "1" SlideMergeRule : slide
+HexaMergeRules --> "1" IScoringPolicy : scoring
+HexaMergeRules ..> TilesMerged : <<create>>
+HexaMergeRules ..> TileSpawned : <<create>>
+HexaMergeRules ..> TargetReached : <<create>>
+TileSpawn --> "1" TileValue : value
+TileSpawn --> "1" SpawnSlot : slot
+TileSpawnRecipe ..|> IPieceRecipe : <TPiece -> TileSpawn>
+TileSpawnRecipe --> "1" SpawnOdds : odds
+MergeScoringPolicy ..|> IScoringPolicy : <TState -> MergeState>
+TilesMerged --|> GameEvent
+TileSpawned --|> GameEvent
+TargetReached --|> GameEvent
+HexaMergeModule ..|> VariantModule
+HexaMergeModule ..|> IResumableVariant
+HexaMergeModule ..> HexaMergeFactory : <<create>>
+HexaMergeModule ..> GameAssembler : <<use>>
+HexaMergeModule ..> GameSessionAdapter : <<create>>
+HexaMergeModule --> "1" MergeStateMapper : codec
+MergeIntentTranslator ..|> IIntentTranslator : <TMove -> MergeMove, TState -> MergeState>
+MergePresenter ..|> ISessionPresenter : <TCell -> TileValue, TState -> MergeState>
+MergeStateMapper ..|> IStateCodec : <TState -> MergeState>
+MergeStateMapper --> "1" ITopology : topology
+MergeStateMapper --> "1" IRandomSourceFactory : randomSources
+MergeStateMapper --> "1" SpawnOdds : odds
+MergeCellPainter ..|> ICellPainter
+MergeCellPainter ..> CellView : <<use>>
+
+note right of HexaMergeFactory : Abstract Factory: concrete factory
+note right of MergeState : Memento: originator
+note right of MergeSnapshot : Memento: memento
+note right of HexaMergeRules : Strategy: concrete strategy\nStrategy: context
+note right of TileSpawnRecipe : Strategy: concrete strategy
+note right of MergeScoringPolicy : Strategy: concrete strategy
+note right of MergeCellPainter : Strategy: concrete strategy
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

@@ -1,0 +1,107 @@
+@startuml class-diagram
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+top to bottom direction
+title HexaBlock Suite — packages and their dependencies
+
+package "app (frameworks)" as app #E3EEFB {
+  package "generic\n8 classes" as app_generic #E3EEFB {
+  }
+  package "hexa-lines\n1 class" as app_hexa_lines #E3EEFB {
+  }
+  package "hexa-fit\n1 class" as app_hexa_fit #E3EEFB {
+  }
+  package "hexa-sort\n1 class" as app_hexa_sort #E3EEFB {
+  }
+  package "hexa-merge\n1 class" as app_hexa_merge #E3EEFB {
+  }
+  package "composition root\n1 class" as app_composition #E3EEFB {
+  }
+}
+package "hexablock_adapters (adapters)" as hexablock_adapters #E3EEFB {
+  package "generic\n32 classes" as hexablock_adapters_generic #E3EEFB {
+  }
+  package "hexa-lines\n5 classes" as hexablock_adapters_hexa_lines #E3EEFB {
+  }
+  package "hexa-fit\n4 classes" as hexablock_adapters_hexa_fit #E3EEFB {
+  }
+  package "hexa-sort\n4 classes" as hexablock_adapters_hexa_sort #E3EEFB {
+  }
+  package "hexa-merge\n4 classes" as hexablock_adapters_hexa_merge #E3EEFB {
+  }
+}
+package "hexablock_application (application)" as hexablock_application #EFE6FA {
+  package "generic\n75 classes" as hexablock_application_generic #EFE6FA {
+  }
+}
+package "hexablock_engine (domain)" as hexablock_engine #FFF4C2 {
+  package "core (generic engine)\n95 classes" as hexablock_engine_generic #FFF4C2 {
+  }
+  package "hexa-lines\n16 classes" as hexablock_engine_hexa_lines #FFF4C2 {
+  }
+  package "hexa-fit\n16 classes" as hexablock_engine_hexa_fit #FFF4C2 {
+  }
+  package "hexa-sort\n19 classes" as hexablock_engine_hexa_sort #FFF4C2 {
+  }
+  package "hexa-merge\n16 classes" as hexablock_engine_hexa_merge #FFF4C2 {
+  }
+}
+
+app_composition ..> app_generic
+app_composition ..> app_hexa_fit
+app_composition ..> app_hexa_lines
+app_composition ..> app_hexa_merge
+app_composition ..> app_hexa_sort
+app_composition ..> hexablock_adapters_generic
+app_composition ..> hexablock_adapters_hexa_fit
+app_composition ..> hexablock_adapters_hexa_lines
+app_composition ..> hexablock_adapters_hexa_merge
+app_composition ..> hexablock_adapters_hexa_sort
+app_composition ..> hexablock_application_generic
+app_composition ..> hexablock_engine_generic
+app_generic ..> hexablock_adapters_generic
+app_generic ..> hexablock_application_generic
+app_hexa_fit ..> app_generic
+app_hexa_fit ..> hexablock_application_generic
+app_hexa_lines ..> app_generic
+app_hexa_lines ..> hexablock_application_generic
+app_hexa_merge ..> app_generic
+app_hexa_merge ..> hexablock_application_generic
+app_hexa_sort ..> app_generic
+app_hexa_sort ..> hexablock_application_generic
+hexablock_adapters_generic ..> hexablock_application_generic
+hexablock_adapters_generic ..> hexablock_engine_generic
+hexablock_adapters_hexa_fit ..> hexablock_adapters_generic
+hexablock_adapters_hexa_fit ..> hexablock_application_generic
+hexablock_adapters_hexa_fit ..> hexablock_engine_generic
+hexablock_adapters_hexa_fit ..> hexablock_engine_hexa_fit
+hexablock_adapters_hexa_lines ..> hexablock_adapters_generic
+hexablock_adapters_hexa_lines ..> hexablock_application_generic
+hexablock_adapters_hexa_lines ..> hexablock_engine_generic
+hexablock_adapters_hexa_lines ..> hexablock_engine_hexa_lines
+hexablock_adapters_hexa_merge ..> hexablock_adapters_generic
+hexablock_adapters_hexa_merge ..> hexablock_application_generic
+hexablock_adapters_hexa_merge ..> hexablock_engine_generic
+hexablock_adapters_hexa_merge ..> hexablock_engine_hexa_merge
+hexablock_adapters_hexa_sort ..> hexablock_adapters_generic
+hexablock_adapters_hexa_sort ..> hexablock_application_generic
+hexablock_adapters_hexa_sort ..> hexablock_engine_generic
+hexablock_adapters_hexa_sort ..> hexablock_engine_hexa_sort
+hexablock_application_generic ..> hexablock_engine_generic
+hexablock_engine_hexa_fit ..> hexablock_engine_generic
+hexablock_engine_hexa_lines ..> hexablock_engine_generic
+hexablock_engine_hexa_merge ..> hexablock_engine_generic
+hexablock_engine_hexa_sort ..> hexablock_engine_generic
+
+legend right
+  Each box is a Dart package split into its generic part and its variants.
+  An arrow is a dependency: some class of the source uses, implements or creates one of the target.
+  Every arrow points inward (C-05). No generic box depends on a variant box; only the
+  composition root, which wires the app, names the variants.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

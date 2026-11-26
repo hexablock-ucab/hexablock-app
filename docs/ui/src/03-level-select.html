@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>03 · Level select (Hexa Fit)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<script>window.GAME = "fit";</script>
+<script src="hexgrid.js"></script>
+<style>
+  /* One level select for every level-based variant (Hexa Fit, Hexa Sort): only the accent and the data in levels.js change. */
+  .progress { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .progress .row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+  .bar { height: 10px; border-radius: 999px; background: var(--well-strong); overflow: hidden; }
+  .bar span { display: block; height: 100%; border-radius: 999px; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .comb { position: relative; flex: 1; margin-top: 8px; }
+  .lvl { position: absolute; width: 84px; height: 97px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .lvl svg.bg { position: absolute; inset: 0; width: 84px; height: 97px; }
+  .lvl .n { position: relative; font: 700 26px/1 var(--font-display); }
+  .lvl .stars { position: relative; display: flex; gap: 1px; margin-top: 5px; }
+  .lvl.next { filter: drop-shadow(0 0 16px rgba(255,210,60,0.65)); }
+  .lvl.tapped .bg polygon { stroke: var(--danger); stroke-dasharray: none; }
+  .stars-total { display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid var(--line); font: 600 18px/1 var(--font-display); }
+  .tip { position: absolute; left: 0; right: 0; bottom: 8px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); border: 1.5px solid var(--danger); font-size: 14px; box-shadow: var(--shadow-card); z-index: 2; }
+  .help { display: flex; gap: 12px; align-items: center; padding: 12px 14px; margin-bottom: 10px; }
+  .help .icon-btn { flex: none; border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="nav">
+    <span class="icon-btn" data-icon="back"></span>
+    <div class="title t-h1" id="title"></div>
+    <span class="stars-total" id="starsTotal"></span>
+  </div>
+  <div class="card progress">
+    <div class="row"><span class="t-label">Progreso</span><span class="t-body" id="progress"></span></div>
+    <div class="bar"><span id="bar"></span></div>
+  </div>
+  <div class="comb" id="comb"></div>
+  <div class="card help"><span class="icon-btn" id="helpIcon"></span><span class="t-body" style="font-size:14px; color:var(--text-muted)" id="help"></span></div>
+</div>
+<div class="home-indicator"></div>
+<script src="levels.js"></script>
+</body>
+</html>

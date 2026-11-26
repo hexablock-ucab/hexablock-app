@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>04 · Game template</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="game.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--secondary); }
+  .zone { position: relative; border: 2px dashed var(--secondary); border-radius: 16px; }
+  .tag { position: absolute; top: -12px; left: 12px; padding: 3px 10px; border-radius: 999px; background: var(--secondary); color: var(--bg); font: 800 11px/1.2 var(--font-body); letter-spacing: 1px; text-transform: uppercase; }
+  .note { font-size: 13px; line-height: 1.35; color: var(--text-muted); }
+  .note b { color: var(--text); }
+  .z-top.zone { padding: 18px 10px 12px; margin-top: 6px; }
+  .z-board.zone { margin: 18px 0; flex-direction: column; gap: 12px; }
+  .z-tray.zone { background: transparent; border-color: var(--secondary); flex-direction: column; justify-content: center; gap: 10px; height: 168px; padding: 18px 14px 12px; }
+  .ph { display: inline-flex; align-items: center; justify-content: center; height: 30px; padding: 0 12px; border-radius: 10px; background: var(--surface); border: 1.5px dashed var(--line); font: 700 13px/1 var(--font-display); color: var(--text-muted); }
+  .row { display: flex; gap: 8px; justify-content: space-around; width: 100%; }
+</style>
+</head>
+<body>
+<div class="screen game-screen">
+  <div class="z-top zone">
+    <span class="tag">Zona 1 · Barra superior</span>
+    <div class="bar">
+      <span class="icon-btn" data-icon="pause"></span>
+      <div class="stats"><span class="ph">Resultado de la variante</span></div>
+      <span class="ph" style="width:64px">Acciones</span>
+    </div>
+    <div class="note" style="margin-top:10px"><b>Siempre:</b> pausa. <b>Varía:</b> el resultado (puntaje, metas, movimientos y tiempo) y las acciones opcionales: deshacer solo si la variante lo permite.</div>
+  </div>
+
+  <div class="z-board zone">
+    <span class="tag">Zona 2 · Tablero</span>
+    <div data-render="board"></div>
+    <div class="note" style="text-align:center; max-width:300px">Lo dibuja el mismo componente para los 4 juegos. La <b>forma de la celda</b> sale de la topología: si mañana son cuadrados, solo cambia este dibujo.</div>
+  </div>
+
+  <div class="z-tray zone">
+    <span class="tag">Zona 3 · Bandeja</span>
+    <div class="row"><span class="ph">3 piezas</span><span class="ph">Piezas del nivel</span><span class="ph">1 pila</span><span class="ph">6 direcciones</span></div>
+    <div class="note">Lo que el jugador juega ahora: viene de la <b>fuente de piezas</b> de cada variante (aleatoria con semilla o fija por nivel), o son controles como en Hexa Merge.</div>
+  </div>
+</div>
+<div class="home-indicator"></div>
+<script>
+  function board() { return HB.board({ cells: HB.hexagon(2), size: 24, gap: 3, fill: () => null }); }
+</script>
+</body>
+</html>

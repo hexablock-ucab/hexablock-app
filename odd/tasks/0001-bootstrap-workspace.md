@@ -2,7 +2,7 @@
 
 - **Status:** In review — draft pull request #25, CI green
 - **Owner:** Eduard Velasco
-- **Branch / PR:** `chore/bootstrap-workspace` · #25 (stacked on #23)
+- **Branch / PR:** `chore/bootstrap-workspace` · #25
 - **Requirements:** C-02, C-05, C-13, C-23, NFR-03
 - **ADRs:** 0002 (Flutter and Dart), 0003 (one package per layer), 0007 (local data and view models), 0008 (iOS from a Mac)
 
@@ -77,9 +77,8 @@ node tool/check-coverage.mjs
 
 ## Next step
 
-1. Retarget #25 to `main` once #23 merges.
-2. Valentina does the early test installation on an iPhone from her Mac (ADR-0008) and records the result here.
-3. The team answers the open question and marks the pull request ready for review.
+1. Valentina does the early test installation on an iPhone from her Mac (ADR-0008) and records the result here.
+2. The team answers the open question and marks the pull request ready for review.
 
 ## Log
 

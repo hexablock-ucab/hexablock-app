@@ -82,33 +82,37 @@ Low-level details are replaceable: the database, the board shape (for example sq
 - Prefer the Dart and Flutter SDKs and already-installed packages. A new dependency needs a one-line justification in the PR and must be a mainstream, maintained package.
 - Run `dart format` and `flutter analyze --fatal-infos` before you finish; CI fails on any finding.
 
-### Domain model (DDD tactical patterns)
+### Domain model
 
-Sources: Evans, *Domain-Driven Design* (2003), Part II, as presented in the course; Evans, *Domain-Driven Design Reference* (2015, CC BY 4.0); Esposito, *Clean Architecture with .NET* (2024), chapters 6 and 7. `docs/domain-model.md` (deliverable D1) lists every domain class with its tactical role; update it in the same PR as the code.
+Sources: Martin, *Clean Architecture* (2017), chapter 20 (entities hold the critical business rules); Gamma et al., *Design Patterns* (1994), *Memento* and *Observer*; Esposito, *Clean Architecture with .NET* (2024), chapter 6 (the anemic model). `docs/domain-model.md` (deliverable D1) lists every domain class with its role; update it in the same PR as the code.
 
-- **Ubiquitous language.** Every domain concept has one name, recorded in the glossary of `docs/domain-model.md` with its Spanish term. Code, tests, diagrams and documents use that name and no synonym; renaming a concept renames the code in the same PR.
-- **Rich model.** Behavior lives with the data it protects. Entities and aggregate roots expose **commands** named after the player's intent (`placePiece`, `clearCompletedLines`, `mergeTiles`, `undoLastMove`) and **queries**, written as methods, named after a question the rules or the player ask (`isSolved()`, `canPlace(piece, at)`, `remainingMoves()`). Each command checks its invariants before it changes anything. **Every public member is named in the ubiquitous language and expresses a command or a question of the domain.** A query may return a value object when that is the answer to a domain question (`cellAt(coord)`, `score()`); what is forbidden is a member that only exposes or replaces a field. **No getters or setters in the domain**: no `getX`/`setX` methods and no `get`/`set` accessors. All fields are private (`final` in Dart, `readonly` in TypeScript, when they never change). Other classes tell the object to do something or ask it a question of the domain; they never read its fields to decide for it.
-- **Tell, don't ask.** When a use case reads a domain object's state, decides, and writes the result back, the decision belongs inside the domain object: move it there. Use cases orchestrate (load, call a command, save, notify) and hold no game rule. This is how the code avoids the *anemic domain model* the course warns against.
-- **Value objects** have no identity: their value is their identity. They are immutable (an operation returns a new value: `score.add(points)`), compare by value (`==` and `hashCode`), validate themselves when created, carry the behavior of their concept, and group values that only make sense together (the two axial components of a coordinate). Its fields are private, and it has no getters or setters.
-- **Entities** are defined by an identity that stays the same through their life cycle, modeled as a value object (`GameSessionId`) produced by an injected generator. They compare by identity, have a life cycle, change state only through commands, have no getters or setters, and use value objects for their attributes.
-- **Aggregates.** An aggregate is the consistency boundary of an invariant, and its root is the only entry point from outside. Other objects reference an aggregate by its identity (`LevelId`), not by holding it. One repository per aggregate root, and it saves and loads the whole aggregate. Create an aggregate only where an invariant spans several objects; a lone entity is its own root.
-- **Domain services** are stateless and named after a domain operation. Use one for a rule that spans several aggregates or fits none. The class that implements a use case is an *application* service (`GameSessionService`), not a domain service.
-- **Domain events** have past-tense names (`LinesCleared`, `LevelCompleted`). The aggregate raises them, and only when another part of the system reacts. They are immutable and carry the time (from the `Clock` port) and the identities involved. Domain events are not in Evans (2003); they come from his later *Reference* (2015).
-- **Crossing a boundary.** When state must leave the domain (to be shown on screen, saved or sent), each aggregate root or value object offers one explicit export operation named for what the outside needs, chosen case by case (for example `toSnapshot()`), that returns an immutable snapshot, in the role of a GoF Memento. Only the mappers of layer 3 call it. State comes back through a named constructor (`restore(snapshot)`). This is the only way out; it is not a getter for other domain or application classes.
-- **Label each class with the role it really plays**, in code names, docs and diagrams. Several of our classes are GoF patterns or Clean Architecture parts, not DDD patterns:
+Why these rules and no others: the scope has no invariant that spans several objects and no other part of the system that reacts to domain events, so aggregates, domain services and domain events would add structure without meeting any requirement. Each rule below has its own reason: value objects come from C-32; behavior in the domain comes from the Dependency Rule and the isolated engine tests (NFR-03, C-23a); immutable state and Memento come from FR-45, FR-66, SCORE-2 and the undo rules of `docs/game-rules.md`.
+
+- **One name per concept.** Every concept has one name, recorded in the glossary of `docs/domain-model.md` with its Spanish term. Code, tests, diagrams and documents use that name and no synonym; renaming a concept renames the code in the same PR.
+- **Behavior lives with its data.** The rules of each variant live in domain classes, which expose operations named after the player's action (`placePiece`, `slide`, `undoLastMove`) and questions the rules ask (`isSolved()`, `canPlace(piece, at)`). Use cases load, call, save and notify; they never decide a game rule. When a use case reads a domain object, decides and writes the result back, the decision belongs inside the domain object (*tell, don't ask*). This is how the code avoids the anemic model.
+- **Immutable game state.** The state of a game is immutable: each action returns a new state. No setters and no public fields that can change.
+- **Read-only getters.** A read-only getter is allowed where something outside needs the value (a screen, a mapper, a test) and cannot change the object through it. Whoever reads a value never takes a decision that belongs to the domain; if it does, move the decision into the domain.
+- **Value objects** are immutable (an operation returns a new value: `score.add(points)`), compare by value (`==` and `hashCode`), validate themselves when created, and carry the behavior of their concept.
+- **Classes with identity** (a game session, a level) compare by their identity, which is a value object (`LevelId`).
+- **Undo and saved games.** GoF Memento: each variant decides what goes into its snapshot (board, score, random generator state). The snapshot is immutable, and the state comes back through a named constructor (`restore(snapshot)`).
+- **Random generator.** The domain holds its own pure random algorithm, with its state as a value object, and receives it injected (seeded in tests). It never uses the platform's generator (`dart:math` `Random`), so a snapshot can save and restore the sequence.
+- **Game events.** GoF Observer: the engine publishes events with past-tense names (`LinesCleared`, `LevelCompleted`) to registered listeners. The engine does not know who listens (sound, screen, persistence).
+- **Label each class with the role it really plays**, in code names, docs and diagrams:
 
 | Class or kind | Role |
 |---|---|
-| `HexCoord`, `Score`, `GameId` | DDD value objects |
-| Board, game session | DDD entities; aggregate roots where D1 says so |
+| `HexCoord`, `Score`, `GameId`, `LevelId` | Value object |
 | Factory per variant (ADR-0006) | GoF Abstract Factory: builds one variant's family of objects |
-| Board and level builder (ADR-0006) | GoF Builder; it also plays the DDD factory role when it returns a valid aggregate |
-| Rule per variant (`LineClearRule`) | GoF Strategy that holds a domain policy |
-| `GameSessionService` | Application service: implements a use case |
-| `ProgressRepository` | DDD repository. The interface lives in layer 2, where it is used (section 3); in classic DDD it sits in the domain |
-| DTOs, mappers, view models, persistence records | Boundary types of layers 3 and 4; no DDD role |
+| Board and level builder (ADR-0006) | GoF Builder |
+| Rule per variant (`LineClearRule`) | GoF Strategy |
+| Game and menu states | GoF State |
+| Game snapshot | GoF Memento |
+| Game event listeners | GoF Observer |
+| `GameSessionService` | Service that implements a use case (layer 2) |
+| `ProgressRepository` | Repository: the port lives in layer 2, where it is used (section 3); its adapter in layer 3 |
+| DTOs, mappers, view models | Boundary types of layers 3 and 4 |
 
-In the class diagram, each DDD building block carries its stereotype and every other class keeps its own role, as `docs/diagrams/README.md` states.
+In the class diagram, value objects and classes with identity carry their stereotype and every other class keeps its own role, as `docs/diagrams/README.md` states.
 
 ## 5. Tests
 
@@ -163,6 +167,8 @@ flutter test --coverage                     # tests of the current package
 node tool/check-architecture.mjs            # Clean Architecture import rules
 node tool/check-test-names.mjs              # should_<result>_when_<condition>
 node tool/check-coverage.mjs                # 90% minimum in domain and use cases
+node tool/class-model/generate.mjs [--check] # class diagram views, D1 tables and explorer from class-model.json
+node --test "tool/**/*.test.mjs"             # tests of the tools
 ```
 
 The quality gates are described in `CONTRIBUTING.md`. A rule that matters has a check; if you add a rule here, add its check too.

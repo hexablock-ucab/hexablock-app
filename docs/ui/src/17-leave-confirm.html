@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>17 · Leave confirmation (Hexa Fit)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<script src="hexgrid.js"></script>
+<style>
+  .behind { position: absolute; inset: 0; width: 390px; height: 844px; border: 0; pointer-events: none; }
+  .ico { width: 20px; height: 20px; display: inline-flex; }
+  .sheet { top: 250px; text-align: center; }
+  .warn { width: 64px; height: 64px; margin: 0 auto 4px; border-radius: 50%; background: color-mix(in srgb, var(--danger) 16%, transparent); color: var(--danger); display: flex; align-items: center; justify-content: center; }
+  .warn span { width: 30px; height: 30px; display: inline-flex; }
+  .lose { text-align: left; padding: 12px 14px; border-radius: 16px; background: var(--well); border: 1.5px solid var(--line); }
+  .lose li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<iframe class="behind" src="06-hexa-fit.html?paused" title="Partida en curso"></iframe>
+<div class="scrim"></div>
+<div class="sheet" role="alertdialog" aria-label="¿Salir del nivel?">
+  <div class="warn"><span data-icon="exit"></span></div>
+  <div class="t-h1">¿Salir del nivel?</div>
+  <ul class="t-body lose" style="margin:0; padding-left:30px; color:var(--text-muted)">
+    <li>Se pierde este intento: 5 movimientos y 0:42.</li>
+    <li>Tus estrellas y récords anteriores se mantienen.</li>
+  </ul>
+  <span class="btn btn-primary">Seguir jugando</span>
+  <span class="btn btn-ghost" style="color:var(--danger)">Salir sin guardar el intento</span>
+</div>
+<div class="home-indicator"></div>
+</body>
+</html>
