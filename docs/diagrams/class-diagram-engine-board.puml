@@ -22,6 +22,7 @@ package "hexablock_engine / core/geometry" {
   class Coordinate << (▲,#D4A300) Value Object >> #FFF4C2 {
     +components : List<int> {readOnly}
     --
+    +«create» Coordinate(components : List<int>)
   }
   interface ITopology << (▲,#D4A300) interface >> #FFF4C2 {
     +id : TopologyId {readOnly}
@@ -49,6 +50,7 @@ package "hexablock_engine / core/geometry" {
   class TopologyId << (▲,#D4A300) Value Object >> #FFF4C2 {
     +name : String {readOnly}
     --
+    +«create» TopologyId(name : String)
   }
   class TopologyRegistry << (▲,#D4A300) >> #FFF4C2 {
     -topologies : Map<TopologyId, ITopology> {readOnly}
@@ -60,26 +62,31 @@ package "hexablock_engine / core/geometry" {
   class Direction << (▲,#D4A300) Value Object >> #FFF4C2 {
     +index : int {readOnly}
     --
+    +«create» Direction(index : int)
   }
   class Axis << (▲,#D4A300) Value Object >> #FFF4C2 {
     +index : int {readOnly}
     --
+    +«create» Axis(index : int)
   }
   class RotationSteps << (▲,#D4A300) Value Object >> #FFF4C2 {
     +count : int {readOnly}
     --
+    +«create» RotationSteps(count : int)
     +plus(other : RotationSteps) : RotationSteps
     +within(fullTurn : RotationSteps) : RotationSteps
   }
   class Radius << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» Radius(value : int)
   }
   class Shape << (▲,#D4A300) Value Object >> #FFF4C2 {
     +cells : Set<Coordinate> {readOnly}
     +/size : int {readOnly}
     -topology : ITopology {readOnly}
     --
+    +«create» Shape(cells : Set<Coordinate>, topology : ITopology)
     +placedAt(anchor : Coordinate) : Set<Coordinate>
     +rotated(by : RotationSteps) : Shape
   }
@@ -87,6 +94,7 @@ package "hexablock_engine / core/geometry" {
     +axis : Axis {readOnly}
     +cells : List<Coordinate> {readOnly}
     --
+    +«create» CellLine(axis : Axis, cells : List<Coordinate>)
   }
 }
 package "hexablock_engine / core/board" {
@@ -95,6 +103,7 @@ package "hexablock_engine / core/board" {
     +coordinates : List<Coordinate> {readOnly}
     -contents : Map<Coordinate, TCell> {readOnly}
     --
+    ~«create» Board(topology : ITopology, coordinates : List<Coordinate>, contents : Map<Coordinate, TCell>)
     +contains(at : Coordinate) : bool
     +cellAt(at : Coordinate) : TCell [0..1]
     +isEmptyAt(at : Coordinate) : bool

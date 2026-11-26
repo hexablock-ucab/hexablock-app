@@ -16,7 +16,7 @@ It is the base of the class diagram (D7) and of the code.
 - **Library-private constructors.** `Board`'s constructor is private to the engine package: `BoardBuilder` calls it, and the `with…` operations of a board return boards that keep its invariant.
 - **Entities.** `FitLevel`, `SortLevel` and `FitPiece` keep an identity that the content does not give: a level keeps its id across versions, and two equal Fit pieces are still two pieces (FIT-2).
 - **No aggregates, domain services or domain events.** No invariant spans several objects that must be loaded and saved as one unit: each game state is one immutable value, and its rules check the invariants. The engine's events are Observer notifications that exist during one game; they carry no time or identities and are not persisted. Value objects, rich behavior and Memento are what the requirements need (C-32, C-19, FR-45, FR-66).
-- **Constructors.** Every value object has an unnamed constructor that takes its attributes and checks its invariant; the diagrams leave those out and show named constructors (`Score.zero()`, `Mulberry32.fromSeed(seed)`) as static operations.
+- **Constructors.** Every value object has an unnamed constructor that takes its attributes and checks its invariant. The diagrams, the explorer and the class reference draw every constructor with its parameters and the UML 2.5.1 stereotype `«create»` (`docs/diagrams/README.md`): the unnamed one, which the generator derives from the attributes that are neither static nor derived (`«create» Score(points)`), and the named ones as static operations (`«create» Score.zero()`, `«create» Mulberry32.fromSeed(seed)`). `Board`'s unnamed constructor is drawn with package visibility (`~`), because it is library-private.
 - **Types.** Dart types are used as written in code: `T?` is an optional value (multiplicity 0..1 in the diagrams), `List`, `Set`, `Map`, `Future` and `Stream` are the Dart core collections and async types.
 
 ## 2. Layers and packages
@@ -487,6 +487,7 @@ A cell position as a list of integers. Only the topology and the board renderer 
 
 - **Invariant:** At least one component. The topology that receives it checks the length and the range (ITopology.isValid).
 - **Attributes:** `+components: List<int> {readOnly}`
+- **Operations:** `+«create» Coordinate(components : List<int>)`
 
 #### `ITopology` — interface
 
@@ -516,6 +517,7 @@ The name of a topology as the level format writes it in board.topology ("hex").
 
 - **Invariant:** non-empty.
 - **Attributes:** `+name: String {readOnly}`
+- **Operations:** `+«create» TopologyId(name : String)`
 
 #### `TopologyRegistry` — class
 
@@ -536,6 +538,7 @@ One of the directions of a topology (6 in hex). Slides (Merge) and swipes use it
 
 - **Invariant:** index >= 0 (the topology that issues it checks the upper bound).
 - **Attributes:** `+index: int {readOnly}`
+- **Operations:** `+«create» Direction(index : int)`
 
 #### `Axis` — value object
 
@@ -545,6 +548,7 @@ One of the axes along which the topology draws straight rows (3 in hex).
 
 - **Invariant:** index >= 0 (the topology that issues it checks the upper bound).
 - **Attributes:** `+index: int {readOnly}`
+- **Operations:** `+«create» Axis(index : int)`
 
 #### `RotationSteps` — value object
 
@@ -554,7 +558,7 @@ A rotation as a count of the topology's rotation steps (60° each in hex). Fit c
 
 - **Invariant:** count >= 0.
 - **Attributes:** `+count: int {readOnly}`
-- **Operations:** `+plus(other : RotationSteps) : RotationSteps`, `+within(fullTurn : RotationSteps) : RotationSteps`
+- **Operations:** `+«create» RotationSteps(count : int)`, `+plus(other : RotationSteps) : RotationSteps`, `+within(fullTurn : RotationSteps) : RotationSteps`
 
 #### `Radius` — value object
 
@@ -564,6 +568,7 @@ The radius of a regular board (4 for Lines, 2 for Sort and Merge).
 
 - **Invariant:** value >= 0.
 - **Attributes:** `+value: int {readOnly}`
+- **Operations:** `+«create» Radius(value : int)`
 
 #### `Shape` — value object
 
@@ -573,7 +578,7 @@ A set of cells relative to the origin: a piece outline. It moves and rotates thr
 
 - **Invariant:** At least one cell, all valid in the topology, connected through neighbors.
 - **Attributes:** `+cells: Set<Coordinate> {readOnly}`, `+/size: int {readOnly}`, `-topology: ITopology {readOnly}`
-- **Operations:** `+placedAt(anchor : Coordinate) : Set<Coordinate>`, `+rotated(by : RotationSteps) : Shape`
+- **Operations:** `+«create» Shape(cells : Set<Coordinate>, topology : ITopology)`, `+placedAt(anchor : Coordinate) : Set<Coordinate>`, `+rotated(by : RotationSteps) : Shape`
 - **Relations:** association `ITopology` [1] topology; aggregation `Coordinate` [1..*] cells
 
 #### `CellLine` — value object
@@ -584,6 +589,7 @@ A maximal straight row of board cells along one axis.
 
 - **Invariant:** At least one cell.
 - **Attributes:** `+axis: Axis {readOnly}`, `+cells: List<Coordinate> {readOnly}`
+- **Operations:** `+«create» CellLine(axis : Axis, cells : List<Coordinate>)`
 - **Relations:** association `Axis` [1] axis; aggregation `Coordinate` [1..*] cells
 
 **Folder `core/board`**
@@ -596,7 +602,7 @@ The immutable board: a set of coordinates of one topology and the content of the
 
 - **Invariant:** Every coordinate is valid in the topology; contents only on board coordinates.
 - **Attributes:** `+topology: ITopology {readOnly}`, `+coordinates: List<Coordinate> {readOnly}`, `-contents: Map<Coordinate, TCell> {readOnly}`
-- **Operations:** `+contains(at : Coordinate) : bool`, `+cellAt(at : Coordinate) : TCell [0..1]`, `+isEmptyAt(at : Coordinate) : bool`, `+isFull() : bool`, `+emptyCoordinates() : List<Coordinate>`, `+occupied() : Map<Coordinate, TCell>`, `+neighborsOf(at : Coordinate) : List<Coordinate>`, `+neighborTowards(from : Coordinate, towards : Direction) : Coordinate [0..1]`, `+rows() : List<CellLine>`, `+canPlace(cells : Set<Coordinate>) : bool`, `+withCell(at : Coordinate, cell : TCell) : Board<TCell>`, `+withCells(cells : Map<Coordinate, TCell>) : Board<TCell>`, `+withoutCells(cells : Iterable<Coordinate>) : Board<TCell>`
+- **Operations:** `~«create» Board(topology : ITopology, coordinates : List<Coordinate>, contents : Map<Coordinate, TCell>)`, `+contains(at : Coordinate) : bool`, `+cellAt(at : Coordinate) : TCell [0..1]`, `+isEmptyAt(at : Coordinate) : bool`, `+isFull() : bool`, `+emptyCoordinates() : List<Coordinate>`, `+occupied() : Map<Coordinate, TCell>`, `+neighborsOf(at : Coordinate) : List<Coordinate>`, `+neighborTowards(from : Coordinate, towards : Direction) : Coordinate [0..1]`, `+rows() : List<CellLine>`, `+canPlace(cells : Set<Coordinate>) : bool`, `+withCell(at : Coordinate, cell : TCell) : Board<TCell>`, `+withCells(cells : Map<Coordinate, TCell>) : Board<TCell>`, `+withoutCells(cells : Iterable<Coordinate>) : Board<TCell>`
 - **Relations:** association `ITopology` [1] topology; aggregation `Coordinate` [1..*] coordinates
 
 #### `BoardBuilder<TCell>` — class
@@ -681,7 +687,7 @@ The answer of validate: accepted, or rejected with a reason.
 
 - **Invariant:** reason is present exactly when the move is rejected.
 - **Attributes:** `+isAccepted: bool {readOnly}`, `+reason: RejectionReason [0..1] {readOnly}`
-- **Operations:** `static +accepted() : MoveValidation`, `static +rejected(reason : RejectionReason) : MoveValidation`
+- **Operations:** `+«create» MoveValidation(isAccepted : bool, reason : RejectionReason [0..1])`, `static +«create» accepted() : MoveValidation`, `static +«create» rejected(reason : RejectionReason) : MoveValidation`
 - **Relations:** association `RejectionReason` [0..1] reason
 
 #### `RejectionReason` — value object
@@ -692,6 +698,7 @@ Why a move was refused, as a translation key the screen shows (FR-10). Nothing b
 
 - **Invariant:** code is a non-empty key in kebab case, prefixed by the game id or "engine".
 - **Attributes:** `+code: String {readOnly}`
+- **Operations:** `+«create» RejectionReason(code : String)`
 
 #### `Resolution<TState>` — value object
 
@@ -700,6 +707,7 @@ domain · `hexablock_engine` · `core/engine` · Traces: C-19c
 What resolve returns: the settled state and the variant events it produced (lines cleared, cascades, merges).
 
 - **Attributes:** `+state: TState {readOnly}`, `+events: List<GameEvent> {readOnly}`
+- **Operations:** `+«create» Resolution(state : TState, events : List<GameEvent>)`
 - **Relations:** aggregation `GameEvent` [0..*] events
 
 #### `GameEnd` — enum
@@ -717,7 +725,7 @@ domain · `hexablock_engine` · `core/engine` · Traces: C-19e, FR-05, FR-06, FI
 What a finished game measured, for its progress model. Each variant fills only what it has: Lines and Merge a score; Fit the moves and (from the timer capability) the time; Sort score and moves. What a level demands (par, thresholds) lives in the progress model, not here.
 
 - **Attributes:** `+end: GameEnd {readOnly}`, `+score: Score [0..1] {readOnly}`, `+moves: MoveCount [0..1] {readOnly}`, `+time: ElapsedTime [0..1] {readOnly}`
-- **Operations:** `+withTime(time : ElapsedTime) : GameOutcome`
+- **Operations:** `+«create» GameOutcome(end : GameEnd, score : Score [0..1], moves : MoveCount [0..1], time : ElapsedTime [0..1])`, `+withTime(time : ElapsedTime) : GameOutcome`
 - **Relations:** association `GameEnd` [1] end; association `Score` [0..1] score; association `MoveCount` [0..1] moves; association `ElapsedTime` [0..1] time
 
 #### `IGameFactory<TCell, TMove, TState>` — interface
@@ -746,6 +754,7 @@ domain · `hexablock_engine` · `core/engine` · Traces: C-21, C-20, C-19e
 A ready game: the engine, the optional capabilities of its variant and the progress model of this game (with its level's par or thresholds).
 
 - **Attributes:** `+engine: GameEngine<TCell, TMove, TState> {readOnly}`, `+capabilities: CapabilitySet {readOnly}`, `+progressModel: IProgressModel {readOnly}`
+- **Operations:** `+«create» PreparedGame(engine : GameEngine<TCell, TMove, TState>, capabilities : CapabilitySet, progressModel : IProgressModel)`
 - **Relations:** association `GameEngine` [1] engine; association `CapabilitySet` [1] capabilities; association `IProgressModel` [1] progressModel
 
 **Folder `core/rules`**
@@ -775,6 +784,7 @@ The board after a slide, the values produced by its merges (in fixed order) and 
 
 - **Invariant:** merged is empty when changed is false.
 - **Attributes:** `+board: Board<TCell> {readOnly}`, `+merged: List<TCell> {readOnly}`, `+changed: bool {readOnly}`
+- **Operations:** `+«create» SlideResult(board : Board<TCell>, merged : List<TCell>, changed : bool)`
 - **Relations:** association `Board` [1] board
 
 #### `LineClearRule<TCell>` — class
@@ -794,6 +804,7 @@ The board after clearing, the rows cleared and the cells emptied.
 
 - **Invariant:** clearedCells is the union of the cells of lines.
 - **Attributes:** `+board: Board<TCell> {readOnly}`, `+lines: List<CellLine> {readOnly}`, `+clearedCells: Set<Coordinate> {readOnly}`, `+/lineCount: int {readOnly}`
+- **Operations:** `+«create» LineClear(board : Board<TCell>, lines : List<CellLine>, clearedCells : Set<Coordinate>)`
 - **Relations:** association `Board` [1] board; aggregation `CellLine` [0..*] lines
 
 **Folder `core/phases`**
@@ -867,6 +878,7 @@ The key of an event (for example "lines-cleared"). The audio map and the present
 
 - **Invariant:** name is non-empty kebab case.
 - **Attributes:** `+name: String {readOnly}`
+- **Operations:** `+«create» EventKind(name : String)`
 
 #### `MoveApplied` — class
 
@@ -933,6 +945,7 @@ domain · `hexablock_engine` · `core/events` · Traces: C-19c, FIT-5, FR-45
 One notification: the state before and after, why it changed, the events and the phase after. Listeners decide on cause and phase, never on the class of an event.
 
 - **Attributes:** `+before: TState {readOnly}`, `+after: TState {readOnly}`, `+cause: ChangeCause {readOnly}`, `+events: List<GameEvent> {readOnly}`, `+phase: PhaseKind {readOnly}`
+- **Operations:** `+«create» StateChange(before : TState, after : TState, cause : ChangeCause, events : List<GameEvent>, phase : PhaseKind)`
 - **Relations:** association `ChangeCause` [1] cause; aggregation `GameEvent` [0..*] events
 
 #### `ChangeCause` — enum
@@ -987,7 +1000,7 @@ The optional capabilities of one game, as typed optional fields. Use cases and t
 
 - **Invariant:** redo is present only if undo is present.
 - **Attributes:** `+undo: IUndoable [0..1] {readOnly}`, `+redo: IRedoable [0..1] {readOnly}`, `+timer: ITimed [0..1] {readOnly}`, `+seeded: IRandomSeeded [0..1] {readOnly}`
-- **Operations:** `static +none() : CapabilitySet`
+- **Operations:** `+«create» CapabilitySet(undo : IUndoable [0..1], redo : IRedoable [0..1], timer : ITimed [0..1], seeded : IRandomSeeded [0..1])`, `static +«create» none() : CapabilitySet`
 - **Relations:** association `IUndoable` [0..1] undo; association `IRedoable` [0..1] redo; association `ITimed` [0..1] timer; association `IRandomSeeded` [0..1] seeded
 
 #### `SeedRecord` — value object
@@ -996,6 +1009,7 @@ domain · `hexablock_engine` · `core/capabilities` · Traces: NFR-05, SORT-6
 
 The seeded capability of a game: the seed it started from.
 
+- **Operations:** `+«create» SeedRecord()`
 - **Relations:** realization `IRandomSeeded`; association `Seed` [1] seed
 
 **Folder `core/memento`**
@@ -1036,7 +1050,7 @@ How many snapshots a history keeps: unlimited (Fit) or a number of steps (Merge:
 
 - **Invariant:** steps >= 1 when limited.
 - **Attributes:** `-limit: int [0..1] {readOnly}`
-- **Operations:** `static +unlimited() : HistoryCapacity`, `static +steps(count : int) : HistoryCapacity`, `+allows(size : int) : bool`
+- **Operations:** `+«create» HistoryCapacity(limit : int [0..1])`, `static +«create» unlimited() : HistoryCapacity`, `static +«create» steps(count : int) : HistoryCapacity`, `+allows(size : int) : bool`
 
 **Folder `core/random`**
 
@@ -1057,7 +1071,7 @@ domain · `hexablock_engine` · `core/random` · Traces: NFR-05, C-14
 Mulberry32 generator by Tommy Ettinger (2017, public domain CC0), https://gist.github.com/tommyettinger/46a874533244883189143505d203312c. 32-bit state; increment 0x6D2B79F5. Every operation is masked to 32 bits, because Dart integers are 64-bit. Not equidistributed (about a third of the 32-bit values never appear), which does not matter for a game. nextBelow rejects the biased tail.
 
 - **Attributes:** `-generatorState: GeneratorState {readOnly}`
-- **Operations:** `static +fromSeed(seed : Seed) : Mulberry32`, `static +restore(state : GeneratorState) : Mulberry32`
+- **Operations:** `static +«create» fromSeed(seed : Seed) : Mulberry32`, `static +«create» restore(state : GeneratorState) : Mulberry32`
 - **Relations:** realization `IRandomSource`; association `GeneratorState` [1] generatorState
 
 #### `IRandomSourceFactory` — interface
@@ -1084,6 +1098,7 @@ domain · `hexablock_engine` · `core/random` · Traces: NFR-05
 A drawn value and the source to draw the next one from.
 
 - **Attributes:** `+value: T {readOnly}`, `+next: IRandomSource {readOnly}`
+- **Operations:** `+«create» RandomDraw(value : T, next : IRandomSource)`
 - **Relations:** association `IRandomSource` [1] next
 
 #### `Seed` — value object
@@ -1094,6 +1109,7 @@ The seed of a game.
 
 - **Invariant:** 0 <= value <= 2^32 - 1.
 - **Attributes:** `+value: int {readOnly}`
+- **Operations:** `+«create» Seed(value : int)`
 
 #### `GeneratorState` — value object
 
@@ -1103,6 +1119,7 @@ The internal state of a generator, saved with the game and in Merge's undo snaps
 
 - **Invariant:** 0 <= value <= 2^32 - 1.
 - **Attributes:** `+value: int {readOnly}`
+- **Operations:** `+«create» GeneratorState(value : int)`
 
 **Folder `core/pieces`**
 
@@ -1122,6 +1139,7 @@ domain · `hexablock_engine` · `core/pieces` · Traces: NFR-05
 A piece and the source that gives the following ones.
 
 - **Attributes:** `+piece: TPiece {readOnly}`, `+rest: TSource {readOnly}`
+- **Operations:** `+«create» PieceDraw(piece : TPiece, rest : TSource)`
 
 #### `IPieceRecipe<TPiece>` — interface
 
@@ -1139,7 +1157,7 @@ domain · `hexablock_engine` · `core/pieces` · Strategy (context) · Traces: N
 A piece source driven by a random source and a recipe. Same seed and recipe give the same pieces.
 
 - **Attributes:** `-random: IRandomSource {readOnly}`, `-recipe: IPieceRecipe<TPiece> {readOnly}`, `+/generatorState: GeneratorState {readOnly}`
-- **Operations:** `+next() : PieceDraw<TPiece, SeededPieceSource<TPiece>>`
+- **Operations:** `+«create» SeededPieceSource(random : IRandomSource, recipe : IPieceRecipe<TPiece>)`, `+next() : PieceDraw<TPiece, SeededPieceSource<TPiece>>`
 - **Relations:** realization `IPieceSource`; association `IRandomSource` [1] random; association `IPieceRecipe` [1] recipe
 
 #### `FixedPieceSource<TPiece>` — value object
@@ -1149,7 +1167,7 @@ domain · `hexablock_engine` · `core/pieces` · Traces: FR-40
 A piece source over a fixed list, delivered in order. Hexa Fit's factory builds one from the level's pieces and hands them all out at the start with drawAll.
 
 - **Attributes:** `-pieces: List<TPiece> {readOnly}`, `+/isExhausted: bool {readOnly}`
-- **Operations:** `+next() : PieceDraw<TPiece, FixedPieceSource<TPiece>>`, `+drawAll() : List<TPiece>`
+- **Operations:** `+«create» FixedPieceSource(pieces : List<TPiece>)`, `+next() : PieceDraw<TPiece, FixedPieceSource<TPiece>>`, `+drawAll() : List<TPiece>`
 - **Relations:** realization `IPieceSource`
 
 **Folder `core/time`**
@@ -1180,7 +1198,7 @@ A playing time in whole seconds.
 
 - **Invariant:** seconds >= 0.
 - **Attributes:** `+seconds: int {readOnly}`
-- **Operations:** `static +truncating(duration : Duration) : ElapsedTime`, `+atMost(limit : ElapsedTime) : bool`, `+isShorterThan(other : ElapsedTime) : bool`
+- **Operations:** `+«create» ElapsedTime(seconds : int)`, `static +«create» truncating(duration : Duration) : ElapsedTime`, `+atMost(limit : ElapsedTime) : bool`, `+isShorterThan(other : ElapsedTime) : bool`
 
 **Folder `core/progress`**
 
@@ -1210,6 +1228,7 @@ The result of one game as it is saved and ranked: a score (Lines, Merge, Sort) o
 
 - **Invariant:** score or stars is present.
 - **Attributes:** `+score: Score [0..1] {readOnly}`, `+stars: StarCount [0..1] {readOnly}`, `+moves: MoveCount [0..1] {readOnly}`, `+time: ElapsedTime [0..1] {readOnly}`, `+achievedAt: ResultDate {readOnly}`
+- **Operations:** `+«create» GameResult(score : Score [0..1], stars : StarCount [0..1], moves : MoveCount [0..1], time : ElapsedTime [0..1], achievedAt : ResultDate)`
 - **Relations:** association `Score` [0..1] score; association `StarCount` [0..1] stars; association `MoveCount` [0..1] moves; association `ElapsedTime` [0..1] time; association `ResultDate` [1] achievedAt
 
 #### `HighScoreProgress` — class
@@ -1228,7 +1247,7 @@ Points.
 
 - **Invariant:** points >= 0.
 - **Attributes:** `+points: int {readOnly}`
-- **Operations:** `static +zero() : Score`, `+plus(other : Score) : Score`, `+isHigherThan(other : Score) : bool`
+- **Operations:** `+«create» Score(points : int)`, `static +«create» zero() : Score`, `+plus(other : Score) : Score`, `+isHigherThan(other : Score) : bool`
 
 #### `StarCount` — value object
 
@@ -1238,7 +1257,7 @@ Stars of a won level.
 
 - **Invariant:** 1 <= value <= 3.
 - **Attributes:** `+value: int {readOnly}`
-- **Operations:** `+isMoreThan(other : StarCount) : bool`
+- **Operations:** `+«create» StarCount(value : int)`, `+isMoreThan(other : StarCount) : bool`
 
 #### `MoveCount` — value object
 
@@ -1248,7 +1267,7 @@ Moves made. Only grows (FIT-4).
 
 - **Invariant:** value >= 0.
 - **Attributes:** `+value: int {readOnly}`
-- **Operations:** `static +zero() : MoveCount`, `+next() : MoveCount`, `+advancedBy(steps : RotationSteps) : MoveCount`, `+atMost(limit : MoveCount) : bool`, `+isFewerThan(other : MoveCount) : bool`
+- **Operations:** `+«create» MoveCount(value : int)`, `static +«create» zero() : MoveCount`, `+next() : MoveCount`, `+advancedBy(steps : RotationSteps) : MoveCount`, `+atMost(limit : MoveCount) : bool`, `+isFewerThan(other : MoveCount) : bool`
 
 #### `ResultDate` — value object
 
@@ -1258,7 +1277,7 @@ When a result was achieved, in UTC, from the Clock port.
 
 - **Invariant:** instant is UTC.
 - **Attributes:** `+instant: DateTime {readOnly}`
-- **Operations:** `+isEarlierThan(other : ResultDate) : bool`
+- **Operations:** `+«create» ResultDate(instant : DateTime)`, `+isEarlierThan(other : ResultDate) : bool`
 
 #### `GoalCount` — value object
 
@@ -1268,7 +1287,7 @@ Goals of a Sort level (blocks removed).
 
 - **Invariant:** value >= 0.
 - **Attributes:** `+value: int {readOnly}`
-- **Operations:** `static +zero() : GoalCount`, `+plus(count : int) : GoalCount`, `+reaches(target : GoalCount) : bool`
+- **Operations:** `+«create» GoalCount(value : int)`, `static +«create» zero() : GoalCount`, `+plus(count : int) : GoalCount`, `+reaches(target : GoalCount) : bool`
 
 **Folder `core/levels`**
 
@@ -1280,6 +1299,7 @@ The identifier of a variant (for example "hexa-lines"). Mandatory dimension of p
 
 - **Invariant:** lowercase letters, digits and hyphens; non-empty.
 - **Attributes:** `+value: String {readOnly}`
+- **Operations:** `+«create» GameId(value : String)`
 
 #### `LevelId` — value object
 
@@ -1289,6 +1309,7 @@ The identifier of a level: "<gameId>-NNN".
 
 - **Invariant:** matches <gameId>-NNN with NNN three digits.
 - **Attributes:** `+value: String {readOnly}`, `+/gameId: GameId {readOnly}`
+- **Operations:** `+«create» LevelId(value : String)`
 
 #### `LevelNumber` — value object
 
@@ -1298,6 +1319,7 @@ The position of a level in its game.
 
 - **Invariant:** value >= 1.
 - **Attributes:** `+value: int {readOnly}`
+- **Operations:** `+«create» LevelNumber(value : int)`
 
 #### `LevelVersion` — value object
 
@@ -1307,7 +1329,7 @@ The version of a level definition; a download replaces a lower version.
 
 - **Invariant:** value >= 1.
 - **Attributes:** `+value: int {readOnly}`
-- **Operations:** `+isNewerThan(other : LevelVersion) : bool`
+- **Operations:** `+«create» LevelVersion(value : int)`, `+isNewerThan(other : LevelVersion) : bool`
 
 #### `Difficulty` — value object
 
@@ -1317,6 +1339,7 @@ The difficulty of a level.
 
 - **Invariant:** 1 <= value <= 5.
 - **Attributes:** `+value: int {readOnly}`
+- **Operations:** `+«create» Difficulty(value : int)`
 
 #### `LevelHeader` — value object
 
@@ -1326,6 +1349,7 @@ What every level shares, whatever its game.
 
 - **Invariant:** id starts with gameId and ends with number (check L1).
 - **Attributes:** `+id: LevelId {readOnly}`, `+gameId: GameId {readOnly}`, `+number: LevelNumber {readOnly}`, `+version: LevelVersion {readOnly}`, `+difficulty: Difficulty {readOnly}`
+- **Operations:** `+«create» LevelHeader(id : LevelId, gameId : GameId, number : LevelNumber, version : LevelVersion, difficulty : Difficulty)`
 - **Relations:** association `LevelId` [1] id; association `GameId` [1] gameId; association `LevelNumber` [1] number; association `LevelVersion` [1] version; association `Difficulty` [1] difficulty
 
 #### `LevelCatalog` — value object
@@ -1336,7 +1360,7 @@ The levels of one game: bundled ones merged with downloaded ones (the higher ver
 
 - **Invariant:** one header per level id; all of the same game.
 - **Attributes:** `-headers: List<LevelHeader> {readOnly}`
-- **Operations:** `+mergedWith(other : LevelCatalog) : LevelCatalog`, `+inOrder() : List<LevelHeader>`, `+accessGiven(completed : Set<LevelId>) : List<LevelAccess>`
+- **Operations:** `+«create» LevelCatalog(headers : List<LevelHeader>)`, `+mergedWith(other : LevelCatalog) : LevelCatalog`, `+inOrder() : List<LevelHeader>`, `+accessGiven(completed : Set<LevelId>) : List<LevelAccess>`
 - **Relations:** aggregation `LevelHeader` [0..*] headers; «create» `LevelAccess`
 
 #### `LevelAccess` — value object
@@ -1347,6 +1371,7 @@ A level as the level select shows it: unlocked or locked, completed or not.
 
 - **Invariant:** a completed level is unlocked.
 - **Attributes:** `+header: LevelHeader {readOnly}`, `+isUnlocked: bool {readOnly}`, `+isCompleted: bool {readOnly}`
+- **Operations:** `+«create» LevelAccess(header : LevelHeader, isUnlocked : bool, isCompleted : bool)`
 - **Relations:** association `LevelHeader` [1] header
 
 #### `LevelPar` — value object
@@ -1356,7 +1381,7 @@ domain · `hexablock_engine` · `core/levels` · Traces: FIT-3, FR-44
 The move par and time par of a Fit level.
 
 - **Attributes:** `+moves: MoveCount {readOnly}`, `+time: ElapsedTime {readOnly}`
-- **Operations:** `+starsFor(moves : MoveCount, time : ElapsedTime) : StarCount`
+- **Operations:** `+«create» LevelPar(moves : MoveCount, time : ElapsedTime)`, `+starsFor(moves : MoveCount, time : ElapsedTime) : StarCount`
 - **Relations:** association `MoveCount` [1] moves; association `ElapsedTime` [1] time
 
 #### `MoveThresholds` — value object
@@ -1367,7 +1392,7 @@ The two move thresholds of a Sort level.
 
 - **Invariant:** first > second.
 - **Attributes:** `+first: MoveCount {readOnly}`, `+second: MoveCount {readOnly}`
-- **Operations:** `+starsFor(moves : MoveCount) : StarCount`
+- **Operations:** `+«create» MoveThresholds(first : MoveCount, second : MoveCount)`, `+starsFor(moves : MoveCount) : StarCount`
 - **Relations:** association `MoveCount` [2] thresholds
 
 #### `ColorId` — value object
@@ -1378,6 +1403,7 @@ A color of the palette shared by Lines pieces and Sort tiles (for example "red")
 
 - **Invariant:** key is a non-empty lowercase word.
 - **Attributes:** `+key: String {readOnly}`
+- **Operations:** `+«create» ColorId(key : String)`
 
 ### Hexa Lines (domain)
 
@@ -1409,7 +1435,7 @@ The whole state of a Hexa Lines game. Immutable; each transition returns a new o
 
 - **Invariant:** score >= 0.
 - **Attributes:** `+board: Board<ColorId> {readOnly}`, `+tray: Tray {readOnly}`, `+score: Score {readOnly}`, `+streak: Streak {readOnly}`, `+source: SeededPieceSource<LinesPiece> {readOnly}`, `+lastTurn: ClearReport [0..1] {readOnly}`
-- **Operations:** `+canPlace(slot : TraySlot, at : Coordinate) : bool`, `+anyPieceFits() : bool`, `+withPiecePlaced(slot : TraySlot, at : Coordinate) : LinesState`, `+withLinesCleared(clear : LineClear<ColorId>) : LinesState`, `+withPointsAdded(points : Score) : LinesState`, `+withTrayRefilled() : LinesState`
+- **Operations:** `+«create» LinesState(board : Board<ColorId>, tray : Tray, score : Score, streak : Streak, source : SeededPieceSource<LinesPiece>, lastTurn : ClearReport [0..1])`, `+canPlace(slot : TraySlot, at : Coordinate) : bool`, `+anyPieceFits() : bool`, `+withPiecePlaced(slot : TraySlot, at : Coordinate) : LinesState`, `+withLinesCleared(clear : LineClear<ColorId>) : LinesState`, `+withPointsAdded(points : Score) : LinesState`, `+withTrayRefilled() : LinesState`
 - **Relations:** association `Board` [1] board; composition `Tray` [1] tray; association `Score` [1] score; association `Streak` [1] streak; association `SeededPieceSource` [1] source; association `ClearReport` [0..1] lastTurn; «use» `LineClear`
 
 #### `LinesMove` — value object
@@ -1419,6 +1445,7 @@ domain · `hexablock_engine` · `variants/hexa_lines` · Traces: FR-32
 Place the piece of one tray slot with its origin at a cell.
 
 - **Attributes:** `+slot: TraySlot {readOnly}`, `+at: Coordinate {readOnly}`
+- **Operations:** `+«create» LinesMove(slot : TraySlot, at : Coordinate)`
 - **Relations:** association `TraySlot` [1] slot; association `Coordinate` [1] at
 
 #### `Tray` — value object
@@ -1429,7 +1456,7 @@ The three slots of offered pieces. A taken slot stays empty until the tray is em
 
 - **Invariant:** exactly 3 slots; each holds a piece or nothing.
 - **Attributes:** `-slots: List<LinesPiece?> {readOnly}`
-- **Operations:** `+pieceAt(slot : TraySlot) : LinesPiece [0..1]`, `+offered() : Map<TraySlot, LinesPiece>`, `+taken(slot : TraySlot) : Tray`, `+isEmpty() : bool`, `+refilled(source : SeededPieceSource<LinesPiece>) : TrayRefill`
+- **Operations:** `+«create» Tray(slots : List<LinesPiece?>)`, `+pieceAt(slot : TraySlot) : LinesPiece [0..1]`, `+offered() : Map<TraySlot, LinesPiece>`, `+taken(slot : TraySlot) : Tray`, `+isEmpty() : bool`, `+refilled(source : SeededPieceSource<LinesPiece>) : TrayRefill`
 - **Relations:** aggregation `LinesPiece` [0..3] slots; «create» `TrayRefill`
 
 #### `TrayRefill` — value object
@@ -1440,6 +1467,7 @@ A refilled tray and the piece source after drawing its three pieces.
 
 - **Invariant:** tray is full.
 - **Attributes:** `+tray: Tray {readOnly}`, `+source: SeededPieceSource<LinesPiece> {readOnly}`
+- **Operations:** `+«create» TrayRefill(tray : Tray, source : SeededPieceSource<LinesPiece>)`
 - **Relations:** association `Tray` [1] tray
 
 #### `TraySlot` — value object
@@ -1450,6 +1478,7 @@ One of the three tray positions.
 
 - **Invariant:** 0 <= index <= 2.
 - **Attributes:** `+index: int {readOnly}`
+- **Operations:** `+«create» TraySlot(index : int)`
 
 #### `LinesPiece` — value object
 
@@ -1459,7 +1488,7 @@ A poly-hex of 1 to 5 cells with its color. It never rotates.
 
 - **Invariant:** shape has 1 to 5 cells.
 - **Attributes:** `+shape: Shape {readOnly}`, `+color: ColorId {readOnly}`
-- **Operations:** `+cellsAt(anchor : Coordinate) : Set<Coordinate>`
+- **Operations:** `+«create» LinesPiece(shape : Shape, color : ColorId)`, `+cellsAt(anchor : Coordinate) : Set<Coordinate>`
 - **Relations:** association `Shape` [1] shape; association `ColorId` [1] color
 
 #### `PieceCatalog` — value object
@@ -1470,7 +1499,7 @@ The fixed catalog of Hexa Lines pieces, loaded from configuration (no rotation: 
 
 - **Invariant:** at least one entry; every entry has 1 to 5 cells.
 - **Attributes:** `-entries: List<LinesPiece> {readOnly}`, `+/size: int {readOnly}`
-- **Operations:** `+entryAt(index : int) : LinesPiece`
+- **Operations:** `+«create» PieceCatalog(entries : List<LinesPiece>)`, `+entryAt(index : int) : LinesPiece`
 - **Relations:** aggregation `LinesPiece` [1..*] entries
 
 #### `CatalogRecipe` — class
@@ -1501,7 +1530,7 @@ Consecutive moves that cleared at least one line.
 
 - **Invariant:** count >= 0.
 - **Attributes:** `+count: int {readOnly}`
-- **Operations:** `+extended() : Streak`, `+broken() : Streak`
+- **Operations:** `+«create» Streak(count : int)`, `+extended() : Streak`, `+broken() : Streak`
 
 #### `ClearReport` — value object
 
@@ -1511,6 +1540,7 @@ What the last move did: cells placed and lines cleared. The scoring policy reads
 
 - **Invariant:** cellsPlaced in 1..5; linesCleared >= 0.
 - **Attributes:** `+cellsPlaced: int {readOnly}`, `+linesCleared: int {readOnly}`
+- **Operations:** `+«create» ClearReport(cellsPlaced : int, linesCleared : int)`
 
 #### `LinesScoringPolicy` — class
 
@@ -1579,6 +1609,7 @@ The closed figure to cover: an arbitrary set of cells.
 
 - **Invariant:** connected through neighbors and without interior holes, checked on the unbounded grid (FIT-1).
 - **Attributes:** `+cells: Set<Coordinate> {readOnly}`, `+/area: int {readOnly}`
+- **Operations:** `+«create» Figure(cells : Set<Coordinate>)`
 
 #### `FitPiece` — entity
 
@@ -1598,6 +1629,7 @@ The identity of a piece in its level; the content of a covered board cell.
 
 - **Invariant:** value >= 0 (position in the level).
 - **Attributes:** `+value: int {readOnly}`
+- **Operations:** `+«create» PieceId(value : int)`
 
 #### `FitState` — value object
 
@@ -1607,7 +1639,7 @@ The state of a Hexa Fit game: board covered by piece ids, placements, orientatio
 
 - **Invariant:** a piece is either placed (one placement) or free; the board holds exactly the cells of the placed pieces.
 - **Attributes:** `+board: Board<PieceId> {readOnly}`, `+pieces: List<FitPiece> {readOnly}`, `+placements: Map<PieceId, PiecePlacement> {readOnly}`, `+orientations: Map<PieceId, RotationSteps> {readOnly}`, `+moves: MoveCount {readOnly}`
-- **Operations:** `+toSnapshot() : FitSnapshot`, `+restoredFrom(snapshot : FitSnapshot) : FitState`, `+isPlaced(piece : PieceId) : bool`, `+freePieces() : List<FitPiece>`, `+isCovered() : bool`, `+canPlace(piece : PieceId, at : Coordinate) : bool`, `+withPlaced(piece : PieceId, at : Coordinate) : FitState`, `+withLifted(piece : PieceId) : FitState`, `+withRotated(piece : PieceId, by : RotationSteps) : FitState`
+- **Operations:** `+«create» FitState(board : Board<PieceId>, pieces : List<FitPiece>, placements : Map<PieceId, PiecePlacement>, orientations : Map<PieceId, RotationSteps>, moves : MoveCount)`, `+toSnapshot() : FitSnapshot`, `+restoredFrom(snapshot : FitSnapshot) : FitState`, `+isPlaced(piece : PieceId) : bool`, `+freePieces() : List<FitPiece>`, `+isCovered() : bool`, `+canPlace(piece : PieceId, at : Coordinate) : bool`, `+withPlaced(piece : PieceId, at : Coordinate) : FitState`, `+withLifted(piece : PieceId) : FitState`, `+withRotated(piece : PieceId, by : RotationSteps) : FitState`
 - **Relations:** realization `ISnapshotable<FitState, FitSnapshot>`; association `Board` [1] board; aggregation `FitPiece` [1..*] pieces; aggregation `PiecePlacement` [0..*] placements; association `MoveCount` [1] moves
 
 #### `FitSnapshot` — value object
@@ -1617,6 +1649,7 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Memento (memento) · Trac
 Memento of Hexa Fit: board, placements and orientations. No move count and no clock: undo and redo never change them (FIT-4). Only FitState reads it.
 
 - **Attributes:** `+board: Board<PieceId> {readOnly}`, `+placements: Map<PieceId, PiecePlacement> {readOnly}`, `+orientations: Map<PieceId, RotationSteps> {readOnly}`
+- **Operations:** `+«create» FitSnapshot(board : Board<PieceId>, placements : Map<PieceId, PiecePlacement>, orientations : Map<PieceId, RotationSteps>)`
 - **Relations:** association `Board` [1] board
 
 #### `PiecePlacement` — value object
@@ -1626,6 +1659,7 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Traces: FR-41
 Where a placed piece sits. Its rotation lives only in FitState.orientations.
 
 - **Attributes:** `+at: Coordinate {readOnly}`
+- **Operations:** `+«create» PiecePlacement(at : Coordinate)`
 - **Relations:** association `Coordinate` [1] at
 
 #### `FitMove` — sealed
@@ -1644,6 +1678,7 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Traces: FR-41, FIT-4
 Place a free piece, in its current orientation, with its origin at a cell.
 
 - **Attributes:** `+at: Coordinate {readOnly}`
+- **Operations:** `+«create» PlaceFitPiece(at : Coordinate)`
 - **Relations:** generalization `FitMove`
 
 #### `RemoveFitPiece` — value object
@@ -1652,6 +1687,7 @@ domain · `hexablock_engine` · `variants/hexa_fit` · Traces: FR-41, FIT-4
 
 Take a placed piece off the figure.
 
+- **Operations:** `+«create» RemoveFitPiece()`
 - **Relations:** generalization `FitMove`
 
 #### `RotateFitPiece` — value object
@@ -1662,6 +1698,7 @@ Turn a free piece by some rotation steps (each step counts one move).
 
 - **Invariant:** by.count >= 1.
 - **Attributes:** `+by: RotationSteps {readOnly}`
+- **Operations:** `+«create» RotateFitPiece(by : RotationSteps)`
 - **Relations:** generalization `FitMove`
 
 #### `HexaFitRules` — class
@@ -1732,6 +1769,7 @@ What the tray generator may draw in one level: the seed, the colors in play and 
 
 - **Invariant:** at least 2 colors, no color repeated (level format).
 - **Attributes:** `+seed: Seed {readOnly}`, `+colors: List<ColorId> {readOnly}`, `+stackSize: StackSizeRange {readOnly}`
+- **Operations:** `+«create» TrayParams(seed : Seed, colors : List<ColorId>, stackSize : StackSizeRange)`
 - **Relations:** association `Seed` [1] seed; aggregation `ColorId` [2..*] colors; association `StackSizeRange` [1] stackSize
 
 #### `StackSizeRange` — value object
@@ -1742,6 +1780,7 @@ The minimum and maximum tiles of a drawn stack. At most 9, so a drawn stack neve
 
 - **Invariant:** 1 <= min <= max <= 9 (S1 and the level format).
 - **Attributes:** `+min: int {readOnly}`, `+max: int {readOnly}`
+- **Operations:** `+«create» StackSizeRange(min : int, max : int)`
 
 #### `SortLevelBuilder` — class
 
@@ -1761,7 +1800,7 @@ A stack of colored tiles, bottom to top; the content of a Sort cell.
 
 - **Invariant:** at least one tile.
 - **Attributes:** `+tiles: List<ColorId> {readOnly}`, `+/height: int {readOnly}`
-- **Operations:** `+top() : ColorId`, `+topBlock() : TopBlock`, `+withBlockOnTop(block : TopBlock) : ColorStack`, `+withoutTopBlock() : ColorStack [0..1]`
+- **Operations:** `+«create» ColorStack(tiles : List<ColorId>)`, `+top() : ColorId`, `+topBlock() : TopBlock`, `+withBlockOnTop(block : TopBlock) : ColorStack`, `+withoutTopBlock() : ColorStack [0..1]`
 - **Relations:** aggregation `ColorId` [1..*] tiles; «create» `TopBlock`
 
 #### `TopBlock` — value object
@@ -1772,7 +1811,7 @@ The contiguous run of same-color tiles at the top of a stack: the unit of transf
 
 - **Invariant:** size >= 1.
 - **Attributes:** `+color: ColorId {readOnly}`, `+size: int {readOnly}`
-- **Operations:** `+reachesRemoval() : bool`, `+joinedWith(other : TopBlock) : TopBlock`
+- **Operations:** `+«create» TopBlock(color : ColorId, size : int)`, `+reachesRemoval() : bool`, `+joinedWith(other : TopBlock) : TopBlock`
 - **Relations:** association `ColorId` [1] color
 
 #### `SortState` — value object
@@ -1783,7 +1822,7 @@ The state of a Hexa Sort game: board of stacks, the offered stack, the tray sour
 
 - **Invariant:** goals, moves and score >= 0.
 - **Attributes:** `+board: Board<ColorStack> {readOnly}`, `+offered: ColorStack {readOnly}`, `+source: SeededPieceSource<ColorStack> {readOnly}`, `+goals: GoalCount {readOnly}`, `+moves: MoveCount {readOnly}`, `+score: Score {readOnly}`, `+lastTurn: SortTurn [0..1] {readOnly}`
-- **Operations:** `+hasEmptyCell() : bool`, `+reaches(goal : GoalCount) : bool`, `+withStackPlaced(at : Coordinate) : SortState`, `+withCascade(result : CascadeResult) : SortState`, `+withPointsAdded(points : Score) : SortState`
+- **Operations:** `+«create» SortState(board : Board<ColorStack>, offered : ColorStack, source : SeededPieceSource<ColorStack>, goals : GoalCount, moves : MoveCount, score : Score, lastTurn : SortTurn [0..1])`, `+hasEmptyCell() : bool`, `+reaches(goal : GoalCount) : bool`, `+withStackPlaced(at : Coordinate) : SortState`, `+withCascade(result : CascadeResult) : SortState`, `+withPointsAdded(points : Score) : SortState`
 - **Relations:** association `Board` [1] board; association `ColorStack` [1] offered; association `SeededPieceSource` [1] source; association `GoalCount` [1] goals; association `MoveCount` [1] moves; association `Score` [1] score; association `SortTurn` [0..1] lastTurn; «use» `CascadeResult`
 
 #### `SortMove` — value object
@@ -1793,6 +1832,7 @@ domain · `hexablock_engine` · `variants/hexa_sort` · Traces: FR-51, SORT-7
 Place the offered stack on an empty cell.
 
 - **Attributes:** `+at: Coordinate {readOnly}`
+- **Operations:** `+«create» SortMove(at : Coordinate)`
 - **Relations:** association `Coordinate` [1] at
 
 #### `SortTurn` — value object
@@ -1803,6 +1843,7 @@ What the last cascade removed; the scoring policy reads it.
 
 - **Invariant:** every removed block has size >= 10.
 - **Attributes:** `+removedBlocks: List<TopBlock> {readOnly}`
+- **Operations:** `+«create» SortTurn(removedBlocks : List<TopBlock>)`
 - **Relations:** aggregation `TopBlock` [0..*] removedBlocks
 
 #### `HexaSortRules` — class
@@ -1832,6 +1873,7 @@ The board after the cascade, the blocks removed and the events in the order of S
 
 - **Invariant:** every removed block has size >= 10.
 - **Attributes:** `+board: Board<ColorStack> {readOnly}`, `+removedBlocks: List<TopBlock> {readOnly}`, `+events: List<GameEvent> {readOnly}`
+- **Operations:** `+«create» CascadeResult(board : Board<ColorStack>, removedBlocks : List<TopBlock>, events : List<GameEvent>)`
 - **Relations:** association `Board` [1] board; aggregation `TopBlock` [0..*] removedBlocks
 
 #### `StackRecipe` — class
@@ -1910,7 +1952,7 @@ A numeric tile: a power of 2. Merges with an equal tile into its double.
 
 - **Invariant:** value is a power of 2 and >= 2.
 - **Attributes:** `+value: int {readOnly}`
-- **Operations:** `+canMergeWith(other : TileValue) : bool`, `+mergedWith(other : TileValue) : TileValue`, `+reaches(target : TileValue) : bool`, `+asScore() : Score`
+- **Operations:** `+«create» TileValue(value : int)`, `+canMergeWith(other : TileValue) : bool`, `+mergedWith(other : TileValue) : TileValue`, `+reaches(target : TileValue) : bool`, `+asScore() : Score`
 - **Relations:** realization `IMergeable<TileValue>`
 
 #### `MergeState` — value object
@@ -1921,7 +1963,7 @@ The state of a Hexa Merge game. Saved whole for FR-16, generator included. after
 
 - **Invariant:** score >= 0.
 - **Attributes:** `+board: Board<TileValue> {readOnly}`, `+score: Score {readOnly}`, `+source: SeededPieceSource<TileSpawn> {readOnly}`, `+targetReached: bool {readOnly}`, `+lastTurn: MergeTurn [0..1] {readOnly}`
-- **Operations:** `+toSnapshot() : MergeSnapshot`, `+restoredFrom(snapshot : MergeSnapshot) : MergeState`, `+afterSlide(result : SlideResult<TileValue>, target : TileValue) : MergeState`, `+withPointsAdded(points : Score) : MergeState`, `+withSpawn() : MergeState`
+- **Operations:** `+«create» MergeState(board : Board<TileValue>, score : Score, source : SeededPieceSource<TileSpawn>, targetReached : bool, lastTurn : MergeTurn [0..1])`, `+toSnapshot() : MergeSnapshot`, `+restoredFrom(snapshot : MergeSnapshot) : MergeState`, `+afterSlide(result : SlideResult<TileValue>, target : TileValue) : MergeState`, `+withPointsAdded(points : Score) : MergeState`, `+withSpawn() : MergeState`
 - **Relations:** realization `ISnapshotable<MergeState, MergeSnapshot>`; association `Board` [1] board; association `Score` [1] score; association `SeededPieceSource` [1] source; association `MergeTurn` [0..1] lastTurn; «use» `SlideResult`
 
 #### `MergeSnapshot` — value object
@@ -1931,6 +1973,7 @@ domain · `hexablock_engine` · `variants/hexa_merge` · Memento (memento) · Tr
 Memento of Hexa Merge: board, score, the tile source with its generator state, and whether the target was reached. Undo brings back the same next tile (MERGE-4). Only MergeState reads it.
 
 - **Attributes:** `+board: Board<TileValue> {readOnly}`, `+score: Score {readOnly}`, `+source: SeededPieceSource<TileSpawn> {readOnly}`, `+targetReached: bool {readOnly}`
+- **Operations:** `+«create» MergeSnapshot(board : Board<TileValue>, score : Score, source : SeededPieceSource<TileSpawn>, targetReached : bool)`
 - **Relations:** association `Board` [1] board; association `Score` [1] score
 
 #### `MergeMove` — value object
@@ -1940,6 +1983,7 @@ domain · `hexablock_engine` · `variants/hexa_merge` · Traces: FR-61
 Swipe in one of the topology's directions.
 
 - **Attributes:** `+direction: Direction {readOnly}`
+- **Operations:** `+«create» MergeMove(direction : Direction)`
 - **Relations:** association `Direction` [1] direction
 
 #### `MergeTurn` — value object
@@ -1950,6 +1994,7 @@ What the last move did: the values produced by merges and the spawned tile.
 
 - **Invariant:** merged may be empty.
 - **Attributes:** `+merged: List<TileValue> {readOnly}`, `+spawned: TileSpawn [0..1] {readOnly}`
+- **Operations:** `+«create» MergeTurn(merged : List<TileValue>, spawned : TileSpawn [0..1])`
 - **Relations:** aggregation `TileValue` [0..*] merged; association `TileSpawn` [0..1] spawned
 
 #### `HexaMergeRules` — class
@@ -1970,6 +2015,7 @@ A tile to add after a move: its value and the slot that picks the cell.
 
 - **Invariant:** value is 2 or 4.
 - **Attributes:** `+value: TileValue {readOnly}`, `+slot: SpawnSlot {readOnly}`
+- **Operations:** `+«create» TileSpawn(value : TileValue, slot : SpawnSlot)`
 - **Relations:** association `TileValue` [1] value; association `SpawnSlot` [1] slot
 
 #### `SpawnSlot` — value object
@@ -1980,7 +2026,7 @@ A raw draw that picks one of the empty cells in fixed order (draw modulo the num
 
 - **Invariant:** 0 <= draw <= 2^32 - 1.
 - **Attributes:** `-draw: int {readOnly}`
-- **Operations:** `+cellIn(empty : List<Coordinate>) : Coordinate`
+- **Operations:** `+«create» SpawnSlot(draw : int)`, `+cellIn(empty : List<Coordinate>) : Coordinate`
 
 #### `SpawnOdds` — value object
 
@@ -1990,7 +2036,7 @@ The chance that a spawned tile is a 4 instead of a 2, per hundred.
 
 - **Invariant:** 0 <= fourPerHundred <= 100.
 - **Attributes:** `+fourPerHundred: int {readOnly}`
-- **Operations:** `+valueFor(draw : int) : TileValue`
+- **Operations:** `+«create» SpawnOdds(fourPerHundred : int)`, `+valueFor(draw : int) : TileValue`
 
 #### `TileSpawnRecipe` — class
 
@@ -2414,6 +2460,7 @@ Translation keys of a variant: its name and its rules summary.
 
 - **Invariant:** keys non-empty.
 - **Attributes:** `+nameKey: String {readOnly}`, `+rulesKey: String {readOnly}`
+- **Operations:** `+«create» VariantTexts(nameKey : String, rulesKey : String)`
 
 #### `PlayableSession` — interface
 
@@ -2441,6 +2488,7 @@ What the screen asks to start.
 
 - **Invariant:** levelId belongs to gameId when present.
 - **Attributes:** `+gameId: GameId {readOnly}`, `+levelId: LevelId [0..1] {readOnly}`, `+seed: Seed [0..1] {readOnly}`
+- **Operations:** `+«create» StartGameRequest(gameId : GameId, levelId : LevelId [0..1], seed : Seed [0..1])`
 
 #### `SessionRequest` — value object
 
@@ -2449,6 +2497,7 @@ application · `hexablock_application` · `variants` · Traces: NFR-05, C-20
 What a module receives to start a session: the seed is always resolved (from the request, the level or ISeedSource).
 
 - **Attributes:** `+gameId: GameId {readOnly}`, `+levelId: LevelId [0..1] {readOnly}`, `+seed: Seed {readOnly}`
+- **Operations:** `+«create» SessionRequest(gameId : GameId, levelId : LevelId [0..1], seed : Seed)`
 
 **Folder `session`**
 
@@ -2466,6 +2515,7 @@ application · `hexablock_application` · `session` · Traces: FR-51
 Tap on a cell (Sort).
 
 - **Attributes:** `+at: Coordinate {readOnly}`
+- **Operations:** `+«create» TapCell(at : Coordinate)`
 - **Relations:** generalization `PlayerIntent`
 
 #### `DropPiece` — value object
@@ -2475,6 +2525,7 @@ application · `hexablock_application` · `session` · Traces: FR-32, FR-41
 Drop a tray piece on a cell (Lines, Fit).
 
 - **Attributes:** `+piece: PieceRef {readOnly}`, `+at: Coordinate {readOnly}`
+- **Operations:** `+«create» DropPiece(piece : PieceRef, at : Coordinate)`
 - **Relations:** generalization `PlayerIntent`; association `PieceRef` [1] piece
 
 #### `Swipe` — value object
@@ -2484,6 +2535,7 @@ application · `hexablock_application` · `session` · Traces: FR-61
 Swipe in a direction (Merge).
 
 - **Attributes:** `+direction: Direction {readOnly}`
+- **Operations:** `+«create» Swipe(direction : Direction)`
 - **Relations:** generalization `PlayerIntent`
 
 #### `RotatePiece` — value object
@@ -2493,6 +2545,7 @@ application · `hexablock_application` · `session` · Traces: FR-42
 Rotate a tray piece one step (Fit).
 
 - **Attributes:** `+piece: PieceRef {readOnly}`
+- **Operations:** `+«create» RotatePiece(piece : PieceRef)`
 - **Relations:** generalization `PlayerIntent`; association `PieceRef` [1] piece
 
 #### `LiftPiece` — value object
@@ -2502,6 +2555,7 @@ application · `hexablock_application` · `session` · Traces: FR-41
 Lift a placed piece off a cell (Fit).
 
 - **Attributes:** `+at: Coordinate {readOnly}`
+- **Operations:** `+«create» LiftPiece(at : Coordinate)`
 - **Relations:** generalization `PlayerIntent`
 
 #### `PieceRef` — value object
@@ -2512,6 +2566,7 @@ A piece of the tray view, by position.
 
 - **Invariant:** index >= 0.
 - **Attributes:** `+index: int {readOnly}`
+- **Operations:** `+«create» PieceRef(index : int)`
 
 #### `SessionView` — value object
 
@@ -2520,6 +2575,7 @@ application · `hexablock_application` · `session` · Traces: C-20, C-22, FR-03
 Everything the game screen draws, the same for every variant.
 
 - **Attributes:** `+board: BoardView {readOnly}`, `+tray: List<PieceView> {readOnly}`, `+stats: List<StatLine> {readOnly}`, `+phase: PhaseKind {readOnly}`
+- **Operations:** `+«create» SessionView(board : BoardView, tray : List<PieceView>, stats : List<StatLine>, phase : PhaseKind)`
 - **Relations:** composition `BoardView` [1] board; composition `PieceView` [0..*] tray; composition `StatLine` [0..*] stats
 
 #### `BoardView` — value object
@@ -2530,6 +2586,7 @@ The board to draw: its topology and one view per cell.
 
 - **Invariant:** no two cell views share a coordinate; each coordinate is valid in the topology.
 - **Attributes:** `+topology: ITopology {readOnly}`, `+cells: List<CellView> {readOnly}`
+- **Operations:** `+«create» BoardView(topology : ITopology, cells : List<CellView>)`
 - **Relations:** composition `CellView` [1..*] cells
 
 #### `CellView` — value object
@@ -2539,6 +2596,7 @@ application · `hexablock_application` · `session` · Traces: C-20
 One cell to draw: its fills bottom to top and an optional label (a tile value).
 
 - **Attributes:** `+coordinate: Coordinate {readOnly}`, `+fills: List<ColorToken> {readOnly}`, `+label: String [0..1] {readOnly}`
+- **Operations:** `+«create» CellView(coordinate : Coordinate, fills : List<ColorToken>, label : String [0..1])`
 - **Relations:** aggregation `ColorToken` [0..*] fills
 
 #### `ColorToken` — value object
@@ -2549,6 +2607,7 @@ A color the painter knows (a palette key, a tile value or a piece id).
 
 - **Invariant:** key non-empty.
 - **Attributes:** `+key: String {readOnly}`
+- **Operations:** `+«create» ColorToken(key : String)`
 
 #### `PieceView` — value object
 
@@ -2558,6 +2617,7 @@ A tray piece to draw.
 
 - **Invariant:** cells non-empty.
 - **Attributes:** `+ref: PieceRef {readOnly}`, `+cells: Set<Coordinate> {readOnly}`, `+fill: ColorToken {readOnly}`
+- **Operations:** `+«create» PieceView(ref : PieceRef, cells : Set<Coordinate>, fill : ColorToken)`
 - **Relations:** association `PieceRef` [1] ref
 
 #### `StatLine` — value object
@@ -2568,6 +2628,7 @@ A labeled value on the game screen (score, moves, goals, time).
 
 - **Invariant:** labelKey non-empty.
 - **Attributes:** `+labelKey: String {readOnly}`, `+value: String {readOnly}`
+- **Operations:** `+«create» StatLine(labelKey : String, value : String)`
 
 #### `SessionUpdate` — value object
 
@@ -2576,6 +2637,7 @@ application · `hexablock_application` · `session` · Traces: FR-09, C-19c
 What a session sends after each change: the new view, one effect per event (for sound and animation) and the phase.
 
 - **Attributes:** `+view: SessionView {readOnly}`, `+effects: List<SessionEffect> {readOnly}`, `+phase: PhaseKind {readOnly}`
+- **Operations:** `+«create» SessionUpdate(view : SessionView, effects : List<SessionEffect>, phase : PhaseKind)`
 - **Relations:** association `SessionView` [1] view; composition `SessionEffect` [0..*] effects
 
 #### `SessionEffect` — value object
@@ -2585,6 +2647,7 @@ application · `hexablock_application` · `session` · Traces: FR-09, C-19c, C-2
 One event as the screen and the audio see it: its kind and the cells it affects, in order. The session adapter builds it from any event without asking its class.
 
 - **Attributes:** `+kind: EventKind {readOnly}`, `+cells: List<Coordinate> {readOnly}`
+- **Operations:** `+«create» SessionEffect(kind : EventKind, cells : List<Coordinate>)`
 - **Relations:** association `EventKind` [1] kind
 
 #### `SavedGame` — value object
@@ -2595,6 +2658,7 @@ A game in progress exported by its variant: the game id and an opaque payload on
 
 - **Invariant:** payload non-empty.
 - **Attributes:** `+gameId: GameId {readOnly}`, `+payload: String {readOnly}`
+- **Operations:** `+«create» SavedGame(gameId : GameId, payload : String)`
 
 #### `ProgressRecord` — value object
 
@@ -2604,6 +2668,7 @@ The best result of a game or a level.
 
 - **Invariant:** levelId belongs to gameId when present.
 - **Attributes:** `+gameId: GameId {readOnly}`, `+levelId: LevelId [0..1] {readOnly}`, `+best: GameResult {readOnly}`, `+synced: bool {readOnly}`
+- **Operations:** `+«create» ProgressRecord(gameId : GameId, levelId : LevelId [0..1], best : GameResult, synced : bool)`
 - **Relations:** association `GameResult` [1] best
 
 #### `SaveProgressResult` — value object
@@ -2613,6 +2678,7 @@ application · `hexablock_application` · `session` · Traces: FR-06, FR-08
 The result of a finished game and whether it became the new best.
 
 - **Attributes:** `+record: ProgressRecord {readOnly}`, `+isNewBest: bool {readOnly}`
+- **Operations:** `+«create» SaveProgressResult(record : ProgressRecord, isNewBest : bool)`
 - **Relations:** association `ProgressRecord` [1] record
 
 #### `DownloadedLevel` — value object
@@ -2623,6 +2689,7 @@ A level definition from the API: its header and the raw document in the API leve
 
 - **Invariant:** payload non-empty.
 - **Attributes:** `+header: LevelHeader {readOnly}`, `+payload: String {readOnly}`
+- **Operations:** `+«create» DownloadedLevel(header : LevelHeader, payload : String)`
 
 #### `LeaderboardEntry` — value object
 
@@ -2632,6 +2699,7 @@ One row of a leaderboard.
 
 - **Invariant:** position >= 1.
 - **Attributes:** `+position: int {readOnly}`, `+userId: UserId {readOnly}`, `+displayName: String {readOnly}`, `+result: GameResult {readOnly}`
+- **Operations:** `+«create» LeaderboardEntry(position : int, userId : UserId, displayName : String, result : GameResult)`
 - **Relations:** association `UserId` [1] userId; association `GameResult` [1] result
 
 #### `UserId` — value object
@@ -2642,6 +2710,7 @@ The stable id of a user in the backend.
 
 - **Invariant:** non-empty.
 - **Attributes:** `+value: String {readOnly}`
+- **Operations:** `+«create» UserId(value : String)`
 
 #### `Credentials` — value object
 
@@ -2651,6 +2720,7 @@ Email and password to register or sign in.
 
 - **Invariant:** both valid.
 - **Attributes:** `+email: Email {readOnly}`, `+password: Password {readOnly}`
+- **Operations:** `+«create» Credentials(email : Email, password : Password)`
 - **Relations:** association `Email` [1] email; association `Password` [1] password
 
 #### `Email` — value object
@@ -2661,6 +2731,7 @@ An email address.
 
 - **Invariant:** one @ and a dot in the domain.
 - **Attributes:** `+value: String {readOnly}`
+- **Operations:** `+«create» Email(value : String)`
 
 #### `Password` — value object
 
@@ -2670,6 +2741,7 @@ A password; never logged, never stored on the device.
 
 - **Invariant:** at least 8 characters.
 - **Attributes:** `+value: String {readOnly}`
+- **Operations:** `+«create» Password(value : String)`
 
 #### `AuthSession` — value object
 
@@ -2678,6 +2750,7 @@ application · `hexablock_application` · `session` · Traces: FR-11, FR-20
 A signed-in session: the user and the access token.
 
 - **Attributes:** `+userId: UserId {readOnly}`, `+token: AccessToken {readOnly}`
+- **Operations:** `+«create» AuthSession(userId : UserId, token : AccessToken)`
 - **Relations:** association `UserId` [1] userId; association `AccessToken` [1] token
 
 #### `AccessToken` — value object
@@ -2688,6 +2761,7 @@ The JWT the API issued.
 
 - **Invariant:** non-empty.
 - **Attributes:** `+value: String {readOnly}`
+- **Operations:** `+«create» AccessToken(value : String)`
 
 #### `Preferences` — value object
 
@@ -2696,6 +2770,7 @@ application · `hexablock_application` · `session` · Traces: FR-09, FR-10
 Sound and language preferences.
 
 - **Attributes:** `+musicOn: bool {readOnly}`, `+effectsOn: bool {readOnly}`, `+language: LanguageCode {readOnly}`
+- **Operations:** `+«create» Preferences(musicOn : bool, effectsOn : bool, language : LanguageCode)`
 - **Relations:** association `LanguageCode` [1] language
 
 #### `LanguageCode` — value object
@@ -2706,6 +2781,7 @@ An app language.
 
 - **Invariant:** "es" or "en".
 - **Attributes:** `+value: String {readOnly}`
+- **Operations:** `+«create» LanguageCode(value : String)`
 
 ### Interface adapters, generic (`hexablock_adapters`)
 
@@ -2948,6 +3024,7 @@ A sound asset.
 
 - **Invariant:** asset path non-empty.
 - **Attributes:** `+asset: String {readOnly}`
+- **Operations:** `+«create» SoundCue(asset : String)`
 
 **Folder `presentation`**
 

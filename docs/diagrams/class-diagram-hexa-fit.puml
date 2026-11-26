@@ -45,6 +45,7 @@ package "hexablock_engine / variants/hexa_fit" {
     +cells : Set<Coordinate> {readOnly}
     +/area : int {readOnly}
     --
+    +«create» Figure(cells : Set<Coordinate>)
   }
   class FitPiece << (▲,#D4A300) Entity >> #FFF4C2 {
     +id : PieceId {readOnly}
@@ -54,6 +55,7 @@ package "hexablock_engine / variants/hexa_fit" {
   class PieceId << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» PieceId(value : int)
   }
   class FitState << (▲,#D4A300) Value Object >> #FFF4C2 {
     +board : Board<PieceId> {readOnly}
@@ -62,6 +64,7 @@ package "hexablock_engine / variants/hexa_fit" {
     +orientations : Map<PieceId, RotationSteps> {readOnly}
     +moves : MoveCount {readOnly}
     --
+    +«create» FitState(board : Board<PieceId>, pieces : List<FitPiece>, placements : Map<PieceId, PiecePlacement>, orientations : Map<PieceId, RotationSteps>, moves : MoveCount)
     +toSnapshot() : FitSnapshot
     +restoredFrom(snapshot : FitSnapshot) : FitState
     +isPlaced(piece : PieceId) : bool
@@ -77,10 +80,12 @@ package "hexablock_engine / variants/hexa_fit" {
     +placements : Map<PieceId, PiecePlacement> {readOnly}
     +orientations : Map<PieceId, RotationSteps> {readOnly}
     --
+    +«create» FitSnapshot(board : Board<PieceId>, placements : Map<PieceId, PiecePlacement>, orientations : Map<PieceId, RotationSteps>)
   }
   class PiecePlacement << (▲,#D4A300) Value Object >> #FFF4C2 {
     +at : Coordinate {readOnly}
     --
+    +«create» PiecePlacement(at : Coordinate)
   }
   abstract class FitMove << (▲,#D4A300) >> #FFF4C2 {
     +piece : PieceId {readOnly}
@@ -89,13 +94,16 @@ package "hexablock_engine / variants/hexa_fit" {
   class PlaceFitPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
     +at : Coordinate {readOnly}
     --
+    +«create» PlaceFitPiece(at : Coordinate)
   }
   class RemoveFitPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
     --
+    +«create» RemoveFitPiece()
   }
   class RotateFitPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
     +by : RotationSteps {readOnly}
     --
+    +«create» RotateFitPiece(by : RotationSteps)
   }
   class HexaFitRules << (▲,#D4A300) >> #FFF4C2 {
     --

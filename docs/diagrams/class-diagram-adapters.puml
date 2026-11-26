@@ -193,6 +193,7 @@ package "hexablock_adapters / audio" {
   class SoundCue << (●,#2F6DB5) Value Object >> #DCEBFA {
     +asset : String {readOnly}
     --
+    +«create» SoundCue(asset : String)
   }
 }
 package "hexablock_adapters / presentation" {

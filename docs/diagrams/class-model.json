@@ -857,6 +857,7 @@
     {
       "name": "Board",
       "kind": "class",
+      "constructorVisibility": "package",
       "stereotypes": [
         "Value Object"
       ],

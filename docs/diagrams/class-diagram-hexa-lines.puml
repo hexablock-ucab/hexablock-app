@@ -44,6 +44,7 @@ package "hexablock_engine / variants/hexa_lines" {
     +source : SeededPieceSource<LinesPiece> {readOnly}
     +lastTurn : ClearReport [0..1] {readOnly}
     --
+    +«create» LinesState(board : Board<ColorId>, tray : Tray, score : Score, streak : Streak, source : SeededPieceSource<LinesPiece>, lastTurn : ClearReport [0..1])
     +canPlace(slot : TraySlot, at : Coordinate) : bool
     +anyPieceFits() : bool
     +withPiecePlaced(slot : TraySlot, at : Coordinate) : LinesState
@@ -55,10 +56,12 @@ package "hexablock_engine / variants/hexa_lines" {
     +slot : TraySlot {readOnly}
     +at : Coordinate {readOnly}
     --
+    +«create» LinesMove(slot : TraySlot, at : Coordinate)
   }
   class Tray << (▲,#D4A300) Value Object >> #FFF4C2 {
     -slots : List<LinesPiece?> {readOnly}
     --
+    +«create» Tray(slots : List<LinesPiece?>)
     +pieceAt(slot : TraySlot) : LinesPiece [0..1]
     +offered() : Map<TraySlot, LinesPiece>
     +taken(slot : TraySlot) : Tray
@@ -69,21 +72,25 @@ package "hexablock_engine / variants/hexa_lines" {
     +tray : Tray {readOnly}
     +source : SeededPieceSource<LinesPiece> {readOnly}
     --
+    +«create» TrayRefill(tray : Tray, source : SeededPieceSource<LinesPiece>)
   }
   class TraySlot << (▲,#D4A300) Value Object >> #FFF4C2 {
     +index : int {readOnly}
     --
+    +«create» TraySlot(index : int)
   }
   class LinesPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
     +shape : Shape {readOnly}
     +color : ColorId {readOnly}
     --
+    +«create» LinesPiece(shape : Shape, color : ColorId)
     +cellsAt(anchor : Coordinate) : Set<Coordinate>
   }
   class PieceCatalog << (▲,#D4A300) Value Object >> #FFF4C2 {
     -entries : List<LinesPiece> {readOnly}
     +/size : int {readOnly}
     --
+    +«create» PieceCatalog(entries : List<LinesPiece>)
     +entryAt(index : int) : LinesPiece
   }
   class CatalogRecipe << (▲,#D4A300) >> #FFF4C2 {
@@ -105,6 +112,7 @@ package "hexablock_engine / variants/hexa_lines" {
   class Streak << (▲,#D4A300) Value Object >> #FFF4C2 {
     +count : int {readOnly}
     --
+    +«create» Streak(count : int)
     +extended() : Streak
     +broken() : Streak
   }
@@ -112,6 +120,7 @@ package "hexablock_engine / variants/hexa_lines" {
     +cellsPlaced : int {readOnly}
     +linesCleared : int {readOnly}
     --
+    +«create» ClearReport(cellsPlaced : int, linesCleared : int)
   }
   class LinesScoringPolicy << (▲,#D4A300) >> #FFF4C2 {
     --

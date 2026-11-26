@@ -36,6 +36,7 @@ package "hexablock_engine / core/progress" {
     +time : ElapsedTime [0..1] {readOnly}
     +achievedAt : ResultDate {readOnly}
     --
+    +«create» GameResult(score : Score [0..1], stars : StarCount [0..1], moves : MoveCount [0..1], time : ElapsedTime [0..1], achievedAt : ResultDate)
   }
   class HighScoreProgress << (▲,#D4A300) >> #FFF4C2 {
     --
@@ -43,19 +44,22 @@ package "hexablock_engine / core/progress" {
   class Score << (▲,#D4A300) Value Object >> #FFF4C2 {
     +points : int {readOnly}
     --
-    {static} +zero() : Score
+    +«create» Score(points : int)
+    {static} +«create» zero() : Score
     +plus(other : Score) : Score
     +isHigherThan(other : Score) : bool
   }
   class StarCount << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» StarCount(value : int)
     +isMoreThan(other : StarCount) : bool
   }
   class MoveCount << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
-    {static} +zero() : MoveCount
+    +«create» MoveCount(value : int)
+    {static} +«create» zero() : MoveCount
     +next() : MoveCount
     +advancedBy(steps : RotationSteps) : MoveCount
     +atMost(limit : MoveCount) : bool
@@ -64,12 +68,14 @@ package "hexablock_engine / core/progress" {
   class ResultDate << (▲,#D4A300) Value Object >> #FFF4C2 {
     +instant : DateTime {readOnly}
     --
+    +«create» ResultDate(instant : DateTime)
     +isEarlierThan(other : ResultDate) : bool
   }
   class GoalCount << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
-    {static} +zero() : GoalCount
+    +«create» GoalCount(value : int)
+    {static} +«create» zero() : GoalCount
     +plus(count : int) : GoalCount
     +reaches(target : GoalCount) : bool
   }
@@ -78,24 +84,29 @@ package "hexablock_engine / core/levels" {
   class GameId << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : String {readOnly}
     --
+    +«create» GameId(value : String)
   }
   class LevelId << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : String {readOnly}
     +/gameId : GameId {readOnly}
     --
+    +«create» LevelId(value : String)
   }
   class LevelNumber << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» LevelNumber(value : int)
   }
   class LevelVersion << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» LevelVersion(value : int)
     +isNewerThan(other : LevelVersion) : bool
   }
   class Difficulty << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» Difficulty(value : int)
   }
   class LevelHeader << (▲,#D4A300) Value Object >> #FFF4C2 {
     +id : LevelId {readOnly}
@@ -104,10 +115,12 @@ package "hexablock_engine / core/levels" {
     +version : LevelVersion {readOnly}
     +difficulty : Difficulty {readOnly}
     --
+    +«create» LevelHeader(id : LevelId, gameId : GameId, number : LevelNumber, version : LevelVersion, difficulty : Difficulty)
   }
   class LevelCatalog << (▲,#D4A300) Value Object >> #FFF4C2 {
     -headers : List<LevelHeader> {readOnly}
     --
+    +«create» LevelCatalog(headers : List<LevelHeader>)
     +mergedWith(other : LevelCatalog) : LevelCatalog
     +inOrder() : List<LevelHeader>
     +accessGiven(completed : Set<LevelId>) : List<LevelAccess>
@@ -117,22 +130,26 @@ package "hexablock_engine / core/levels" {
     +isUnlocked : bool {readOnly}
     +isCompleted : bool {readOnly}
     --
+    +«create» LevelAccess(header : LevelHeader, isUnlocked : bool, isCompleted : bool)
   }
   class LevelPar << (▲,#D4A300) Value Object >> #FFF4C2 {
     +moves : MoveCount {readOnly}
     +time : ElapsedTime {readOnly}
     --
+    +«create» LevelPar(moves : MoveCount, time : ElapsedTime)
     +starsFor(moves : MoveCount, time : ElapsedTime) : StarCount
   }
   class MoveThresholds << (▲,#D4A300) Value Object >> #FFF4C2 {
     +first : MoveCount {readOnly}
     +second : MoveCount {readOnly}
     --
+    +«create» MoveThresholds(first : MoveCount, second : MoveCount)
     +starsFor(moves : MoveCount) : StarCount
   }
   class ColorId << (▲,#D4A300) Value Object >> #FFF4C2 {
     +key : String {readOnly}
     --
+    +«create» ColorId(key : String)
   }
 }
 package "hexablock_engine / core/engine" {

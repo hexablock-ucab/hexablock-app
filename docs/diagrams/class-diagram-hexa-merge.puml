@@ -40,6 +40,7 @@ package "hexablock_engine / variants/hexa_merge" {
   class TileValue << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» TileValue(value : int)
     +canMergeWith(other : TileValue) : bool
     +mergedWith(other : TileValue) : TileValue
     +reaches(target : TileValue) : bool
@@ -52,6 +53,7 @@ package "hexablock_engine / variants/hexa_merge" {
     +targetReached : bool {readOnly}
     +lastTurn : MergeTurn [0..1] {readOnly}
     --
+    +«create» MergeState(board : Board<TileValue>, score : Score, source : SeededPieceSource<TileSpawn>, targetReached : bool, lastTurn : MergeTurn [0..1])
     +toSnapshot() : MergeSnapshot
     +restoredFrom(snapshot : MergeSnapshot) : MergeState
     +afterSlide(result : SlideResult<TileValue>, target : TileValue) : MergeState
@@ -64,15 +66,18 @@ package "hexablock_engine / variants/hexa_merge" {
     +source : SeededPieceSource<TileSpawn> {readOnly}
     +targetReached : bool {readOnly}
     --
+    +«create» MergeSnapshot(board : Board<TileValue>, score : Score, source : SeededPieceSource<TileSpawn>, targetReached : bool)
   }
   class MergeMove << (▲,#D4A300) Value Object >> #FFF4C2 {
     +direction : Direction {readOnly}
     --
+    +«create» MergeMove(direction : Direction)
   }
   class MergeTurn << (▲,#D4A300) Value Object >> #FFF4C2 {
     +merged : List<TileValue> {readOnly}
     +spawned : TileSpawn [0..1] {readOnly}
     --
+    +«create» MergeTurn(merged : List<TileValue>, spawned : TileSpawn [0..1])
   }
   class HexaMergeRules << (▲,#D4A300) >> #FFF4C2 {
     -slide : SlideMergeRule<TileValue> {readOnly}
@@ -90,15 +95,18 @@ package "hexablock_engine / variants/hexa_merge" {
     +value : TileValue {readOnly}
     +slot : SpawnSlot {readOnly}
     --
+    +«create» TileSpawn(value : TileValue, slot : SpawnSlot)
   }
   class SpawnSlot << (▲,#D4A300) Value Object >> #FFF4C2 {
     -draw : int {readOnly}
     --
+    +«create» SpawnSlot(draw : int)
     +cellIn(empty : List<Coordinate>) : Coordinate
   }
   class SpawnOdds << (▲,#D4A300) Value Object >> #FFF4C2 {
     +fourPerHundred : int {readOnly}
     --
+    +«create» SpawnOdds(fourPerHundred : int)
     +valueFor(draw : int) : TileValue
   }
   class TileSpawnRecipe << (▲,#D4A300) >> #FFF4C2 {

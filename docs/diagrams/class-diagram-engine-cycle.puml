@@ -54,17 +54,20 @@ package "hexablock_engine / core/engine" {
     +isAccepted : bool {readOnly}
     +reason : RejectionReason [0..1] {readOnly}
     --
-    {static} +accepted() : MoveValidation
-    {static} +rejected(reason : RejectionReason) : MoveValidation
+    +«create» MoveValidation(isAccepted : bool, reason : RejectionReason [0..1])
+    {static} +«create» accepted() : MoveValidation
+    {static} +«create» rejected(reason : RejectionReason) : MoveValidation
   }
   class RejectionReason << (▲,#D4A300) Value Object >> #FFF4C2 {
     +code : String {readOnly}
     --
+    +«create» RejectionReason(code : String)
   }
   class Resolution<TState> << (▲,#D4A300) Value Object >> #FFF4C2 {
     +state : TState {readOnly}
     +events : List<GameEvent> {readOnly}
     --
+    +«create» Resolution(state : TState, events : List<GameEvent>)
   }
   enum GameEnd << (▲,#D4A300) >> #FFF4C2 {
     ongoing
@@ -77,6 +80,7 @@ package "hexablock_engine / core/engine" {
     +moves : MoveCount [0..1] {readOnly}
     +time : ElapsedTime [0..1] {readOnly}
     --
+    +«create» GameOutcome(end : GameEnd, score : Score [0..1], moves : MoveCount [0..1], time : ElapsedTime [0..1])
     +withTime(time : ElapsedTime) : GameOutcome
   }
   interface IGameFactory<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2 {
@@ -98,6 +102,7 @@ package "hexablock_engine / core/engine" {
     +capabilities : CapabilitySet {readOnly}
     +progressModel : IProgressModel {readOnly}
     --
+    +«create» PreparedGame(engine : GameEngine<TCell, TMove, TState>, capabilities : CapabilitySet, progressModel : IProgressModel)
   }
 }
 package "hexablock_engine / core/rules" {
@@ -116,6 +121,7 @@ package "hexablock_engine / core/rules" {
     +merged : List<TCell> {readOnly}
     +changed : bool {readOnly}
     --
+    +«create» SlideResult(board : Board<TCell>, merged : List<TCell>, changed : bool)
   }
   class LineClearRule<TCell> << (▲,#D4A300) >> #FFF4C2 {
     --
@@ -127,6 +133,7 @@ package "hexablock_engine / core/rules" {
     +clearedCells : Set<Coordinate> {readOnly}
     +/lineCount : int {readOnly}
     --
+    +«create» LineClear(board : Board<TCell>, lines : List<CellLine>, clearedCells : Set<Coordinate>)
   }
 }
 package "hexablock_engine / core/phases" {
@@ -167,6 +174,7 @@ package "hexablock_engine / core/events" {
   class EventKind << (▲,#D4A300) Value Object >> #FFF4C2 {
     +name : String {readOnly}
     --
+    +«create» EventKind(name : String)
   }
   class MoveApplied << (▲,#D4A300) >> #FFF4C2 {
     --
@@ -200,6 +208,7 @@ package "hexablock_engine / core/events" {
     +events : List<GameEvent> {readOnly}
     +phase : PhaseKind {readOnly}
     --
+    +«create» StateChange(before : TState, after : TState, cause : ChangeCause, events : List<GameEvent>, phase : PhaseKind)
   }
   enum ChangeCause << (▲,#D4A300) >> #FFF4C2 {
     moveApplied
@@ -289,6 +298,7 @@ note right of IGameRules : Strategy: strategy
 note right of GameEngine : Strategy: context\nState: context\nObserver: subject
 note right of IGameFactory : Abstract Factory: abstract factory
 note right of GameAssembler : Abstract Factory: client
+note left of SlideMergeRule : TCell > IMergeable~<TCell>
 note right of GamePhase : State: state
 note right of PlayingPhase : State: concrete state
 note right of PausedPhase : State: concrete state

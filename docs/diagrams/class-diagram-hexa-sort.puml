@@ -47,11 +47,13 @@ package "hexablock_engine / variants/hexa_sort" {
     +colors : List<ColorId> {readOnly}
     +stackSize : StackSizeRange {readOnly}
     --
+    +«create» TrayParams(seed : Seed, colors : List<ColorId>, stackSize : StackSizeRange)
   }
   class StackSizeRange << (▲,#D4A300) Value Object >> #FFF4C2 {
     +min : int {readOnly}
     +max : int {readOnly}
     --
+    +«create» StackSizeRange(min : int, max : int)
   }
   class SortLevelBuilder << (▲,#D4A300) >> #FFF4C2 {
     -topologies : TopologyRegistry {readOnly}
@@ -74,6 +76,7 @@ package "hexablock_engine / variants/hexa_sort" {
     +tiles : List<ColorId> {readOnly}
     +/height : int {readOnly}
     --
+    +«create» ColorStack(tiles : List<ColorId>)
     +top() : ColorId
     +topBlock() : TopBlock
     +withBlockOnTop(block : TopBlock) : ColorStack
@@ -83,6 +86,7 @@ package "hexablock_engine / variants/hexa_sort" {
     +color : ColorId {readOnly}
     +size : int {readOnly}
     --
+    +«create» TopBlock(color : ColorId, size : int)
     +reachesRemoval() : bool
     +joinedWith(other : TopBlock) : TopBlock
   }
@@ -95,6 +99,7 @@ package "hexablock_engine / variants/hexa_sort" {
     +score : Score {readOnly}
     +lastTurn : SortTurn [0..1] {readOnly}
     --
+    +«create» SortState(board : Board<ColorStack>, offered : ColorStack, source : SeededPieceSource<ColorStack>, goals : GoalCount, moves : MoveCount, score : Score, lastTurn : SortTurn [0..1])
     +hasEmptyCell() : bool
     +reaches(goal : GoalCount) : bool
     +withStackPlaced(at : Coordinate) : SortState
@@ -104,10 +109,12 @@ package "hexablock_engine / variants/hexa_sort" {
   class SortMove << (▲,#D4A300) Value Object >> #FFF4C2 {
     +at : Coordinate {readOnly}
     --
+    +«create» SortMove(at : Coordinate)
   }
   class SortTurn << (▲,#D4A300) Value Object >> #FFF4C2 {
     +removedBlocks : List<TopBlock> {readOnly}
     --
+    +«create» SortTurn(removedBlocks : List<TopBlock>)
   }
   class HexaSortRules << (▲,#D4A300) >> #FFF4C2 {
     -goal : GoalCount {readOnly}
@@ -130,6 +137,7 @@ package "hexablock_engine / variants/hexa_sort" {
     +removedBlocks : List<TopBlock> {readOnly}
     +events : List<GameEvent> {readOnly}
     --
+    +«create» CascadeResult(board : Board<ColorStack>, removedBlocks : List<TopBlock>, events : List<GameEvent>)
   }
   class StackRecipe << (▲,#D4A300) >> #FFF4C2 {
     -params : TrayParams {readOnly}

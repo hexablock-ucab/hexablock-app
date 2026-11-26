@@ -44,10 +44,12 @@ package "hexablock_engine / core/capabilities" {
     +timer : ITimed [0..1] {readOnly}
     +seeded : IRandomSeeded [0..1] {readOnly}
     --
-    {static} +none() : CapabilitySet
+    +«create» CapabilitySet(undo : IUndoable [0..1], redo : IRedoable [0..1], timer : ITimed [0..1], seeded : IRandomSeeded [0..1])
+    {static} +«create» none() : CapabilitySet
   }
   class SeedRecord << (▲,#D4A300) Value Object >> #FFF4C2 {
     --
+    +«create» SeedRecord()
   }
 }
 package "hexablock_engine / core/memento" {
@@ -74,8 +76,9 @@ package "hexablock_engine / core/memento" {
   class HistoryCapacity << (▲,#D4A300) Value Object >> #FFF4C2 {
     -limit : int [0..1] {readOnly}
     --
-    {static} +unlimited() : HistoryCapacity
-    {static} +steps(count : int) : HistoryCapacity
+    +«create» HistoryCapacity(limit : int [0..1])
+    {static} +«create» unlimited() : HistoryCapacity
+    {static} +«create» steps(count : int) : HistoryCapacity
     +allows(size : int) : bool
   }
 }
@@ -89,8 +92,8 @@ package "hexablock_engine / core/random" {
   class Mulberry32 << (▲,#D4A300) >> #FFF4C2 {
     -generatorState : GeneratorState {readOnly}
     --
-    {static} +fromSeed(seed : Seed) : Mulberry32
-    {static} +restore(state : GeneratorState) : Mulberry32
+    {static} +«create» fromSeed(seed : Seed) : Mulberry32
+    {static} +«create» restore(state : GeneratorState) : Mulberry32
   }
   interface IRandomSourceFactory << (▲,#D4A300) interface >> #FFF4C2 {
     --
@@ -104,14 +107,17 @@ package "hexablock_engine / core/random" {
     +value : T {readOnly}
     +next : IRandomSource {readOnly}
     --
+    +«create» RandomDraw(value : T, next : IRandomSource)
   }
   class Seed << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» Seed(value : int)
   }
   class GeneratorState << (▲,#D4A300) Value Object >> #FFF4C2 {
     +value : int {readOnly}
     --
+    +«create» GeneratorState(value : int)
   }
 }
 package "hexablock_engine / core/pieces" {
@@ -123,6 +129,7 @@ package "hexablock_engine / core/pieces" {
     +piece : TPiece {readOnly}
     +rest : TSource {readOnly}
     --
+    +«create» PieceDraw(piece : TPiece, rest : TSource)
   }
   interface IPieceRecipe<TPiece> << (▲,#D4A300) interface >> #FFF4C2 {
     --
@@ -133,12 +140,14 @@ package "hexablock_engine / core/pieces" {
     -recipe : IPieceRecipe<TPiece> {readOnly}
     +/generatorState : GeneratorState {readOnly}
     --
+    +«create» SeededPieceSource(random : IRandomSource, recipe : IPieceRecipe<TPiece>)
     +next() : PieceDraw<TPiece, SeededPieceSource<TPiece>>
   }
   class FixedPieceSource<TPiece> << (▲,#D4A300) Value Object >> #FFF4C2 {
     -pieces : List<TPiece> {readOnly}
     +/isExhausted : bool {readOnly}
     --
+    +«create» FixedPieceSource(pieces : List<TPiece>)
     +next() : PieceDraw<TPiece, FixedPieceSource<TPiece>>
     +drawAll() : List<TPiece>
   }
@@ -159,7 +168,8 @@ package "hexablock_engine / core/time" {
   class ElapsedTime << (▲,#D4A300) Value Object >> #FFF4C2 {
     +seconds : int {readOnly}
     --
-    {static} +truncating(duration : Duration) : ElapsedTime
+    +«create» ElapsedTime(seconds : int)
+    {static} +«create» truncating(duration : Duration) : ElapsedTime
     +atMost(limit : ElapsedTime) : bool
     +isShorterThan(other : ElapsedTime) : bool
   }
@@ -204,9 +214,12 @@ GameStopwatch --> "1" Clock : clock
 GameStopwatch ..> ElapsedTime : <<create>>
 
 note right of ISnapshotable : Memento: originator
+note left of SnapshotHistory : TState > ISnapshotable~<TState, TSnapshot>
 note right of SnapshotHistory : Memento: caretaker\nObserver: concrete observer
+note left of RedoableSnapshotHistory : TState > ISnapshotable~<TState, TSnapshot>
 note right of RedoableSnapshotHistory : Memento: caretaker
 note right of Mulberry32Factory : Single instance: single instance
+note left of PieceDraw : TSource > IPieceSource~<TPiece>
 note right of IPieceRecipe : Strategy: strategy
 note right of SeededPieceSource : Strategy: context
 note right of GameStopwatch : Observer: concrete observer
