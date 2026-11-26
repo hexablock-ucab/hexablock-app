@@ -290,6 +290,7 @@ function style(){
   ];
 }
 
+// Handle for browser tests driven through the DevTools protocol; the page itself never reads it.
 window.classExplorer={cy:()=>cy,state:()=>st};
 function render(){
   const graph=st.view!=='list';

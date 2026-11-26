@@ -65,7 +65,7 @@ The Clean layers diagram keeps the four rings the assignment requires (§3.4); t
 
 `class-model.json` holds one entry per class: `name`, `kind` (`class`, `interface`, `abstract`, `enum`, `sealed`), `stereotypes`, `layer`, `port` (`input`, `output` or null), `package`, `folder`, `scope` (`generic` or the variant id), `typeParameters` (name, bound, reason of the bound), `attributes` (name, type, visibility, `readOnly`, `static`, `derived`), `operations` (name, parameters, return type, visibility, `static`, `abstract`, kind), `literals` of an enum, `relations` (type, target, multiplicity, role, label, bindings), `patterns` (pattern and role), `traces` (requirement IDs, game rules, ADRs; † marks one not yet on `main`), `invariant` of a value object and `summary`.
 
-The `.puml` views and the generated sections of `docs/domain-model.md` come from this file, so the diagram, the document and the data are meant to agree. Change the JSON first, then regenerate; until the generator script is in the repository (last bullet), a reviewer checks that the three match.
+The `.puml` views and the generated sections of `docs/domain-model.md` come from this file, so the diagram, the document and the data are meant to agree. Change the JSON first, then run `node tool/class-model/generate.mjs`; CI runs it with `--check` and fails when a generated file does not match the JSON.
 
 ## Conventions
 
@@ -73,4 +73,4 @@ The `.puml` views and the generated sections of `docs/domain-model.md` come from
 - Export at 2x scale, so the images stay readable in the README.
 - A pull request that changes a class, a layer boundary or an extension point updates the affected diagram in the same pull request.
 - **Tool:** PlantUML for the class diagram, run locally with Java and the built-in Smetana layout (no Graphviz): `java -DPLANTUML_LIMIT_SIZE=30000 -jar plantuml.jar -tpng docs/diagrams/class-diagram*.puml`, and the same with `-tsvg` for the vector files. `skinparam dpi 192` in every file gives the 2x export. draw.io stays the choice for the concentric layers.
-- The script that generates the `.puml` files and the explorer from `class-model.json` is not in the repository yet; until it is, a change to the model updates the JSON, the affected `.puml`, PNG and SVG files and `class-explorer.html` in the same pull request.
+- **Generator:** `node tool/class-model/generate.mjs` writes the `.puml` views, the generated sections of `docs/domain-model.md` and `class-explorer.html` from `class-model.json`; `--check` writes nothing and fails on any difference or model error (unknown relation target, wrong `«bind»` arity, a class not shown in full in exactly one view, an outward dependency). Its tests run with `node --test "tool/**/*.test.mjs"`. The PNG and SVG files still come from PlantUML (command above), in the same pull request as the change.

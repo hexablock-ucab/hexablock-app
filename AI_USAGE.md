@@ -44,6 +44,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-09 | [README and AI usage log adjusted after reviewing reference repositories](#2026-11-09--readme-and-ai-usage-log-adjusted-after-reviewing-reference-repositories-docs-no-task-document) |
 | 2026-11-09 | [Domain modeling rules for DDD tactical patterns](#2026-11-09--domain-modeling-rules-for-ddd-tactical-patterns-docs-no-task-document) |
 | 2026-11-24 to 2026-11-25 | [Domain model (D1) and class diagram (D7)](#2026-11-24-to-2026-11-25--domain-model-d1-and-class-diagram-d7-oddtasks0005-domain-modelmd) |
+| 2026-11-25 | [Class-model generator moved to `tool/`](#2026-11-25--class-model-generator-moved-to-tool-oddtasks0005-domain-modelmd) |
 | 2026-11-25 | [Domain model rules without DDD](#2026-11-25--domain-model-rules-without-ddd-docs-no-task-document) |
 | 2026-11-25 | [Game rules completed with the team decisions of 2026-11-24](#2026-11-25--game-rules-completed-with-the-team-decisions-of-2026-11-24-oddtasks0002-game-rulesmd-pr-13) |
 | 2026-11-25 | [Requirements baseline](#2026-11-25--requirements-baseline-docs-no-task-document) |
@@ -176,6 +177,19 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
   - Rendering: a `skinparam` block that PlantUML rejected, PNGs cut at 4096 px, and arrow glyphs missing in the diagram font. Detected with `plantuml -checkonly` and by looking at the PNGs; fixed in the generator.
 - **Verification:** `architecture-reviewer`, first pass (request changes, 7 blockers, all fixed); second pass after the fixes and the topology change (request changes: B1–B4, B6 and B7 confirmed fixed, B5 partly fixed, plus three new blockers, all fixed); third pass (request changes: three text and relation blockers, all fixed; not run a fourth time). The explorer was checked in Brave headless through the DevTools protocol with real clicks (start view, focus on a class, packages, opening a package, list) and `odd-verify` (S1–S9 and S11–S13 pass, S10 partial and then fixed, S14 not verifiable by the agent). After the fixes: the JSON parses; `java -jar plantuml.jar -checkonly docs/diagrams/class-diagram*.puml` passes on the 13 files; the explorer computes 0 warnings; the generator that will move to `tool/` reproduces the 13 `.puml` files, the generated sections of the document and the explorer byte for byte; `git diff --stat main -- packages app lib test` is empty (no production code).
 - **Lessons:** Generating the diagrams and the document's tables from one model kept them consistent through two rounds of changes. An independent reviewer agent found design defects (anemic states, type checks hidden in listeners) that the agent that wrote the model had not seen.
+
+### 2026-11-25 — Class-model generator moved to `tool/` (odd/tasks/0005-domain-model.md)
+
+- **Pull request:** #26 (stacked on #24)
+- **Author:** Eduard Velasco
+- **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
+- **Task:** Put in the repository the script that generates the class diagram views, the generated sections of `docs/domain-model.md` and the explorer from `docs/diagrams/class-model.json`, with a test that fails when the JSON and the `.puml` files differ (C-11, NFR-02).
+- **Prompts:** "Después, en otro PR, pasa a tool/ el generador del JSON y de los .puml, con una prueba que falle si el JSON y los .puml difieren."
+- **Result:** `tool/class-model/generate.mjs` (writes the files, or `--check` to compare and report model errors), `generate.test.mjs` (four tests with `node:test`), the explorer template and Cytoscape 3.30.2 (MIT) in `tool/class-model/`; two CI steps (tool tests, class model check); npm scripts; `docs/diagrams/README.md` and `AGENTS.md` §9 updated. The AI derived the generator from the session script that had produced the model, dropping the part that wrote the JSON: from now on the JSON is the source and is edited directly.
+- **Team modifications:** TODO(team): what the team changes in review.
+- **Errors and corrections:** The first version of the test of an unknown relation target crashed the generator instead of reporting the error; the generator now stops and reports structural errors before drawing. `node --test tool/` did not find the tests on Node 24; the command uses the glob `"tool/**/*.test.mjs"`.
+- **Verification:** `node tool/class-model/generate.mjs --check` reports the 15 generated files equal to the committed ones; `node --test "tool/**/*.test.mjs"` passes 4 of 4; with one `.puml` edited by hand, both the test and `--check` fail and name the file, and pass again once it is restored.
+- **Lessons:** Making the JSON the only source closes the gap between the diagram and the data; CI now enforces what the README used to ask of reviewers.
 
 ### 2026-11-25 — Domain model rules without DDD (docs; no task document)
 

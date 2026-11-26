@@ -167,6 +167,8 @@ flutter test --coverage                     # tests of the current package
 node tool/check-architecture.mjs            # Clean Architecture import rules
 node tool/check-test-names.mjs              # should_<result>_when_<condition>
 node tool/check-coverage.mjs                # 90% minimum in domain and use cases
+node tool/class-model/generate.mjs [--check] # class diagram views, D1 tables and explorer from class-model.json
+node --test "tool/**/*.test.mjs"             # tests of the tools
 ```
 
 The quality gates are described in `CONTRIBUTING.md`. A rule that matters has a check; if you add a rule here, add its check too.
