@@ -4,7 +4,7 @@ The classes of the generic engine, of the four variants and of the layers around
 It is the base of the class diagram (D7) and of the code.
 
 - **Source of truth.** [`docs/diagrams/class-model.json`](diagrams/class-model.json) holds the model as data. The diagrams (`docs/diagrams/class-diagram*.puml`) and the sections of this document marked *generated* come from it; the rest is written by hand. Change the model and regenerate; never edit a generated section.
-- **Traces.** Each class cites requirement IDs (`docs/requirements.md`), game rules (`docs/game-rules.md`) or ADRs. A trace marked **†** is decided but not yet on `main`: the rules LINES-4..6, MERGE-2..4, FIT-6, LEVEL-1..2 and the requirement FR-16 arrive with the pending pull requests of the game rules and of the requirements baseline.
+- **Traces.** Each class cites requirement IDs (`docs/requirements.md`), game rules (`docs/game-rules.md`) or ADRs. A trace marked **†** is decided but not yet on `main`: the rules LINES-4..7, MERGE-2..4, FIT-6, FIT-7, SORT-8, LEVEL-1..2 and the requirement FR-16 arrive with the pending pull requests of the game rules and of the requirements baseline.
 - **Status.** The layout follows ADR-0003, ADR-0004 and ADR-0006. ADR-0004 is read in the text that pull request #23 accepts (`Board<TCell>`, a coordinate as a list of integers, level files that declare their topology); this model does not change it. Nothing here is code yet.
 
 ## 1. Conventions
@@ -384,7 +384,7 @@ Every value object, with the invariant it checks when created (generated):
 | `Tray` | domain · hexa-lines | exactly 3 slots; each holds a piece or nothing. | FR-31 |
 | `TrayRefill` | domain · hexa-lines | tray is full. | FR-31, NFR-05 |
 | `TraySlot` | domain · hexa-lines | 0 <= index <= 2. | C-32, FR-31 |
-| `LinesPiece` | domain · hexa-lines | shape has 1 to 5 cells. | FR-31, LINES-4†, LINES-5† |
+| `LinesPiece` | domain · hexa-lines | shape has 1 to 5 cells. | FR-31, LINES-4†, LINES-5†, LINES-7† |
 | `PieceCatalog` | domain · hexa-lines | at least one entry; every entry has 1 to 5 cells. | FR-31, LINES-5†, C-31 |
 | `Streak` | domain · hexa-lines | count >= 0. | FR-34, LINES-3 |
 | `ClearReport` | domain · hexa-lines | cellsPlaced in 1..5; linesCleared >= 0. | LINES-3 |
@@ -460,13 +460,13 @@ Primitives that remain in layers 1 and 2, and why each needs no value object of 
 
 DTOs of layer 3 (`LevelDto`, `ProgressDto`, `LeaderboardEntryDto`) hold primitives by design: they are the boundary, and the mappers convert them.
 
-## 14. Model choices to confirm as game rules
+## 14. Model choices confirmed as game rules
 
-The model takes these choices; a game rule should confirm them before the code depends on them:
+The model took three choices that the requirements left open. Each one is now a game rule, decided by the team on the game-rules branch (so it is marked †):
 
-- **Hexa Fit rotates only free pieces.** `HexaFitRules.validate` refuses to rotate a placed piece; FIT-4's example rotates a free piece. To turn a placed piece, the player lifts it first.
-- **Hexa Sort tray stacks.** `StackRecipe` draws a size uniformly in the level's range and each tile's color uniformly among the level's colors (SORT-6 leaves the distribution open).
-- **Hexa Lines catalog entries carry their color**, so a shape always has the same color.
+- **FIT-7†: Hexa Fit rotates only free pieces.** `HexaFitRules.validate` refuses to rotate a placed piece. To turn it, the player lifts it, rotates it and places it again, and each action counts (FIT-4).
+- **SORT-8†: how the tray draws a stack.** `StackRecipe` draws a size uniformly in the level's range, then each tile's color uniformly among the level's colors, bottom tile first, every draw from the level's seed (SORT-6, NFR-05).
+- **LINES-7†: catalog entries carry their color.** Each `LinesPiece` of the catalog has a color name of the palette, so a shape always has the same color; the color never changes a rule.
 
 ## 15. Class reference
 
@@ -1453,7 +1453,7 @@ One of the three tray positions.
 
 #### `LinesPiece` — value object
 
-domain · `hexablock_engine` · `variants/hexa_lines` · Traces: FR-31, LINES-4†, LINES-5†
+domain · `hexablock_engine` · `variants/hexa_lines` · Traces: FR-31, LINES-4†, LINES-5†, LINES-7†
 
 A poly-hex of 1 to 5 cells with its color. It never rotates.
 
@@ -1666,9 +1666,9 @@ Turn a free piece by some rotation steps (each step counts one move).
 
 #### `HexaFitRules` — class
 
-domain · `hexablock_engine` · `variants/hexa_fit` · Strategy (concrete strategy) · Traces: FR-41, FR-42, FR-43, FIT-2, FIT-4, C-19c
+domain · `hexablock_engine` · `variants/hexa_fit` · Strategy (concrete strategy) · Traces: FR-41, FR-42, FR-43, FIT-2, FIT-4, C-19c, FIT-7†
 
-Orchestrates; the state holds the logic. validate: place only when state.canPlace; remove only a placed piece; rotate only a free piece (to confirm as a rule). apply: state.withPlaced, withLifted or withRotated. resolve: nothing to settle. evaluate: won when state.isCovered(); never lost (FR-43).
+Orchestrates; the state holds the logic. validate: place only when state.canPlace; remove only a placed piece; rotate only a free piece (FIT-7: a placed piece is lifted, rotated and placed again). apply: state.withPlaced, withLifted or withRotated. resolve: nothing to settle. evaluate: won when state.isCovered(); never lost (FR-43).
 
 - **Operations:** `+boardOf(state : FitState) : Board<PieceId>`, `+validate(state : FitState, move : FitMove) : MoveValidation`, `+apply(state : FitState, move : FitMove) : FitState`, `+resolve(state : FitState) : Resolution<FitState>`, `+evaluate(state : FitState) : GameEnd`, `+outcomeOf(state : FitState) : GameOutcome`
 - **Relations:** realization `IGameRules<PieceId, FitMove, FitState>`
@@ -1836,9 +1836,9 @@ The board after the cascade, the blocks removed and the events in the order of S
 
 #### `StackRecipe` — class
 
-domain · `hexablock_engine` · `variants/hexa_sort` · Strategy (concrete strategy) · Traces: SORT-6, NFR-05
+domain · `hexablock_engine` · `variants/hexa_sort` · Strategy (concrete strategy) · Traces: SORT-6, SORT-8†, NFR-05
 
-Draws one stack: a size uniform in the level's range, and each tile's color uniform among the level's colors (to confirm as a rule).
+Draws one stack: a size uniform in the level's range, and each tile's color uniform among the level's colors, bottom tile first, every draw from the level's seed (SORT-8).
 
 - **Attributes:** `-params: TrayParams {readOnly}`
 - **Operations:** `+draw(random : IRandomSource) : RandomDraw<ColorStack>`

@@ -7420,7 +7420,8 @@
       "traces": [
         "FR-31",
         "LINES-4†",
-        "LINES-5†"
+        "LINES-5†",
+        "LINES-7†"
       ],
       "invariant": "shape has 1 to 5 cells.",
       "summary": "A poly-hex of 1 to 5 cells with its color. It never rotates."
@@ -9187,10 +9188,11 @@
         "FR-43",
         "FIT-2",
         "FIT-4",
-        "C-19c"
+        "C-19c",
+        "FIT-7†"
       ],
       "invariant": null,
-      "summary": "Orchestrates; the state holds the logic. validate: place only when state.canPlace; remove only a placed piece; rotate only a free piece (to confirm as a rule). apply: state.withPlaced, withLifted or withRotated. resolve: nothing to settle. evaluate: won when state.isCovered(); never lost (FR-43)."
+      "summary": "Orchestrates; the state holds the logic. validate: place only when state.canPlace; remove only a placed piece; rotate only a free piece (FIT-7: a placed piece is lifted, rotated and placed again). apply: state.withPlaced, withLifted or withRotated. resolve: nothing to settle. evaluate: won when state.isCovered(); never lost (FR-43)."
     },
     {
       "name": "FitLevelBuilder",
@@ -11040,10 +11042,11 @@
       ],
       "traces": [
         "SORT-6",
+        "SORT-8†",
         "NFR-05"
       ],
       "invariant": null,
-      "summary": "Draws one stack: a size uniform in the level's range, and each tile's color uniform among the level's colors (to confirm as a rule)."
+      "summary": "Draws one stack: a size uniform in the level's range, and each tile's color uniform among the level's colors, bottom tile first, every draw from the level's seed (SORT-8)."
     },
     {
       "name": "SortScoringPolicy",

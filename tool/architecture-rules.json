@@ -1,5 +1,5 @@
 {
-  "$comment": "Architecture rules as checks (C-05, C-20, NFR-01, NFR-03, NFR-05). Paths follow the PROPOSED layout of ADR-0003; update them in the same PR that accepts or changes that ADR. Rules whose folders do not exist yet are skipped.",
+  "$comment": "Architecture rules as checks (C-05, C-20, NFR-01, NFR-03, NFR-05). Paths follow the PROPOSED layout of ADR-0003; update them in the same PR that accepts or changes that ADR. The generic engine is the core/ folder of hexablock_engine (docs/domain-model.md §2); the variants live beside it in variants/<id>/, where their names are allowed. Rules whose folders do not exist yet are skipped.",
   "sourceExtensions": [".dart"],
   "rules": [
     {
@@ -32,7 +32,7 @@
     },
     {
       "id": "engine-has-no-variant-conditionals",
-      "paths": ["packages/hexablock_engine/lib/src/engine"],
+      "paths": ["packages/hexablock_engine/lib/src/core"],
       "forbidden": [
         { "pattern": "\\bis\\s+Hexa(Lines|Fit|Sort|Merge)", "reason": "LSP/OCP: the engine never checks the concrete variant type (C-20)." },
         { "pattern": "Hexa(Lines|Fit|Sort|Merge)", "reason": "The generic engine must not mention a concrete variant (NFR-01)." }
