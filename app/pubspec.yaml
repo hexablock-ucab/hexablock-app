@@ -1,0 +1,29 @@
+name: hexablock_app
+description: "Layer 4 (frameworks and drivers) of HexaBlock Suite: the Flutter app and its composition root (ADR-0003)."
+publish_to: none
+version: 0.1.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Secure storage of the session token with the operating system's protection (ADR-0007).
+  flutter_secure_storage: ^11.2.0
+  hexablock_adapters:
+    path: ../packages/hexablock_adapters
+  hexablock_application:
+    path: ../packages/hexablock_application
+  hexablock_engine:
+    path: ../packages/hexablock_engine
+  # Player preferences: sound, language, theme and tile symbols (ADR-0007).
+  shared_preferences: ^2.5.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

@@ -100,9 +100,31 @@ Hexa Fit has at least 15 levels and Hexa Sort at least 10, designed by hand with
 
 ## Getting Started
 
-> TODO (task 0001): prerequisites with versions, installation and run commands.
+Prerequisites, with the versions the team uses (CI pins the same Flutter version):
 
-After cloning, run `npm install` once to install the git hooks (commit message and pre-push checks).
+| Tool | Version |
+|---|---|
+| Flutter (stable channel) | 3.47.8 |
+| Dart (bundled with Flutter) | 3.13.7 |
+| Node.js (git hooks and quality gates only) | 22 or newer |
+| Android Studio or the Android SDK | for Android builds |
+| Xcode on a Mac, and CocoaPods | for iOS builds ([ADR-0008](docs/adr/0008-ios-install-from-a-mac.md)) |
+
+The repository is a Dart pub workspace with one package per Clean Architecture layer ([ADR-0003](docs/adr/0003-clean-architecture-as-dart-packages.md)):
+
+| Folder | Layer |
+|---|---|
+| `packages/hexablock_engine` | 1. Entities (pure Dart) |
+| `packages/hexablock_application` | 2. Use cases and ports (pure Dart) |
+| `packages/hexablock_adapters` | 3. Interface adapters (plain Dart) |
+| `app/` | 4. Flutter app and composition root |
+
+```bash
+npm install          # once after cloning: git hooks (commit message and pre-push checks)
+flutter pub get      # at the repository root: resolves every package of the workspace
+cd app
+flutter run          # on a connected device or emulator
+```
 
 ### Install on a phone
 
@@ -111,7 +133,18 @@ After cloning, run `npm install` once to install the git hooks (commit message a
 
 ## Running Tests
 
-> TODO (task 0001).
+Run every check of the CI from the repository root:
+
+```bash
+dart format --output=none --set-exit-if-changed .
+flutter analyze --fatal-infos --fatal-warnings
+node tool/run-tests.mjs              # flutter test --coverage in each package; fails if a package with code runs no test
+node tool/check-coverage.mjs         # 90% line coverage minimum in the engine and the use cases
+node tool/check-architecture.mjs     # Clean Architecture import rules
+node tool/check-test-names.mjs       # should_<result>_when_<condition>
+```
+
+To test one package only, run `flutter test` inside its folder.
 
 ## AI Usage Documentation
 

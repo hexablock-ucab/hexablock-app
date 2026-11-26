@@ -45,6 +45,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Same version as README "Getting Started" (task 0001, S6).
+          flutter-version: 3.47.8
           cache: true
 
       - name: Install dependencies
@@ -61,15 +63,8 @@ jobs:
 
       - name: Test every package with coverage
         if: steps.detect.outputs.present == 'true'
-        run: |
-          set -e
-          for dir in $(find . -name pubspec.yaml -not -path '*/.dart_tool/*' -not -path '*/build/*' -exec dirname {} \; | sort); do
-            if [ -d "$dir/test" ]; then
-              echo "::group::flutter test $dir"
-              (cd "$dir" && flutter test --coverage)
-              echo "::endgroup::"
-            fi
-          done
+        # Fails when a package with production code runs no tests, and prints how many ran.
+        run: node tool/run-tests.mjs
 
       - name: Coverage gate
         if: steps.detect.outputs.present == 'true'
