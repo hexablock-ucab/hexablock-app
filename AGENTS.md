@@ -5,7 +5,7 @@ Rules for every AI agent and every human that works in this repository.
 
 ## 1. What this repository is
 
-HexaBlock Suite is a mobile app (Flutter, proposed in ADR-0002) with four casual puzzle games on one hexagonal board:
+HexaBlock Suite is a mobile app (Flutter, ADR-0002) with four casual puzzle games on one hexagonal board:
 Hexa Lines, Hexa Fit, Hexa Sort and Hexa Merge.
 It is the semester project of *Desarrollo de Software* (UCAB, 2026-2).
 
@@ -44,13 +44,11 @@ When the assignment is ambiguous, or a choice affects grading and is not the tea
 
 ## 3. Architecture rules (Clean Architecture)
 
-> **Decision status.** The assignment fixes Clean Architecture and the Dependency Rule (C-05): those rules are binding now.
-> The concrete layout below (one Dart package per layer, ADR-0003) and the grid-topology extension point (ADR-0004) are **Proposed**.
-> Until the team accepts those ADRs, do not create packages or topology abstractions; ask the user instead.
+> **Decision status.** The assignment fixes Clean Architecture and the Dependency Rule (C-05). The team accepted Flutter and Dart (ADR-0002), one Dart package per layer (ADR-0003), the grid-topology extension point (ADR-0004), the board and level builders (ADR-0006), local data with drift and view models in plain Dart (ADR-0007) and the iOS installation from a Mac (ADR-0008). All of these are binding.
 
 Four concentric layers. Source code dependencies point inward only (the Dependency Rule).
 
-Proposed layout (ADR-0003):
+Layout (ADR-0003):
 
 | Layer | Package (Dart pub workspace) | May depend on |
 |---|---|---|
@@ -61,12 +59,12 @@ Proposed layout (ADR-0003):
 
 Binding rules (C-05, C-19 to C-22, NFR-02 to NFR-05):
 
-- The domain and the use cases are **pure Dart** (with the proposed layout: `hexablock_engine` and `hexablock_application`). They never import `package:flutter`, a database, `http`, or a random-number library. The package boundary enforces this: a forbidden import does not compile.
-- Ports (interfaces) are declared in the inner layer that **uses** them. Adapters implement them in an outer layer.
+- The domain and the use cases are **pure Dart** (`hexablock_engine` and `hexablock_application`). They never import `package:flutter`, a database, `http`, or a random-number library. The package boundary enforces this: a forbidden import does not compile.
+- Ports (interfaces) are declared in the inner layer that **uses** them. Adapters implement them in an outer layer. The interfaces the domain itself calls (piece source, random generator) live in `hexablock_engine`; the I/O ports (repositories, remote API, session storage, system clock) live in `hexablock_application` (ADR-0003).
 - The engine never contains a condition on the variant type (`if (rules is HexaSortRules)`). Variation lives behind interfaces.
 - Data crosses layer boundaries as domain types inward and as DTOs or view models outward. Mappers live in layer 3.
-- Randomness, time and IDs are injected (ports), never created inside the domain. Tests use seeded sources.
-- Rendering, persistence and the remote API are replaceable details behind ports (NFR-02). Grid geometry as an extension point is proposed in ADR-0004. Do not hard-code a widget or an HTTP detail inside the domain.
+- Randomness, time and IDs are injected, never created inside the domain. The domain's random generator is its own pure algorithm with its state as a value object, never the platform's `Random` (ADR-0003). Tests use seeded sources.
+- Rendering, persistence and the remote API are replaceable details behind ports (NFR-02). Grid geometry is an extension point (ADR-0004). Do not hard-code a widget or an HTTP detail inside the domain.
 - **Do not over-engineer.** Add an abstraction only when a requirement, an ADR or a second real implementation needs it. Abstractions declared in an ADR are requirements, not speculation.
 
 Low-level details are replaceable: the database, the board shape (for example square cells instead of hexagons), the user interface and the levels may change shortly before the defense, never the architecture, and the design must absorb that change without rewriting the project (C-31, NFR-02). A hard-coded low-level detail is the main design flaw to avoid.

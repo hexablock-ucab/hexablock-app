@@ -2,7 +2,7 @@
 
 How to extend HexaBlock Suite **without modifying the engine** (NFR-01, NFR-02). This guide is a deliverable (C-12) and the script for the live demonstration in the defense. Keep it true: every class name below must exist in the code.
 
-> **Status:** skeleton. It is filled in as the engine is built; the package paths follow the proposed layout of ADR-0003. Each section lists the files to **create**, the files to **configure** and the files that must **not change**.
+> **Status:** skeleton. It is filled in as the engine is built; the package paths follow the layout of ADR-0003. Each section lists the files to **create**, the files to **configure** and the files that must **not change**.
 
 ## Extension points
 

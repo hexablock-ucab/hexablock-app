@@ -1,9 +1,9 @@
 # ADR-0002: Flutter and Dart for the game client
 
-- **Status:** Proposed — to review in the first team meeting
-- **Date:** 2026-10-28
+- **Status:** Accepted
+- **Date:** 2026-11-25 (proposed 2026-10-28)
 - **Proposed by:** Eduard Velasco
-- **Deciders:** —
+- **Deciders:** Eduard Velasco, Ali Dahouk, Valentina Maza
 - **Requirements:** C-01, C-02, C-16d, C-19, C-25, C-30
 
 ## Context
