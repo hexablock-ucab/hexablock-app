@@ -7,13 +7,13 @@
 > Semester project — *Desarrollo de Software*, Universidad Católica Andrés Bello (UCAB), 2026-2.
 > Team: Valentina Maza · Ali Dahouk · Eduard Velasco — see [Team](#team).
 
-> **Project status:** foundation stage. Requirements, architecture decisions (all *Proposed*) and quality gates are in place; development starts after the team review. Sections marked *TODO* are filled as the work lands.
+> **Project status:** foundation stage. The requirements are in *Baseline*, the architecture decisions are *Accepted* and the quality gates are in place; development starts with the domain model and the workspace bootstrap. Sections marked *TODO* are filled as the work lands.
 
 ## Description
 
 HexaBlock Suite is a mobile app with four casual puzzle games played on a hexagonal board — **Hexa Lines**, **Hexa Fit**, **Hexa Sort** and **Hexa Merge** — built on **one generic game engine**. Each game is an instantiation of the engine, not a copy: adding a fifth variant means adding classes or configuration, never editing the engine.
 
-Proposed stack: Flutter and Dart ([ADR-0002](docs/adr/0002-flutter-and-dart.md)). Progress, leaderboards and level definitions sync with the [HexaBlock API](https://github.com/hexablock-ucab/hexablock-api).
+Stack: Flutter and Dart ([ADR-0002](docs/adr/0002-flutter-and-dart.md)). Progress, leaderboards and level definitions sync with the [HexaBlock API](https://github.com/hexablock-ucab/hexablock-api).
 
 ## Documentation
 
@@ -39,11 +39,11 @@ Proposed stack: Flutter and Dart ([ADR-0002](docs/adr/0002-flutter-and-dart.md))
 
 > TODO: embed `docs/diagrams/clean-architecture.png` and explain each layer.
 
-The project follows Clean Architecture (Martin, 2017): four concentric layers whose dependencies point inward only. The proposed layout makes each layer a separate Dart package, so the compiler enforces the rule ([ADR-0003](docs/adr/0003-clean-architecture-as-dart-packages.md)); `tool/check-architecture.mjs` checks the rest in CI.
+The project follows Clean Architecture (Martin, 2017): four concentric layers whose dependencies point inward only. Each layer is a separate Dart package, so the compiler enforces the rule ([ADR-0003](docs/adr/0003-clean-architecture-as-dart-packages.md)); `tool/check-architecture.mjs` checks the rest in CI.
 
 | Layer | Package | Contents | Must not depend on |
 |---|---|---|---|
-| Entities | `hexablock_engine` | TODO | Any other package; Flutter, `dart:io`, storage or network libraries. Randomness and clocks come in through ports. |
+| Entities | `hexablock_engine` | TODO | Any other package; Flutter, `dart:io`, storage or network libraries. The random generator is the domain's own seeded algorithm, injected; the clock comes in through a port. |
 | Use cases | `hexablock_application` | TODO | `hexablock_adapters`, `app`; Flutter, `dart:io`, storage or network libraries |
 | Interface adapters | `hexablock_adapters` | TODO | `app` |
 | Frameworks & drivers | `app` | TODO | — (outermost layer) |
@@ -51,7 +51,7 @@ The project follows Clean Architecture (Martin, 2017): four concentric layers wh
 Placements that are not obvious:
 
 - **Composition root:** `app/` is the only place that creates concrete classes and wires them to ports (ADR-0003).
-- **Repository implementations and storage drivers:** TODO — fixed with the local persistence ADR.
+- **Repository implementations and storage drivers:** adapters in `hexablock_adapters` over drift (progress, levels, saved game), `shared_preferences` (preferences) and `flutter_secure_storage` (token), behind ports of `hexablock_application` ([ADR-0007](docs/adr/0007-local-data-and-view-models.md)).
 
 ## Generic Engine
 
@@ -107,7 +107,7 @@ After cloning, run `npm install` once to install the git hooks (commit message a
 ### Install on a phone
 
 - **Android:** download the APK from the latest [GitHub Release](https://github.com/hexablock-ucab/hexablock-app/releases/latest).
-- **iOS:** TODO — the route (TestFlight or direct installation from a Mac) is chosen in a follow-up ADR (see [ADR-0002](docs/adr/0002-flutter-and-dart.md)).
+- **iOS:** installed directly from a Mac with Xcode, without TestFlight ([ADR-0008](docs/adr/0008-ios-install-from-a-mac.md)).
 
 ## Running Tests
 

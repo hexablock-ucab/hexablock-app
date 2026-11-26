@@ -4,7 +4,7 @@ How to extend HexaBlock Suite **without modifying the engine** (NFR-01, NFR-02).
 
 The rule for this guide is that every name in it is a class of the domain model ([`docs/domain-model.md`](domain-model.md), [`docs/diagrams/class-model.json`](diagrams/class-model.json)). Once the code exists, every name must also exist in the code.
 
-> **Status:** follows the domain model (D1). There is no code yet. The folders are those of `docs/domain-model.md` §2:
+> **Status:** follows the domain model (D1). There is no code yet. The package paths follow the layout of ADR-0003, and the folders are those of `docs/domain-model.md` §2:
 > - in `hexablock_engine`, the generic engine lives under `core/`;
 > - in `hexablock_application`, every folder is generic;
 > - in `hexablock_adapters` and `app`, every folder is generic except `variants/<id>/`, which holds one variant's classes.
