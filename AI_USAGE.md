@@ -151,7 +151,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 
 ### 2026-11-25 — Class-model generator moved to `tool/` (odd/tasks/0005-domain-model.md)
 
-- **Pull request:** TODO(team): number assigned when the PR opens.
+- **Pull request:** #26 (stacked on #24)
 - **Author:** Eduard Velasco
 - **Tool / model:** Claude Code (VS Code extension), model Claude Opus 5.5.
 - **Task:** Put in the repository the script that generates the class diagram views, the generated sections of `docs/domain-model.md` and the explorer from `docs/diagrams/class-model.json`, with a test that fails when the JSON and the `.puml` files differ (C-11, NFR-02).
