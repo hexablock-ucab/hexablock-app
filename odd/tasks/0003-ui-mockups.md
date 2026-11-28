@@ -1,8 +1,8 @@
 # 0003 — UI mockups of the app screens (D12)
 
-- **Status:** Verifying
+- **Status:** Verifying — #14 merged on 2026-11-26; T10 and T11 (account, leaderboard, sounds) in review in #19
 - **Owner:** Valentina Maza
-- **Branch / PR:** `docs/ui-mockups` · #14
+- **Branch / PR:** `docs/ui-mockups` · #14 (merged); `docs/ui-account-sound` · #19
 - **Issue:** hexablock-ucab/hexablock-workspace#34 (D12)
 - **Requirements:** FR-01, FR-02, FR-03, FR-04, FR-05, FR-06, FR-07, FR-09, FR-10, FR-14, FR-15, FR-32, FR-37, FR-45, FR-56, FR-64, FR-66, C-28, NFR-02, NFR-04
 - **ADRs:** 0002 (Flutter and Dart), 0004 (grid topology and `BoardRenderer`)
