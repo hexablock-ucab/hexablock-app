@@ -2,7 +2,7 @@
 
 - **Status:** Verifying
 - **Owner:** Valentina Maza
-- **Branch / PR:** `build/sync-levels` · #
+- **Branch / PR:** `build/sync-levels` · #20
 - **Requirements:** FR-04, FR-14, FR-23, C-13
 - **ADRs:** 0006 (the level builder reads the files); in `hexablock-api`: 0004 (generic level schema)
 
@@ -39,13 +39,13 @@ The team decided on 2026-11-23 that `levels/` in `hexablock-api` is the single s
 
 ## Verification
 
-| Spec | Evidence | Verdict |
-|---|---|---|
-| S1 | `--ref feat/levels --dest /tmp/synctest`: "Copied 25 level files … (1bd6bf2)"; `source.json` holds the repository, ref and commit. | Pass |
-| S2 | Right after the copy: "Levels in sync … 25 files", exit 0. After editing `hexa-fit-003.json` in the copy: "different from the API: hexa-fit/hexa-fit-003.json", exit 1. After deleting `hexa-sort-010.json`: "missing in the app", exit 1. | Pass |
-| S2 | Against `main` before hexablock-api #19 is merged: "hexablock-api main has no levels/ folder yet.", exit 1. | Pass |
-| S1, S2 | `node --test "tool/**/*.test.mjs"`: 4 tests of the copy pass (first copy; `source.json`, `README.md` and a non-level file kept; only the changed level copied and the stale one deleted; every difference listed). Against hexablock-api `main` (6cc4858): 25 copied with a `README.md` kept; an extra level reported by `--check` (exit 1), then removed. | Pass |
-| S3 | Step "Levels in sync with hexablock-api" in `ci.yml`, with no `continue-on-error`, after the tool tests, and a condition on `app/assets/levels/source.json`. | Pending CI run once the copy exists |
+| Spec   | Evidence                                                                                                                                                                                                                                                                                                                                                   | Verdict                             |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| S1     | `--ref feat/levels --dest /tmp/synctest`: "Copied 25 level files … (1bd6bf2)"; `source.json` holds the repository, ref and commit.                                                                                                                                                                                                                         | Pass                                |
+| S2     | Right after the copy: "Levels in sync … 25 files", exit 0. After editing `hexa-fit-003.json` in the copy: "different from the API: hexa-fit/hexa-fit-003.json", exit 1. After deleting `hexa-sort-010.json`: "missing in the app", exit 1.                                                                                                                 | Pass                                |
+| S2     | Against `main` before hexablock-api #19 is merged: "hexablock-api main has no levels/ folder yet.", exit 1.                                                                                                                                                                                                                                                | Pass                                |
+| S1, S2 | `node --test "tool/**/*.test.mjs"`: 4 tests of the copy pass (first copy; `source.json`, `README.md` and a non-level file kept; only the changed level copied and the stale one deleted; every difference listed). Against hexablock-api `main` (6cc4858): 25 copied with a `README.md` kept; an extra level reported by `--check` (exit 1), then removed. | Pass                                |
+| S3     | Step "Levels in sync with hexablock-api" in `ci.yml`, with no `continue-on-error`, after the tool tests, and a condition on `app/assets/levels/source.json`.                                                                                                                                                                                               | Pending CI run once the copy exists |
 
 ## Open questions
 
