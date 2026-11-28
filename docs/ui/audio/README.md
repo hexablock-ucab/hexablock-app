@@ -25,9 +25,6 @@ The files move to the app's assets when the Flutter project exists; the app play
 
 ## Music
 
-The background music is still to download: the agent's workspace cannot reach the site. Two CC0 loops by MintoDog on OpenGameArt fit the neon arcade style; the team listens and picks one:
-
-- [*Sci-fi Puzzle In-Game 3*](https://opengameart.org/node/181258), CC0, loopable, 100 BPM.
-- [*Cozy Puzzle In-Game 2*](https://opengameart.org/node/185146), CC0, loopable, 90 BPM.
+The team chose MintoDog's music (review of #19): [*Sci-fi Puzzle In-Game 3*](https://opengameart.org/node/181258), CC0, loopable, 100 BPM, which fits the neon arcade style. It is credited in `THIRD_PARTY_NOTICES.md` and on the credits screen; the file is downloaded from OpenGameArt and added with the app's audio assets. [*Cozy Puzzle In-Game 2*](https://opengameart.org/node/185146) by the same author (CC0) stays as the alternative.
 
 Music and effects mute separately in Settings (FR-09). When a file is added, its line goes in `THIRD_PARTY_NOTICES.md`.
