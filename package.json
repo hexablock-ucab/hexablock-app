@@ -9,7 +9,9 @@
     "check:coverage": "node tool/check-coverage.mjs",
     "check:class-model": "node tool/class-model/generate.mjs --check",
     "generate:class-model": "node tool/class-model/generate.mjs",
-    "test:tool": "node --test \"tool/**/*.test.mjs\""
+    "test:tool": "node --test \"tool/**/*.test.mjs\"",
+    "sync:levels": "node tool/sync-levels.mjs",
+    "check:levels-sync": "node tool/sync-levels.mjs --check"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
