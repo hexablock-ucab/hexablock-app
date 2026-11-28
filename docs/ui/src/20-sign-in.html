@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>20 · Sign in</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="account.css">
+<script src="hexgrid.js"></script>
+</head>
+<body>
+<!-- Opened from Settings → Account or from a leaderboard. Playing never needs an account (FR-15): "Seguir como invitado" closes it. -->
+<div class="screen">
+  <div class="nav">
+    <span class="icon-btn" data-icon="close" aria-label="Cerrar"></span>
+    <div class="title t-h1" style="font-size:26px">Cuenta</div>
+    <span class="spacer"></span>
+  </div>
+  <div class="acc-hero">
+    <div data-render="logo"></div>
+    <div class="why">Inicia sesión para guardar tu progreso en la nube y aparecer en el ranking. Puedes jugar sin cuenta.</div>
+  </div>
+  <div class="segmented tabs"><span class="active">Iniciar sesión</span><span>Crear cuenta</span></div>
+  <div class="form">
+    <div class="field">
+      <label>Correo</label>
+      <div class="input"><span class="ic" data-icon="mail"></span><span class="val">valentina@ejemplo.com</span></div>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <div class="input focus"><span class="ic" data-icon="key"></span><span class="val">••••••••••••••</span><span class="eye" aria-label="Mostrar contraseña"><span data-icon="eye"></span></span></div>
+    </div>
+    <span class="btn btn-primary">Iniciar sesión</span>
+  </div>
+  <div class="guest"><span class="btn btn-ghost">Seguir como invitado</span></div>
+  <div class="fine">Tu progreso de este teléfono se une a tu cuenta al iniciar sesión.</div>
+</div>
+<div class="home-indicator"></div>
+<script>
+  function logo() {
+    const ring = { "0,0": "var(--primary)", "1,-1": "var(--variant-lines)", "1,0": "var(--variant-fit)", "0,1": "var(--variant-sort)",
+                   "-1,1": "var(--tile-red)", "-1,0": "var(--merge-1024)", "0,-1": "var(--tile-green)" };
+    return HB.board({ cells: HB.hexagon(1), size: 13, gap: 3, fill: (q, r) => ring[q + "," + r] });
+  }
+</script>
+</body>
+</html>

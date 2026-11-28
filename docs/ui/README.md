@@ -20,6 +20,8 @@ Every screen is an HTML page in [`src/`](src/) built from shared files, so a cha
 | [`src/levels.js`](src/levels.js) | The data of the level select: one screen for every level-based variant. |
 | [`src/strings.js`](src/strings.js) | English strings; any mockup renders in English with `?lang=en`. |
 | [`tokens.json`](tokens.json) | The tokens of `tokens.css` for both themes, for building the Flutter themes. |
+| [`src/howto.js`](src/howto.js), [`src/leaderboard.js`](src/leaderboard.js) | The how-to-play modal and the leaderboard: one layout each, one config per variant. |
+| [`audio/`](audio/) | The proposed sound map, 12 CC0 effects and a page to listen to them. |
 | [`l10n/`](l10n/) | Every string of the mockups as Spanish and English ARB files, ready for Flutter's `gen-l10n`. |
 
 To edit a mockup, open its HTML file in a browser, change it, and export the PNG again (a 390 × 844 viewport at device scale factor 2, for example with Chrome DevTools *Capture screenshot*). Add `?theme=light` or `?lang=en` to the address to export the other theme or language.
@@ -47,7 +49,10 @@ To edit a mockup, open its HTML file in a browser, change it, and export the PNG
 | 16 | Pause menu: resume, restart, how to play, settings, quit; in Hexa Fit the board is hidden | [16-pause-menu.png](png/16-pause-menu.png) | S12, S18 |
 | 17 | Leave confirmation: what is lost and what is kept | [17-leave-confirm.png](png/17-leave-confirm.png) | S12 |
 | 18 | States: sync, offline, level download and errors, first launch, invalid placement, color glyphs, back button | [18-states.png](png/18-states.png) | S13, FR-04, FR-14, FR-15, FR-32 |
-| 19 | How to play: a short modal per variant (Hexa Fit shown), with the clock stopped | [19-how-to-play.png](png/19-how-to-play.png) | S18 |
+| 19, 19b–19d | How to play, one short modal per variant (Fit, Lines, Sort, Merge); in Hexa Fit with the clock stopped and the board hidden | [19](png/19-how-to-play.png) · [19b](png/19b-how-to-play-lines.png) · [19c](png/19c-how-to-play-sort.png) · [19d](png/19d-how-to-play-merge.png) | S18 |
+| 20, 21 | Account: sign in, and create account with its errors (draft until the API contract, D5) | [20](png/20-sign-in.png) · [21](png/21-create-account.png) | S19, FR-11 |
+| 22, 22b | Leaderboard: Hexa Fit by level and Hexa Lines (draft until D5) | [22](png/22-leaderboard-fit.png) · [22b](png/22b-leaderboard-lines.png) | S19, FR-13, RANK-1, RANK-2 |
+| 23 | Credits and licenses (Settings → Créditos) | [23](png/23-credits.png) | S20, FR-09 |
 
 Every screen also exists in the light theme, in [`png/light/`](png/light/) with the same file names (export any mockup with `?theme=light`). English: [`png/en/`](png/en/).
 
@@ -69,6 +74,9 @@ Every screen also exists in the light theme, in [`png/light/`](png/light/) with 
 - **Pausing Hexa Fit hides the board.** With the clock stopped, the player cannot study the figure for free; the board comes back on resume (team decision of 2026-11-23). The how-to-play modal stops the clock and hides the board the same way.
 - **How to play.** One short modal per variant, in Spanish and English. It opens the first time a variant is played and from Pause → How to play. The steps of the four variants are in `l10n/` (`howTo…` keys); the Hexa Fit modal is drawn (19).
 - **State colors are not tile colors** (review O5). `--danger` and `--success` differ from `--tile-red` and `--tile-green` in both themes, so an error never reads as a red tile. `--primary` stays the brand gold, shared on purpose with Hexa Merge's identity, and never signals a state.
+- **Account (20, 21).** Playing never needs an account (FR-15): the screen opens from Settings or a leaderboard and always offers "Continue as guest". Email and a password of 12 to 128 characters with no composition rules, as the team decided on 2026-11-23; creating the account signs the player in. Errors appear under their field in words. The leaderboard name is a proposal until the API contract (D5) fixes the fields.
+- **Leaderboard (22).** One layout for the four variants, with the columns and order of RANK-1 and one row per player (RANK-2); the player's own row stays pinned under the table. Hexa Fit and Hexa Sort choose a level or *Global*; the global table follows RANK-3 once it is written in `docs/game-rules.md`, so it is not drawn yet. Players are invented.
+- **Sound (FR-09).** The proposed effects and the music candidates are in [`audio/README.md`](audio/README.md); open `audio/listen.html` to hear them.
 - **Leaving a game.** The system back button and the iOS swipe-back open the pause menu; they never leave a game without asking. Leaving a level-based game in progress asks for confirmation.
 - **Game states follow `docs/game-rules.md`.** No two neighboring Hexa Sort stacks share a top color (SORT-3); the Hexa Lines defeat board has a free cell on every row of the three axes, all isolated (LINES-1, LINES-2); the Hexa Sort and Hexa Merge defeat boards are full with no two equal neighbors (SORT-5, MERGE-1). Each board was checked with a script.
 - **The game never waits for the network.** Progress is saved on the phone first (FR-08); sync runs in the background and its status appears on the home and settings screens, never inside a game (FR-15).
@@ -99,7 +107,7 @@ The light theme only redefines tokens in `tokens.css` (`:root[data-theme="light"
 
 ## English strings
 
-The strings of every mockup are ready as ARB files for Flutter's `gen-l10n`: [`l10n/app_es.arb`](l10n/app_es.arb) (the template, with a description and typed placeholders for each key) and [`l10n/app_en.arb`](l10n/app_en.arb), 139 keys each. Both files have the same keys and the same placeholders, and every ICU message parses (checked with `@messageformat/parser`). They move to the app's `lib/l10n/` when the Flutter project exists. The app keeps its strings in ARB files with ICU placeholders and plurals (for example `{done} of {total} levels`, `{count, plural, one{1 piece left} other{{count} pieces left}}`); numbers use the locale's separator (3 960 in Spanish, 3,960 in English).
+The strings of every mockup are ready as ARB files for Flutter's `gen-l10n`: [`l10n/app_es.arb`](l10n/app_es.arb) (the template, with a description and typed placeholders for each key) and [`l10n/app_en.arb`](l10n/app_en.arb), 167 keys each. Both files have the same keys and the same placeholders, and every ICU message parses (checked with `@messageformat/parser`). They move to the app's `lib/l10n/` when the Flutter project exists. The app keeps its strings in ARB files with ICU placeholders and plurals (for example `{done} of {total} levels`, `{count, plural, one{1 piece left} other{{count} pieces left}}`); numbers use the locale's separator (3 960 in Spanish, 3,960 in English).
 
 | Screen | Spanish (mockup) → English |
 |---|---|
@@ -111,11 +119,14 @@ The strings of every mockup are ready as ARB files for Flutter's `gen-l10n`: [`l
 | 11 Settings | Ajustes → Settings · Cuenta y progreso → Account and progress · Tu progreso se guarda en el teléfono y se sincroniza → Your progress is saved on the phone and synced · Al día → Up to date · Sonido → Sound · Música (de fondo) → (Background) music · Efectos de sonido → Sound effects · Colocar, completar, fusionar → Place, clear, merge · Idioma → Language · Acerca de → About · Créditos y licencias → Credits and licenses · Fuentes, sonidos y referencias → Fonts, sounds and references · Versión → Version |
 | 16, 17 Pause | Pausa → Paused · detenido → stopped · Seguir jugando → Keep playing · Reiniciar nivel → Restart level · Salir → Quit · ¿Salir del nivel? → Leave the level? · Se pierde este intento: {moves} movimientos y {time} → This attempt is lost: {moves} moves and {time} · Tus estrellas y récords anteriores se mantienen → Your earlier stars and records are kept · Salir sin guardar el intento → Leave without saving the attempt |
 | 16, 19 Pause and how to play | Cómo jugar → How to play · Tablero oculto mientras el reloj está detenido → Board hidden while the clock is stopped · Reloj en pausa → Clock paused · Entendido → Got it · the steps of every variant: `l10n/app_es.arb`, keys `howTo…` |
+| 20, 21 Account | Cuenta → Account · Iniciar sesión → Sign in · Crear cuenta → Create account · Correo → Email · Contraseña → Password · Usa de 12 a 128 caracteres (llevas {count}) → Use 12 to 128 characters (you have {count}) · Seguir como invitado → Continue as guest · the rest: `l10n/`, keys `account…` |
+| 22 Leaderboard | Ranking → Leaderboard · Por nivel → By level · Jugador → Player · {name} (tú) → {name} (you) · Cada jugador aparece una vez, con su mejor resultado → Each player appears once, with their best result · the rest: keys `leaderboard…` |
+| 23 Credits | Créditos → Credits · Equipo → Team · Fuentes, sonidos y música → Fonts, sounds and music · Licencias de código abierto → Open-source licenses |
 | 18 States | Sincronizando… → Syncing… · Sin conexión · guardado en el teléfono → Offline · saved on the phone · No se pudo sincronizar · Reintentar → Sync failed · Retry · Invitado · inicia sesión para guardar en la nube → Guest · sign in to save in the cloud · {n} niveles nuevos de {game} descargados → {n} new {game} levels downloaded · Cargando nivel {n}… → Loading level {n}… · No se pudieron bajar los niveles nuevos. Los que ya tienes siguen disponibles → The new levels could not be downloaded. The ones you have are still available · Nuevo → New |
 
 ## Out of scope (follow-up)
 
-Sign-in, register and leaderboard screens (FR-11, FR-13) are drawn once the API contract (D5) defines the data they show. The credits screen follows `THIRD_PARTY_NOTICES.md` once sounds and music are chosen.
+The account and leaderboard screens (20 to 22) are drafts: they are adjusted when the API contract (D5) fixes their fields and errors, and the global leaderboard of Hexa Fit and Hexa Sort is drawn when RANK-3 is written. The music and the win and lose jingles are chosen by the team (`audio/README.md`).
 
 ## Credits
 

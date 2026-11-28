@@ -524,6 +524,128 @@
   "@howToMergeStep3": {
     "description": "Hexa Merge, step 3."
   },
+  "accountTitle": "Cuenta",
+  "@accountTitle": {
+    "description": "Title of the account screen."
+  },
+  "accountWhy": "Inicia sesión para guardar tu progreso en la nube y aparecer en el ranking. Puedes jugar sin cuenta.",
+  "@accountWhy": {
+    "description": "Account screen intro."
+  },
+  "accountSignIn": "Iniciar sesión",
+  "@accountSignIn": {
+    "description": "Tab and button."
+  },
+  "accountCreate": "Crear cuenta",
+  "@accountCreate": {
+    "description": "Tab and button."
+  },
+  "accountDisplayName": "Nombre en el ranking",
+  "@accountDisplayName": {
+    "description": "Field label; proposal until the API contract (D5)."
+  },
+  "accountNameAvailable": "Disponible",
+  "@accountNameAvailable": {
+    "description": "Field help when the name is free."
+  },
+  "accountEmail": "Correo",
+  "@accountEmail": {
+    "description": "Field label."
+  },
+  "accountPassword": "Contraseña",
+  "@accountPassword": {
+    "description": "Field label."
+  },
+  "accountShowPassword": "Mostrar contraseña",
+  "@accountShowPassword": {
+    "description": "Accessibility label of the eye button."
+  },
+  "accountPasswordLength": "Usa de 12 a 128 caracteres (llevas {count}). Una frase larga es más segura.",
+  "@accountPasswordLength": {
+    "description": "Password help; no composition rules (team decision of 2026-11-23, OWASP).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountEmailTaken": "Ya hay una cuenta con este correo. Inicia sesión.",
+  "@accountEmailTaken": {
+    "description": "Error under the email field."
+  },
+  "accountWrongCredentials": "El correo o la contraseña no coinciden.",
+  "@accountWrongCredentials": {
+    "description": "Error after a failed sign-in."
+  },
+  "accountContinueGuest": "Seguir como invitado",
+  "@accountContinueGuest": {
+    "description": "Closes the account screen; playing needs no account."
+  },
+  "accountMergeNote": "Tu progreso de este teléfono se une a tu cuenta al iniciar sesión.",
+  "@accountMergeNote": {
+    "description": "Note under the sign-in form."
+  },
+  "leaderboardTitle": "Ranking",
+  "@leaderboardTitle": {
+    "description": "Screen title."
+  },
+  "leaderboardByLevel": "Por nivel",
+  "@leaderboardByLevel": {
+    "description": "Scope option in Hexa Fit and Hexa Sort."
+  },
+  "leaderboardGlobal": "Global",
+  "@leaderboardGlobal": {
+    "description": "Scope option."
+  },
+  "leaderboardPlayer": "Jugador",
+  "@leaderboardPlayer": {
+    "description": "Column header."
+  },
+  "leaderboardDate": "Fecha",
+  "@leaderboardDate": {
+    "description": "Column header."
+  },
+  "leaderboardYou": "{name} (tú)",
+  "@leaderboardYou": {
+    "description": "The player's own row.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "leaderboardRecordNote": "Récord de cada jugador · todas las partidas",
+  "@leaderboardRecordNote": {
+    "description": "Scope note in Hexa Lines and Hexa Merge."
+  },
+  "leaderboardOncePerPlayer": "Cada jugador aparece una vez, con su mejor resultado.",
+  "@leaderboardOncePerPlayer": {
+    "description": "Note under the table (RANK-2)."
+  },
+  "leaderboardOffline": "El ranking necesita conexión.",
+  "@leaderboardOffline": {
+    "description": "Shown offline."
+  },
+  "creditsTitle": "Créditos",
+  "@creditsTitle": {
+    "description": "Screen title."
+  },
+  "creditsTeam": "Equipo",
+  "@creditsTeam": {
+    "description": "Section."
+  },
+  "creditsAssets": "Fuentes, sonidos y música",
+  "@creditsAssets": {
+    "description": "Section."
+  },
+  "creditsReferences": "Referencias",
+  "@creditsReferences": {
+    "description": "Section."
+  },
+  "creditsOpenSource": "Licencias de código abierto",
+  "@creditsOpenSource": {
+    "description": "Row that opens Flutter's license page."
+  },
   "leaveTitle": "¿Salir del nivel?",
   "@leaveTitle": {
     "description": "Confirmation title."

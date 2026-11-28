@@ -28,4 +28,6 @@ The team cites every source of code, algorithms, assets and tools that it did no
 |---|---|---|---|
 | [Fredoka](https://fonts.google.com/specimen/Fredoka) (latin subset, weights 500–700, via [Fontsource](https://fontsource.org)) | The Fredoka Project Authors | SIL Open Font License 1.1 | `docs/ui/src/fonts/` (UI mockups) |
 | [Nunito](https://fonts.google.com/specimen/Nunito) (latin subset, weights 600–800, via [Fontsource](https://fontsource.org)) | The Nunito Project Authors | SIL Open Font License 1.1 | `docs/ui/src/fonts/` (UI mockups) |
-| TODO (sounds, music, icons) | | | |
+| [Interface Sounds](https://kenney.nl/assets/interface-sounds): 12 effects, unchanged (`click_002`, `toggle_001`, `drop_002`, `tick_002`, `back_002`, `error_008`, `confirmation_002`, `confirmation_003`, `confirmation_004`, `glass_002`, `pluck_001`, `maximize_006`) | Kenney (www.kenney.nl) | CC0 1.0 (public domain; crediting is optional, done here) | `docs/ui/audio/` (proposed sound map) |
+| [Sci-fi Puzzle In-Game 3](https://opengameart.org/node/181258): background music loop | MintoDog (OpenGameArt) | CC0 1.0 (public domain; crediting is optional, done here and on the credits screen) | The app's background music (FR-09); the file is added with the app's audio assets |
+| TODO (the win and lose jingles, see `docs/ui/audio/README.md`) | | | |

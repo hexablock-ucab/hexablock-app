@@ -1,8 +1,8 @@
 # 0003 — UI mockups of the app screens (D12)
 
-- **Status:** Verifying
+- **Status:** Verifying — #14 merged on 2026-11-26; T10 and T11 (account, leaderboard, sounds) in review in #19
 - **Owner:** Valentina Maza
-- **Branch / PR:** `docs/ui-mockups` · #14
+- **Branch / PR:** `docs/ui-mockups` · #14 (merged); `docs/ui-account-sound` · #19
 - **Issue:** hexablock-ucab/hexablock-workspace#34 (D12)
 - **Requirements:** FR-01, FR-02, FR-03, FR-04, FR-05, FR-06, FR-07, FR-09, FR-10, FR-14, FR-15, FR-32, FR-37, FR-45, FR-56, FR-64, FR-66, C-28, NFR-02, NFR-04
 - **ADRs:** 0002 (Flutter and Dart), 0004 (grid topology and `BoardRenderer`)
@@ -30,7 +30,7 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 ## Scope
 
 - In scope: the screens listed in the specs, a small style guide (palette, type, components), a README that indexes the mockups.
-- Out of scope: sign-in, register and leaderboard screens (see Open questions); animations; tablet and landscape layouts; Flutter code.
+- Out of scope: animations; tablet and landscape layouts; Flutter code.
 
 ## Specs
 
@@ -56,6 +56,8 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 - **S16** (FR-10): Two screens exported in English (`docs/ui/png/en/`), and every screen fits at 360 × 780 without horizontal overflow.
 - **S17** (FR-10, C-28): Every screen exists in the dark and the light theme (`docs/ui/png/` and `docs/ui/png/light/`, file for file); Settings lets the player choose dark, light or system and hide the color symbols; `docs/ui/tokens.json` has the tokens of both themes and `docs/ui/l10n/` the strings in Spanish and English.
 - **S18** (FR-03, FR-44, team decisions of 2026-11-23): A how-to-play modal exists per variant, in both languages, opened the first time a variant is played and from the pause menu; in Hexa Fit the pause menu and the modal stop the clock and hide the board. State colors (`--danger`, `--success`) differ from the tile colors in both themes (review O5).
+- **S19** (FR-11, FR-13, FR-15, RANK-1, RANK-2, team decisions of 2026-11-23): Draft account screens (sign in; create account with field errors; email and a 12–128 character password with no composition rules; always a guest option) and a leaderboard with one layout for every variant, the columns and order of RANK-1, one row per player and the player's own row pinned. Both are adjusted when the API contract (D5) exists.
+- **S20** (FR-09, C-14): A proposed sound map with CC0 effects that the team can hear (`docs/ui/audio/`), music candidates with their license, and a credits screen that matches `THIRD_PARTY_NOTICES.md`.
 
 ## Allowed edit surfaces
 
@@ -75,6 +77,8 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 - [x] **T7** (S2, S3, S7, S8, S12–S16) Changes after the review of PR #14 (Eduard: B1–B5, S1–S9, O1–O7; Ali: light theme).
 - [x] **T8** (S17) Light export of every screen, theme and symbol settings, `tokens.json` and the ARB files.
 - [x] **T9** (S18) Screen 19 (how to play, Hexa Fit), *Cómo jugar* in the pause menu, Hexa Fit board hidden while paused, the steps of the four variants in the ARB files, state colors separated from tile colors, every PNG exported again.
+- [x] **T10** (S18–S20) How-to-play modals of Lines, Sort and Merge (19b–19d, one config per variant in `howto.js`); account (20, 21), leaderboard (22, 22b, `leaderboard.js`) and credits (23) screens; 12 Kenney CC0 effects with their sound map and a listening page; 28 new ARB keys.
+- [ ] **T11** (S20) The team listens to the effects and picks the music and the two jingles; the chosen files are added with their license line. **Needs the team.**
 
 ## Verification
 
@@ -98,6 +102,8 @@ Coding starts on 2026-11-16 and nobody has defined how the app looks. Without mo
 | S16 | `docs/ui/png/en/` (home, Hexa Fit); every phone screen rendered at 360 × 780 with a script that reports elements outside the screen: none horizontally | Pending team review |
 | S17 | `docs/ui/png/light/` file for file with `docs/ui/png/`; `11-settings.png` in both themes; `docs/ui/tokens.json`; `docs/ui/l10n/app_es.arb` and `app_en.arb` (120 keys, same placeholders, ICU parsed) | Pending team review |
 | S18 | `19-how-to-play.png` and `16-pause-menu.png` in both themes (Fit board hidden behind them, checked at 360 × 780: no horizontal overflow); `howTo…` keys for the four variants in `l10n/` (139 keys, same placeholders, ICU parsed); `--danger` #FF7A5C and `--success` #7DF0C4 against `--tile-red` #FF4D6D and `--tile-green` #3BE08B, text contrast 5.0–7.3:1 and 9.2–13.6:1 on every dark surface | Pending team review |
+| S19 | `20-sign-in.png`, `21-create-account.png`, `22-leaderboard-fit.png`, `22b-leaderboard-lines.png` in both themes; Hexa Fit rows ordered by RANK-1 (stars, then moves, then time); no horizontal overflow at 360 × 780 | Pending team review |
+| S20 | `docs/ui/audio/`: 12 effects copied unchanged from Kenney *Interface Sounds* with its CC0 license file; `listen.html` plays each one; `THIRD_PARTY_NOTICES.md` and `23-credits.png` list the same assets; ARB files 167 keys, same placeholders, ICU parsed | Pending team review |
 
 ## Open questions
 
@@ -126,3 +132,6 @@ Eduard re-reviews PR #14 against his comments of 2026-11-09; then merge and mark
 - 2026-11-16 — Valentina Maza with Claude (Opus 5.5, claude.ai): T8 done. All 19 exports in `png/light/` (13 new); sheets behind the pause menu and leave confirmation now take the page's theme and language (`hexgrid.js`); the style guide reads its swatch values from the active theme; Settings gains *Tema* (dark, light, system) and *Símbolos en las fichas* (B4); `tokens.json` exported from `tokens.css`; `l10n/app_es.arb` and `l10n/app_en.arb` with 120 keys, same keys and placeholders, every ICU message parsed. Settings now scrolls at 360 × 780 (vertical only; no horizontal overflow).
 - 2026-11-24 — Valentina Maza (verbatim): "sigamos" (answering the offer to apply review point O5 and the team decisions of 2026-11-23 that touch the mockups: saving endless games, the how-to-play modal and the Hexa Fit board hidden while paused).
 - 2026-11-24 — Valentina Maza with Claude (Opus 5.5, claude.ai): T9 done. Screen 19 (how to play, Hexa Fit); *Cómo jugar* in the pause menu; Hexa Fit hides its board while paused (`06-hexa-fit.html?paused`, used by 16, 17 and 19); `hexgrid.js` now adds the page's `?theme`/`?lang` to an iframe that already has a query; `--danger` and `--success` no longer equal tile colors (O5); 19 new keys in the ARB files with the steps of the four variants; the saving proposal marked as accepted; every PNG exported again in both themes.
+- 2026-11-24 — Valentina Maza (verbatim): "hagamos los pasos 2,3,4" (account and leaderboard screens, sounds and music, the how-to-play modals of the other variants).
+- 2026-11-24 — Valentina Maza with Claude (Opus 5.5, claude.ai): T10 done. The effects come from a GitHub mirror of Kenney's *Interface Sounds* (CC0); they were chosen by name, length and loudness, not by ear, so T11 asks the team to listen. The music sites cannot be reached from the agent's workspace, so the music is listed as candidates with links. The leaderboard name field and the global leaderboard (RANK-3) are left open for D5 and `docs/game-rules.md`.
+- 2026-11-28 — Review of #19 (Valentina with Claude): the music is MintoDog's *Sci-fi Puzzle In-Game 3* (CC0), now credited in `THIRD_PARTY_NOTICES.md` and in `docs/ui/audio/README.md`; the branch moved onto `main` after #14 was merged.

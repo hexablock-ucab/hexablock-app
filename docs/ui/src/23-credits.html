@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>23 · Credits and licenses</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<script src="hexgrid.js"></script>
+<style>
+  /* Settings → Créditos y licencias. Its content mirrors THIRD_PARTY_NOTICES.md; the open-source licenses row opens Flutter's own license page. */
+  .group { margin-top: 12px; }
+  .group > .t-label { margin: 0 0 8px 4px; }
+  .list { padding: 2px 16px; }
+  .item { display: flex; align-items: center; gap: 12px; min-height: 54px; border-bottom: 1.5px solid var(--divider); }
+  .item:last-child { border-bottom: 0; }
+  .item .txt { flex: 1; min-width: 0; }
+  .item .t-body { font-size: 15px; }
+  .item .hint { font-size: 13px; color: var(--text-muted); }
+  .lic { font: 800 11px/1 var(--font-body); letter-spacing: 1px; padding: 6px 8px; border-radius: 999px; border: 1.5px solid var(--line-strong); color: var(--text-muted); white-space: nowrap; }
+  .chev { width: 20px; height: 20px; color: var(--text-muted); display: inline-flex; }
+  .team { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 0; }
+  .foot { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="nav">
+    <span class="icon-btn" data-icon="back" aria-label="Atrás"></span>
+    <div class="title t-h1" style="font-size:24px">Créditos</div>
+    <span class="spacer"></span>
+  </div>
+  <div class="group">
+    <div class="t-label">Equipo</div>
+    <div class="card list"><div class="team"><span class="chip">Eduard Velasco</span><span class="chip">Ali Dahouk</span><span class="chip">Valentina Maza</span></div></div>
+  </div>
+  <div class="group">
+    <div class="t-label">Fuentes, sonidos y música</div>
+    <div class="card list">
+      <div class="item"><div class="txt"><div class="t-body">Fredoka y Nunito</div><div class="hint">Tipografías · Google Fonts</div></div><span class="lic">OFL 1.1</span></div>
+      <div class="item"><div class="txt"><div class="t-body">Interface Sounds</div><div class="hint">Efectos de sonido · Kenney</div></div><span class="lic">CC0</span></div>
+      <div class="item"><div class="txt"><div class="t-body">Música de fondo</div><div class="hint">MintoDog · OpenGameArt</div></div><span class="lic">CC0</span></div>
+    </div>
+  </div>
+  <div class="group">
+    <div class="t-label">Referencias</div>
+    <div class="card list">
+      <div class="item"><div class="txt"><div class="t-body">Hexagonal Grids</div><div class="hint">Coordenadas axiales · Red Blob Games</div></div><span class="chev" data-icon="next"></span></div>
+      <div class="item"><div class="txt"><div class="t-body">Licencias de código abierto</div><div class="hint">Flutter y sus paquetes</div></div><span class="chev" data-icon="next"></span></div>
+    </div>
+  </div>
+  <div class="foot">Desarrollo de Software · UCAB 2026-2<br>Versión 1.0.0</div>
+</div>
+<div class="home-indicator"></div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>22b · Leaderboard (lines)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="leaderboard.css">
+<script src="hexgrid.js"></script>
+<script>window.BOARD_GAME = "lines";</script>
+<script src="leaderboard.js"></script>
+</head>
+<body style="--cols: 2">
+<!-- Opened from a game card, a victory screen or level select. Needs the network; offline it says so (screen 18). -->
+<div class="screen">
+  <div class="nav">
+    <span class="icon-btn" data-icon="back" aria-label="Atrás"></span>
+    <div class="title t-h1" style="font-size:26px">Ranking</div>
+    <span class="spacer"></span>
+  </div>
+  <div class="segmented games" id="games"></div>
+  <div class="scope" id="scope"></div>
+  <div class="card table">
+    <div class="head" id="head"></div>
+    <div id="rows"></div>
+  </div>
+  <div class="me" id="me"></div>
+  <div class="note">Cada jugador aparece una vez, con su mejor resultado.</div>
+</div>
+<div class="home-indicator"></div>
+</body>
+</html>

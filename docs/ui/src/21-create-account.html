@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>21 · Create account (with errors)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="account.css">
+<script src="hexgrid.js"></script>
+</head>
+<body>
+<!-- Team decisions of 2026-11-23: sign in with email; password of 12 to 128 characters with no composition rules (OWASP);
+     creating the account signs the player in directly. Errors show under their field, in words, never only in red. -->
+<div class="screen">
+  <div class="nav">
+    <span class="icon-btn" data-icon="close" aria-label="Cerrar"></span>
+    <div class="title t-h1" style="font-size:26px">Cuenta</div>
+    <span class="spacer"></span>
+  </div>
+  <div class="segmented tabs" style="margin-top:8px"><span>Iniciar sesión</span><span class="active">Crear cuenta</span></div>
+  <div class="form">
+    <div class="field">
+      <label>Nombre en el ranking</label>
+      <div class="input"><span class="ic" data-icon="user"></span><span class="val">valen</span></div>
+      <div class="help ok"><span class="i" data-icon="check"></span>Disponible</div>
+    </div>
+    <div class="field">
+      <label>Correo</label>
+      <div class="input error"><span class="ic" data-icon="mail"></span><span class="val">valentina@ejemplo.com</span></div>
+      <div class="help err"><span class="i" data-icon="alert"></span>Ya hay una cuenta con este correo. Inicia sesión.</div>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <div class="input error focus"><span class="ic" data-icon="key"></span><span class="val">•••••••</span><span class="eye" aria-label="Mostrar contraseña"><span data-icon="eye"></span></span></div>
+      <div class="help err"><span class="i" data-icon="alert"></span>Usa de 12 a 128 caracteres (llevas 7). Una frase larga es más segura.</div>
+    </div>
+    <span class="btn btn-disabled">Crear cuenta</span>
+  </div>
+  <div class="guest"><span class="btn btn-ghost">Seguir como invitado</span></div>
+</div>
+<div class="home-indicator"></div>
+</body>
+</html>
