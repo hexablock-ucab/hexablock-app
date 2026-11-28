@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>12 · Victory (Hexa Sort, last level)</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="result.css">
+<script src="hexgrid.js"></script>
+<style>
+  body { --accent: var(--variant-sort);
+    background: radial-gradient(420px 380px at 50% 28%, rgba(255,210,60,0.22), transparent 70%), radial-gradient(520px 360px at 110% -5%, rgba(180,124,255,0.25), transparent 65%), var(--bg); }
+</style>
+</head>
+<body>
+<div style="position:absolute; inset:0; pointer-events:none" data-render="burst"></div>
+<div class="screen">
+  <div class="head">
+    <div class="t-label" style="color:var(--accent)">Hexa Sort · Nivel 10 de 10</div>
+    <div class="t-display" style="font-size:38px">¡Completaste<br>Hexa Sort!</div>
+  </div>
+  <div class="stars-row"><span data-stars="1/1" data-size="64"></span><span data-stars="1/1" data-size="88"></span><span data-stars="1/1" data-size="64"></span></div>
+  <div class="t-body" style="text-align:center; color:var(--text-muted)">3 de 3 estrellas · 27 de 30 en el juego</div>
+
+  <div class="card result">
+    <div class="line"><span class="t-label">Metas</span><span class="v">3 / 3</span></div>
+    <div class="line"><span class="t-label">Movimientos</span><span><span class="v">22</span><span class="ok">≤ 30 ★</span><span class="ok">≤ 24 ★</span></span></div>
+    <div class="line"><span class="t-label">Puntaje</span><span class="v">300</span></div>
+  </div>
+
+  <div class="actions">
+    <span class="btn btn-primary"><span class="ico" data-icon="levels"></span>Ver niveles</span>
+    <div class="row2">
+      <span class="btn btn-secondary"><span class="ico" data-icon="retry"></span>Reintentar</span>
+      <span class="btn btn-ghost"><span class="ico" data-icon="home"></span>Inicio</span>
+    </div>
+  </div>
+</div>
+<div class="home-indicator"></div>
+<script>
+  // Small hexes flying out, like confetti. Fixed positions so the mockup is the same every time.
+  function burst() {
+    const bits = [[40,120,"--tile-cyan",14,-20],[330,96,"--tile-violet",18,15],[300,210,"--tile-yellow",10,30],[70,250,"--tile-green",12,-10],
+                  [24,360,"--tile-red",9,40],[352,330,"--tile-orange",13,-35],[120,64,"--tile-orange",8,10],[262,58,"--tile-green",9,-25],
+                  [196,40,"--tile-red",7,0],[340,430,"--tile-cyan",8,20]];
+    return bits.map(([x, y, c, s, rot]) =>
+      `<svg style="position:absolute; left:${x}px; top:${y}px; transform: rotate(${rot}deg); opacity:0.85" width="${s * 1.8}" height="${s * 2}"><use href="#hx" width="${s * 1.8}" height="${s * 2}" fill="var(${c})"/></svg>`).join("");
+  }
+</script>
+</body>
+</html>

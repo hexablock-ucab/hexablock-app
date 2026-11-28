@@ -7,6 +7,9 @@
     "check:architecture": "node tool/check-architecture.mjs",
     "check:test-names": "node tool/check-test-names.mjs",
     "check:coverage": "node tool/check-coverage.mjs",
+    "check:class-model": "node tool/class-model/generate.mjs --check",
+    "generate:class-model": "node tool/class-model/generate.mjs",
+    "test:tool": "node --test \"tool/**/*.test.mjs\"",
     "sync:levels": "node tool/sync-levels.mjs",
     "check:levels-sync": "node tool/sync-levels.mjs --check"
   },

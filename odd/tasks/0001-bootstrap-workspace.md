@@ -1,10 +1,10 @@
 # 0001 — Bootstrap the Dart workspace on the quality gates
 
-- **Status:** Draft — starts after the team accepts ADR-0002 and ADR-0003
+- **Status:** Draft — ready to start
 - **Owner:** TBD
 - **Branch / PR:** `chore/bootstrap-workspace` · #
 - **Requirements:** C-02, C-05, C-13, C-23, NFR-03
-- **ADRs:** 0002 (Flutter and Dart), 0003 (one package per layer)
+- **ADRs:** 0002 (Flutter and Dart), 0003 (one package per layer), 0007 (local data and view models), 0008 (iOS from a Mac)
 
 ## Objective
 
@@ -77,7 +77,7 @@ node tool/check-coverage.mjs
 
 ## Next step
 
-The team accepts ADR-0002 and ADR-0003; then someone takes this task.
+Someone takes this task. ADR-0002, ADR-0003, ADR-0007 and ADR-0008 are Accepted; the early iOS test installation of ADR-0008 belongs here.
 
 ## Log
 

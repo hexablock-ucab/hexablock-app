@@ -1,0 +1,337 @@
+@startuml class-diagram-hexa-lines
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Variant hexa-lines — every layer, with its «bind» to the generic engine
+
+package "hexablock_engine / variants/hexa_lines" {
+  class HexaLinesEngine << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class HexaLinesFactory << (▲,#D4A300) >> #FFF4C2 {
+    +gameId : GameId {readOnly}
+    -catalog : PieceCatalog {readOnly}
+    -seed : Seed {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    -topology : ITopology {readOnly}
+    -radius : Radius {readOnly}
+    --
+    +createBoard() : Board<ColorId>
+    +createRules() : IGameRules<ColorId, LinesMove, LinesState>
+    +createInitialState(board : Board<ColorId>) : LinesState
+    +createCapabilities(engine : GameEngine<ColorId, LinesMove, LinesState>) : CapabilitySet
+    +createProgressModel() : IProgressModel
+  }
+  class LinesState << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<ColorId> {readOnly}
+    +tray : Tray {readOnly}
+    +score : Score {readOnly}
+    +streak : Streak {readOnly}
+    +source : SeededPieceSource<LinesPiece> {readOnly}
+    +lastTurn : ClearReport [0..1] {readOnly}
+    --
+    +«create» LinesState(board : Board<ColorId>, tray : Tray, score : Score, streak : Streak, source : SeededPieceSource<LinesPiece>, lastTurn : ClearReport [0..1])
+    +canPlace(slot : TraySlot, at : Coordinate) : bool
+    +anyPieceFits() : bool
+    +withPiecePlaced(slot : TraySlot, at : Coordinate) : LinesState
+    +withLinesCleared(clear : LineClear<ColorId>) : LinesState
+    +withPointsAdded(points : Score) : LinesState
+    +withTrayRefilled() : LinesState
+  }
+  class LinesMove << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +slot : TraySlot {readOnly}
+    +at : Coordinate {readOnly}
+    --
+    +«create» LinesMove(slot : TraySlot, at : Coordinate)
+  }
+  class Tray << (▲,#D4A300) Value Object >> #FFF4C2 {
+    -slots : List<LinesPiece?> {readOnly}
+    --
+    +«create» Tray(slots : List<LinesPiece?>)
+    +pieceAt(slot : TraySlot) : LinesPiece [0..1]
+    +offered() : Map<TraySlot, LinesPiece>
+    +taken(slot : TraySlot) : Tray
+    +isEmpty() : bool
+    +refilled(source : SeededPieceSource<LinesPiece>) : TrayRefill
+  }
+  class TrayRefill << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +tray : Tray {readOnly}
+    +source : SeededPieceSource<LinesPiece> {readOnly}
+    --
+    +«create» TrayRefill(tray : Tray, source : SeededPieceSource<LinesPiece>)
+  }
+  class TraySlot << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +index : int {readOnly}
+    --
+    +«create» TraySlot(index : int)
+  }
+  class LinesPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +shape : Shape {readOnly}
+    +color : ColorId {readOnly}
+    --
+    +«create» LinesPiece(shape : Shape, color : ColorId)
+    +cellsAt(anchor : Coordinate) : Set<Coordinate>
+  }
+  class PieceCatalog << (▲,#D4A300) Value Object >> #FFF4C2 {
+    -entries : List<LinesPiece> {readOnly}
+    +/size : int {readOnly}
+    --
+    +«create» PieceCatalog(entries : List<LinesPiece>)
+    +entryAt(index : int) : LinesPiece
+  }
+  class CatalogRecipe << (▲,#D4A300) >> #FFF4C2 {
+    -catalog : PieceCatalog {readOnly}
+    --
+    +draw(random : IRandomSource) : RandomDraw<LinesPiece>
+  }
+  class HexaLinesRules << (▲,#D4A300) >> #FFF4C2 {
+    -scoring : IScoringPolicy<LinesState> {readOnly}
+    -clearRule : LineClearRule<ColorId> {readOnly}
+    --
+    +boardOf(state : LinesState) : Board<ColorId>
+    +validate(state : LinesState, move : LinesMove) : MoveValidation
+    +apply(state : LinesState, move : LinesMove) : LinesState
+    +resolve(state : LinesState) : Resolution<LinesState>
+    +evaluate(state : LinesState) : GameEnd
+    +outcomeOf(state : LinesState) : GameOutcome
+  }
+  class Streak << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +count : int {readOnly}
+    --
+    +«create» Streak(count : int)
+    +extended() : Streak
+    +broken() : Streak
+  }
+  class ClearReport << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +cellsPlaced : int {readOnly}
+    +linesCleared : int {readOnly}
+    --
+    +«create» ClearReport(cellsPlaced : int, linesCleared : int)
+  }
+  class LinesScoringPolicy << (▲,#D4A300) >> #FFF4C2 {
+    --
+    +pointsFor(before : LinesState, after : LinesState) : Score
+  }
+  class LinesCleared << (▲,#D4A300) >> #FFF4C2 {
+    +lines : List<CellLine> {readOnly}
+    +streak : Streak {readOnly}
+    --
+  }
+  class TrayRefilled << (▲,#D4A300) >> #FFF4C2 {
+    +tray : Tray {readOnly}
+    --
+  }
+}
+package "hexablock_adapters / variants/hexa_lines" {
+  class HexaLinesModule << (●,#2F6DB5) >> #DCEBFA {
+    +gameId : GameId {readOnly}
+    +texts : VariantTexts {readOnly}
+    +resumable : IResumableVariant [0..1] {readOnly}
+    -catalog : PieceCatalog {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    -topology : ITopology {readOnly}
+    -codec : LinesStateMapper {readOnly}
+    --
+    +startSession(request : SessionRequest) : Future<PlayableSession>
+    +resumeSession(saved : SavedGame) : PlayableSession
+  }
+  class LinesIntentTranslator << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +toMove(intent : PlayerIntent, state : LinesState) : LinesMove [0..1]
+  }
+  class LinesPresenter << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +present(state : LinesState, phase : PhaseKind) : SessionView
+  }
+  class LinesCatalogMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    -assets : IAssetReader {readOnly}
+    -topology : ITopology {readOnly}
+    --
+    +load() : Future<PieceCatalog>
+  }
+  class LinesStateMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    -topology : ITopology {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    -catalog : PieceCatalog {readOnly}
+    --
+    +encode(state : LinesState) : String
+    +decode(payload : String) : LinesState
+  }
+}
+package "app / variants/hexa_lines" {
+  class LinesCellPainter << (●,#2F6DB5) >> #DCEBFA {
+    --
+    +paint(canvas : Canvas, cell : CellView, outline : Path)
+  }
+}
+package "hexablock_engine / core/engine" {
+  class GameEngine<TCell, TMove, TState> << (▲,#D4A300) >> #FFF4C2
+  interface IGameFactory<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  interface IGameRules<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  class GameAssembler << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/random" {
+  interface IRandomSourceFactory << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/geometry" {
+  interface ITopology << (▲,#D4A300) interface >> #FFF4C2
+  class Coordinate << (▲,#D4A300) Value Object >> #FFF4C2
+  class Shape << (▲,#D4A300) Value Object >> #FFF4C2
+  class CellLine << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/capabilities" {
+  class SeedRecord << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/progress" {
+  class HighScoreProgress << (▲,#D4A300) >> #FFF4C2
+  class Score << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IScoringPolicy<TState> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/board" {
+  class Board<TCell> << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/pieces" {
+  class SeededPieceSource<TPiece> << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IPieceRecipe<TPiece> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/rules" {
+  class LineClear<TCell> << (▲,#D4A300) Value Object >> #FFF4C2
+  class LineClearRule<TCell> << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/levels" {
+  class ColorId << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/events" {
+  abstract class GameEvent << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_application / variants" {
+  interface VariantModule << (■,#7E57C2) interface >> #ECE2F7
+  interface IResumableVariant << (■,#7E57C2) interface >> #ECE2F7
+}
+package "hexablock_adapters / session" {
+  class GameSessionAdapter<TCell, TMove, TState> << (●,#2F6DB5) Adapter >> #DCEBFA
+  interface IIntentTranslator<TMove, TState> << (●,#2F6DB5) interface >> #DCEBFA
+  interface ISessionPresenter<TCell, TState> << (●,#2F6DB5) interface >> #DCEBFA
+  interface IStateCodec<TState> << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_adapters / levels" {
+  interface IAssetReader << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "app / rendering" {
+  interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
+}
+
+hide GameEngine members
+hide IGameFactory members
+hide IRandomSourceFactory members
+hide ITopology members
+hide SeedRecord members
+hide HighScoreProgress members
+hide Board members
+hide Score members
+hide SeededPieceSource members
+hide LineClear members
+hide Coordinate members
+hide Shape members
+hide ColorId members
+hide IPieceRecipe members
+hide IGameRules members
+hide IScoringPolicy members
+hide LineClearRule members
+hide GameEvent members
+hide CellLine members
+hide VariantModule members
+hide IResumableVariant members
+hide GameAssembler members
+hide GameSessionAdapter members
+hide IIntentTranslator members
+hide ISessionPresenter members
+hide IAssetReader members
+hide IStateCodec members
+hide ICellPainter members
+hide CellView members
+HexaLinesEngine ..> GameEngine : <<bind>>\n<TCell -> ColorId, TMove -> LinesMove, TState -> LinesState>
+HexaLinesFactory ..|> IGameFactory : <TCell -> ColorId, TMove -> LinesMove, TState -> LinesState>
+HexaLinesFactory --> "1" PieceCatalog : catalog
+HexaLinesFactory --> "1" IRandomSourceFactory : randomSources
+HexaLinesFactory --> "1" ITopology : topology
+HexaLinesFactory ..> HexaLinesRules : <<create>>
+HexaLinesFactory ..> LinesState : <<create>>
+HexaLinesFactory ..> SeedRecord : <<create>>
+HexaLinesFactory ..> CatalogRecipe : <<create>>
+HexaLinesFactory ..> HighScoreProgress : <<create>>
+LinesState --> "1" Board : board
+LinesState *--> "1" Tray : tray
+LinesState --> "1" Score : score
+LinesState --> "1" Streak : streak
+LinesState --> "1" SeededPieceSource : source
+LinesState --> "0..1" ClearReport : lastTurn
+LinesState ..> LineClear : <<use>>
+LinesMove --> "1" TraySlot : slot
+LinesMove --> "1" Coordinate : at
+Tray o--> "0..3" LinesPiece : slots
+Tray ..> TrayRefill : <<create>>
+TrayRefill --> "1" Tray : tray
+LinesPiece --> "1" Shape : shape
+LinesPiece --> "1" ColorId : color
+PieceCatalog o--> "1..*" LinesPiece : entries
+CatalogRecipe ..|> IPieceRecipe : <TPiece -> LinesPiece>
+CatalogRecipe --> "1" PieceCatalog : catalog
+HexaLinesRules ..|> IGameRules : <TCell -> ColorId, TMove -> LinesMove, TState -> LinesState>
+HexaLinesRules --> "1" IScoringPolicy : scoring
+HexaLinesRules --> "1" LineClearRule : clearRule
+HexaLinesRules ..> LinesCleared : <<create>>
+HexaLinesRules ..> TrayRefilled : <<create>>
+LinesScoringPolicy ..|> IScoringPolicy : <TState -> LinesState>
+LinesCleared --|> GameEvent
+LinesCleared o--> "1..*" CellLine : lines
+TrayRefilled --|> GameEvent
+HexaLinesModule ..|> VariantModule
+HexaLinesModule ..|> IResumableVariant
+HexaLinesModule ..> HexaLinesFactory : <<create>>
+HexaLinesModule ..> GameAssembler : <<use>>
+HexaLinesModule ..> GameSessionAdapter : <<create>>
+HexaLinesModule --> "1" LinesStateMapper : codec
+LinesIntentTranslator ..|> IIntentTranslator : <TMove -> LinesMove, TState -> LinesState>
+LinesPresenter ..|> ISessionPresenter : <TCell -> ColorId, TState -> LinesState>
+LinesCatalogMapper --> "1" IAssetReader : assets
+LinesCatalogMapper ..> PieceCatalog : <<create>>
+LinesStateMapper ..|> IStateCodec : <TState -> LinesState>
+LinesStateMapper --> "1" ITopology : topology
+LinesStateMapper --> "1" IRandomSourceFactory : randomSources
+LinesStateMapper --> "1" PieceCatalog : catalog
+LinesCellPainter ..|> ICellPainter
+LinesCellPainter ..> CellView : <<use>>
+
+note right of HexaLinesFactory : Abstract Factory: concrete factory
+note right of CatalogRecipe : Strategy: concrete strategy
+note right of HexaLinesRules : Strategy: concrete strategy\nStrategy: context
+note right of LinesScoringPolicy : Strategy: concrete strategy
+note right of LinesCellPainter : Strategy: concrete strategy
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

@@ -1,0 +1,676 @@
+{
+  "@@locale": "es",
+  "appTitle": "HexaBlock Suite",
+  "@appTitle": {
+    "description": "App name; not translated."
+  },
+  "gameLines": "Hexa Lines",
+  "@gameLines": {
+    "description": "Variant name; not translated."
+  },
+  "gameFit": "Hexa Fit",
+  "@gameFit": {
+    "description": "Variant name; not translated."
+  },
+  "gameSort": "Hexa Sort",
+  "@gameSort": {
+    "description": "Variant name; not translated."
+  },
+  "gameMerge": "Hexa Merge",
+  "@gameMerge": {
+    "description": "Variant name; not translated."
+  },
+  "actionPlay": "Jugar",
+  "@actionPlay": {
+    "description": "Button on the next level to play."
+  },
+  "actionRetry": "Reintentar",
+  "@actionRetry": {
+    "description": "Button that repeats the attempt."
+  },
+  "actionLevels": "Niveles",
+  "@actionLevels": {
+    "description": "Button that opens level select."
+  },
+  "actionSeeLevels": "Ver niveles",
+  "@actionSeeLevels": {
+    "description": "Primary button after the last level."
+  },
+  "actionHome": "Inicio",
+  "@actionHome": {
+    "description": "Button that goes to the home screen."
+  },
+  "actionNextLevel": "Siguiente nivel",
+  "@actionNextLevel": {
+    "description": "Primary button after a won level."
+  },
+  "actionPlayAgain": "Jugar otra vez",
+  "@actionPlayAgain": {
+    "description": "Primary button after an endless game ends."
+  },
+  "actionRetryLevel": "Reintentar nivel",
+  "@actionRetryLevel": {
+    "description": "Primary button after a lost level."
+  },
+  "actionUndo": "Deshacer",
+  "@actionUndo": {
+    "description": "Undo button and chip."
+  },
+  "actionRedo": "Rehacer",
+  "@actionRedo": {
+    "description": "Redo button (accessibility label)."
+  },
+  "actionRotate": "Girar",
+  "@actionRotate": {
+    "description": "Rotate button (accessibility label)."
+  },
+  "actionPause": "Pausa",
+  "@actionPause": {
+    "description": "Pause button (accessibility label)."
+  },
+  "actionBack": "Atrás",
+  "@actionBack": {
+    "description": "Back button (accessibility label)."
+  },
+  "actionSettings": "Ajustes",
+  "@actionSettings": {
+    "description": "Settings button (accessibility label)."
+  },
+  "actionClose": "Cerrar",
+  "@actionClose": {
+    "description": "Close button (accessibility label)."
+  },
+  "homeSuite": "SUITE",
+  "@homeSuite": {
+    "description": "Under the logo."
+  },
+  "homeContinue": "Continuar",
+  "@homeContinue": {
+    "description": "Label of the card that resumes the last game."
+  },
+  "homeContinueLevel": "{game} · Nivel {level}",
+  "@homeContinueLevel": {
+    "description": "Title of the continue card.",
+    "placeholders": {
+      "game": {
+        "type": "String"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "homeLinesDescription": "Completa líneas en los 3 ejes.",
+  "@homeLinesDescription": {
+    "description": "Card text of Hexa Lines."
+  },
+  "homeFitDescription": "Encaja todas las piezas.",
+  "@homeFitDescription": {
+    "description": "Card text of Hexa Fit."
+  },
+  "homeSortDescription": "Apila y junta 10 iguales.",
+  "@homeSortDescription": {
+    "description": "Card text of Hexa Sort."
+  },
+  "homeMergeDescription": "Suma fichas hasta 2048.",
+  "@homeMergeDescription": {
+    "description": "Card text of Hexa Merge."
+  },
+  "chipBest": "Mejor",
+  "@chipBest": {
+    "description": "Chip label before the best score."
+  },
+  "chipDone": "Hechos",
+  "@chipDone": {
+    "description": "Chip label before levels done, e.g. 6/15."
+  },
+  "chipNew": "Nuevo",
+  "@chipNew": {
+    "description": "Chip of a variant never played."
+  },
+  "noValue": "—",
+  "@noValue": {
+    "description": "Shown instead of a record that does not exist yet."
+  },
+  "versionLabel": "Versión {version}",
+  "@versionLabel": {
+    "description": "Footer and settings.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "levelSelectProgress": "Progreso",
+  "@levelSelectProgress": {
+    "description": "Label of the progress card."
+  },
+  "levelSelectDone": "{done} de {total} niveles",
+  "@levelSelectDone": {
+    "description": "Progress card.",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "levelSelectStars": "{earned} de {total} ★",
+  "@levelSelectStars": {
+    "description": "Stars earned in the variant.",
+    "placeholders": {
+      "earned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "levelLocked": "Nivel {level} bloqueado. Completa el nivel {required} para desbloquearlo.",
+  "@levelLocked": {
+    "description": "Snackbar after tapping a locked level.",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "required": {
+        "type": "int"
+      }
+    }
+  },
+  "levelSelectFitHint": "Cubre toda la figura con las piezas. Gíralas de 60° en 60°; puedes deshacer sin límite.",
+  "@levelSelectFitHint": {
+    "description": "Hint card on Hexa Fit level select."
+  },
+  "levelSelectSortHint": "Coloca cada pila en una celda vacía. 10 fichas del mismo símbolo y color forman una meta.",
+  "@levelSelectSortHint": {
+    "description": "Hint card on Hexa Sort level select."
+  },
+  "statScore": "Puntaje",
+  "@statScore": {
+    "description": "Top bar label."
+  },
+  "statBest": "Mejor",
+  "@statBest": {
+    "description": "Top bar label."
+  },
+  "statMoves": "Movimientos",
+  "@statMoves": {
+    "description": "Top bar label."
+  },
+  "statMovesShort": "Mov.",
+  "@statMovesShort": {
+    "description": "Short chip label."
+  },
+  "statTime": "Tiempo",
+  "@statTime": {
+    "description": "Top bar label."
+  },
+  "statGoals": "Metas",
+  "@statGoals": {
+    "description": "Top bar label in Hexa Sort."
+  },
+  "statStreak": "Racha",
+  "@statStreak": {
+    "description": "Chip in Hexa Lines."
+  },
+  "levelNumber": "Nivel {level}",
+  "@levelNumber": {
+    "description": "Chip with the level number.",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "starTarget": "3★ con ≤ {moves} mov.",
+  "@starTarget": {
+    "description": "Next star threshold (Hexa Sort, Hexa Fit).",
+    "placeholders": {
+      "moves": {
+        "type": "int"
+      }
+    }
+  },
+  "linesComplete": "¡Completa la línea!",
+  "@linesComplete": {
+    "description": "Floating hint in Hexa Lines."
+  },
+  "trayLines": "Piezas · arrastra o toca",
+  "@trayLines": {
+    "description": "Tray label in Hexa Lines."
+  },
+  "fitRemoveHint": "Toca una pieza puesta para devolverla a la bandeja.",
+  "@fitRemoveHint": {
+    "description": "Hint in Hexa Fit."
+  },
+  "fitPiecesLeft": "{count, plural, =1{Queda 1 de {total} piezas} other{Quedan {count} de {total} piezas}}",
+  "@fitPiecesLeft": {
+    "description": "Tray label in Hexa Fit.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "sortNextStack": "Siguiente pila",
+  "@sortNextStack": {
+    "description": "Tray label in Hexa Sort."
+  },
+  "sortTapEmpty": "Toca una celda vacía",
+  "@sortTapEmpty": {
+    "description": "Tray text in Hexa Sort."
+  },
+  "sortCascade": "Cascada · ¡+{count} {color}!",
+  "@sortCascade": {
+    "description": "Toast after a cascade; color is one of the color names.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeSwipe": "Desliza",
+  "@mergeSwipe": {
+    "description": "Tray label in Hexa Merge."
+  },
+  "mergeTarget": "Objetivo",
+  "@mergeTarget": {
+    "description": "Tray label in Hexa Merge."
+  },
+  "mergeRule": "Fichas iguales que chocan se suman.",
+  "@mergeRule": {
+    "description": "Tray text in Hexa Merge."
+  },
+  "mergeReachedTitle": "¡Llegaste a {target}!",
+  "@mergeReachedTitle": {
+    "description": "Banner when the target tile appears.",
+    "placeholders": {
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "mergeReachedBody": "La partida sigue: suma todo lo que puedas.",
+  "@mergeReachedBody": {
+    "description": "Banner body."
+  },
+  "colorRed": "rojo",
+  "@colorRed": {
+    "description": "Tile color."
+  },
+  "colorOrange": "naranja",
+  "@colorOrange": {
+    "description": "Tile color."
+  },
+  "colorYellow": "amarillo",
+  "@colorYellow": {
+    "description": "Tile color."
+  },
+  "colorGreen": "verde",
+  "@colorGreen": {
+    "description": "Tile color."
+  },
+  "colorCyan": "celeste",
+  "@colorCyan": {
+    "description": "Tile color."
+  },
+  "colorViolet": "violeta",
+  "@colorViolet": {
+    "description": "Tile color."
+  },
+  "victoryLevel": "¡Nivel completado!",
+  "@victoryLevel": {
+    "description": "Victory title."
+  },
+  "victorySortDone": "¡Completaste Hexa Sort!",
+  "@victorySortDone": {
+    "description": "Victory title on the last Hexa Sort level."
+  },
+  "victoryFitDone": "¡Completaste Hexa Fit!",
+  "@victoryFitDone": {
+    "description": "Victory title on the last Hexa Fit level."
+  },
+  "victoryStars": "{count, plural, =1{1 de 3 estrellas} other{{count} de 3 estrellas}}",
+  "@victoryStars": {
+    "description": "Under the stars.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "victoryBestOnLevel": "Mejor en este nivel",
+  "@victoryBestOnLevel": {
+    "description": "Result row."
+  },
+  "newRecord": "¡Nuevo récord!",
+  "@newRecord": {
+    "description": "Result row and badge."
+  },
+  "record": "¡Récord!",
+  "@record": {
+    "description": "Short badge."
+  },
+  "resultHeader": "{game} · Nivel {level}",
+  "@resultHeader": {
+    "description": "Kicker above the result title.",
+    "placeholders": {
+      "game": {
+        "type": "String"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "defeatNoSpace": "Sin espacio",
+  "@defeatNoSpace": {
+    "description": "Hexa Lines end title."
+  },
+  "defeatNoSpaceBody": "Ninguna de tus piezas cabe en el tablero.",
+  "@defeatNoSpaceBody": {
+    "description": "Hexa Lines end text."
+  },
+  "defeatBoardFull": "Tablero lleno",
+  "@defeatBoardFull": {
+    "description": "Hexa Sort defeat title."
+  },
+  "defeatBoardFullBody": "{count, plural, =1{No quedan celdas vacías y te faltó 1 meta.} other{No quedan celdas vacías y te faltaron {count} metas.}}",
+  "@defeatBoardFullBody": {
+    "description": "Hexa Sort defeat text.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "defeatNoMoves": "Sin movimientos",
+  "@defeatNoMoves": {
+    "description": "Hexa Merge end title."
+  },
+  "defeatNoMovesBody": "Ningún deslizamiento cambia el tablero.",
+  "@defeatNoMovesBody": {
+    "description": "Hexa Merge end text."
+  },
+  "mergeReachedThisGame": "Llegaste a {target} en esta partida",
+  "@mergeReachedThisGame": {
+    "description": "Badge on the Hexa Merge end screen.",
+    "placeholders": {
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "stampGameOver": "Fin de la partida",
+  "@stampGameOver": {
+    "description": "Stamp over the board."
+  },
+  "stampLevelFailed": "Nivel no superado",
+  "@stampLevelFailed": {
+    "description": "Stamp over the board."
+  },
+  "pauseTitle": "Pausa",
+  "@pauseTitle": {
+    "description": "Pause sheet title."
+  },
+  "pauseStopped": "detenido",
+  "@pauseStopped": {
+    "description": "Next to the stopped time."
+  },
+  "pauseResume": "Seguir jugando",
+  "@pauseResume": {
+    "description": "Primary button."
+  },
+  "pauseRestart": "Reiniciar nivel",
+  "@pauseRestart": {
+    "description": "Secondary button."
+  },
+  "pauseQuit": "Salir",
+  "@pauseQuit": {
+    "description": "Pause menu."
+  },
+  "pauseBackNote": "El botón Atrás del teléfono y el gesto de volver en iPhone abren este menú; nunca sacan de la partida sin preguntar.",
+  "@pauseBackNote": {
+    "description": "Note on the pause sheet."
+  },
+  "pauseHowToPlay": "Cómo jugar",
+  "@pauseHowToPlay": {
+    "description": "Pause menu button that opens the how-to-play modal."
+  },
+  "pauseBoardHidden": "Tablero oculto mientras el reloj está detenido",
+  "@pauseBoardHidden": {
+    "description": "Shown in Hexa Fit instead of the board while paused."
+  },
+  "howToPlayTitle": "Cómo jugar",
+  "@howToPlayTitle": {
+    "description": "Title of the how-to-play modal."
+  },
+  "howToPlayClockPaused": "Reloj en pausa",
+  "@howToPlayClockPaused": {
+    "description": "Chip on the how-to-play modal in Hexa Fit."
+  },
+  "howToPlayGotIt": "Entendido",
+  "@howToPlayGotIt": {
+    "description": "Button that closes the how-to-play modal."
+  },
+  "howToPlayWhen": "Aparece la primera vez que juegas {game} y en Pausa → Cómo jugar.",
+  "@howToPlayWhen": {
+    "description": "Note under the how-to-play modal.",
+    "placeholders": {
+      "game": {
+        "type": "String"
+      }
+    }
+  },
+  "howToFitStep1": "Arrastra una pieza a la figura, o tócala y luego toca una casilla.",
+  "@howToFitStep1": {
+    "description": "Hexa Fit, step 1."
+  },
+  "howToFitStep2": "Gírala con el botón, de 60° en 60°. Toca una pieza puesta para devolverla.",
+  "@howToFitStep2": {
+    "description": "Hexa Fit, step 2."
+  },
+  "howToFitStep3": "Cubre toda la figura, sin huecos ni piezas encimadas.",
+  "@howToFitStep3": {
+    "description": "Hexa Fit, step 3."
+  },
+  "howToFitStars": "1 estrella por ganar, +1 si no pasas los movimientos y +1 si no pasas el tiempo.",
+  "@howToFitStars": {
+    "description": "Hexa Fit, stars."
+  },
+  "howToLinesStep1": "Coloca una de las 3 piezas en un lugar libre donde quepa entera.",
+  "@howToLinesStep1": {
+    "description": "Hexa Lines, step 1."
+  },
+  "howToLinesStep2": "Completa líneas en cualquiera de los 3 ejes para borrarlas y sumar puntos.",
+  "@howToLinesStep2": {
+    "description": "Hexa Lines, step 2."
+  },
+  "howToLinesStep3": "Varias líneas a la vez y jugadas seguidas con línea multiplican el puntaje. Pierdes cuando ninguna pieza cabe.",
+  "@howToLinesStep3": {
+    "description": "Hexa Lines, step 3."
+  },
+  "howToSortStep1": "Toca una casilla vacía para poner la pila de la bandeja.",
+  "@howToSortStep1": {
+    "description": "Hexa Sort, step 1."
+  },
+  "howToSortStep2": "Las fichas iguales de arriba pasan a la pila vecina que tiene más, en cascada.",
+  "@howToSortStep2": {
+    "description": "Hexa Sort, step 2."
+  },
+  "howToSortStep3": "10 fichas iguales juntas cuentan una meta. Cumple las metas antes de llenar el tablero.",
+  "@howToSortStep3": {
+    "description": "Hexa Sort, step 3."
+  },
+  "howToMergeStep1": "Desliza en una de las 6 direcciones: todas las fichas se mueven hasta el borde.",
+  "@howToMergeStep1": {
+    "description": "Hexa Merge, step 1."
+  },
+  "howToMergeStep2": "Dos fichas iguales que chocan se suman en una. Cada fusión suma puntos.",
+  "@howToMergeStep2": {
+    "description": "Hexa Merge, step 2."
+  },
+  "howToMergeStep3": "Llega a 2048 y sigue jugando. Termina cuando ningún deslizamiento cambia el tablero.",
+  "@howToMergeStep3": {
+    "description": "Hexa Merge, step 3."
+  },
+  "leaveTitle": "¿Salir del nivel?",
+  "@leaveTitle": {
+    "description": "Confirmation title."
+  },
+  "leaveLost": "Se pierde este intento: {moves} movimientos y {time}.",
+  "@leaveLost": {
+    "description": "Confirmation text.",
+    "placeholders": {
+      "moves": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveKept": "Tus estrellas y récords anteriores se mantienen.",
+  "@leaveKept": {
+    "description": "Confirmation text."
+  },
+  "leaveConfirm": "Salir sin guardar el intento",
+  "@leaveConfirm": {
+    "description": "Destructive button."
+  },
+  "settingsTitle": "Ajustes",
+  "@settingsTitle": {
+    "description": "Screen title."
+  },
+  "settingsAccount": "Cuenta y progreso",
+  "@settingsAccount": {
+    "description": "Section."
+  },
+  "settingsAccountBody": "Tu progreso se guarda en el teléfono y se sincroniza",
+  "@settingsAccountBody": {
+    "description": "Account row."
+  },
+  "settingsSound": "Sonido",
+  "@settingsSound": {
+    "description": "Section."
+  },
+  "settingsMusic": "Música",
+  "@settingsMusic": {
+    "description": "Row."
+  },
+  "settingsMusicBody": "Música de fondo",
+  "@settingsMusicBody": {
+    "description": "Row subtitle."
+  },
+  "settingsEffects": "Efectos de sonido",
+  "@settingsEffects": {
+    "description": "Row."
+  },
+  "settingsEffectsBody": "Colocar, completar, fusionar",
+  "@settingsEffectsBody": {
+    "description": "Row subtitle."
+  },
+  "settingsDisplay": "Pantalla e idioma",
+  "@settingsDisplay": {
+    "description": "Section."
+  },
+  "settingsLanguage": "Idioma",
+  "@settingsLanguage": {
+    "description": "Row."
+  },
+  "settingsTheme": "Tema",
+  "@settingsTheme": {
+    "description": "Row: dark or light."
+  },
+  "settingsThemeDark": "Oscuro",
+  "@settingsThemeDark": {
+    "description": "Theme option."
+  },
+  "settingsThemeLight": "Claro",
+  "@settingsThemeLight": {
+    "description": "Theme option."
+  },
+  "settingsThemeSystem": "Sistema",
+  "@settingsThemeSystem": {
+    "description": "Theme option that follows the phone."
+  },
+  "settingsGlyphs": "Símbolos en las fichas",
+  "@settingsGlyphs": {
+    "description": "Row: show the glyph of each color."
+  },
+  "settingsGlyphsBody": "Un símbolo por color",
+  "@settingsGlyphsBody": {
+    "description": "Row subtitle."
+  },
+  "settingsAbout": "Acerca de",
+  "@settingsAbout": {
+    "description": "Section."
+  },
+  "settingsCredits": "Créditos y licencias",
+  "@settingsCredits": {
+    "description": "Row."
+  },
+  "settingsCreditsBody": "Fuentes, sonidos y referencias",
+  "@settingsCreditsBody": {
+    "description": "Row subtitle."
+  },
+  "syncUpToDate": "Progreso al día",
+  "@syncUpToDate": {
+    "description": "Home chip."
+  },
+  "syncUpToDateShort": "Al día",
+  "@syncUpToDateShort": {
+    "description": "Settings chip."
+  },
+  "syncSyncing": "Sincronizando…",
+  "@syncSyncing": {
+    "description": "Chip."
+  },
+  "syncOffline": "Sin conexión · guardado en el teléfono",
+  "@syncOffline": {
+    "description": "Chip."
+  },
+  "syncFailed": "No se pudo sincronizar · Reintentar",
+  "@syncFailed": {
+    "description": "Chip; tapping retries."
+  },
+  "syncGuest": "Invitado · inicia sesión para guardar en la nube",
+  "@syncGuest": {
+    "description": "Chip."
+  },
+  "levelsDownloaded": "{count, plural, =1{1 nivel nuevo de {game} descargado.} other{{count} niveles nuevos de {game} descargados.}}",
+  "@levelsDownloaded": {
+    "description": "Banner after sync.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "game": {
+        "type": "String"
+      }
+    }
+  },
+  "levelLoading": "Cargando nivel {level}…",
+  "@levelLoading": {
+    "description": "Loading row.",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "levelsDownloadFailed": "No se pudieron bajar los niveles nuevos. Los que ya tienes siguen disponibles.",
+  "@levelsDownloadFailed": {
+    "description": "Error banner."
+  }
+}

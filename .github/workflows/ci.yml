@@ -30,11 +30,16 @@ jobs:
       - name: Test names
         run: node tool/check-test-names.mjs
 
+      - name: Tool tests
+        run: node --test "tool/**/*.test.mjs"
+
+      - name: Class model and its views agree
+        run: node tool/class-model/generate.mjs --check
+
       # levels/ in hexablock-api is the single source of the levels (team decision of 2026-11-23).
-      # The step warns, without failing the build, when the app's copy differs; it waits until the copy exists.
+      # The build fails when the app's copy differs; the step waits until the copy exists.
       - name: Levels in sync with hexablock-api
         if: hashFiles('app/assets/levels/source.json') != ''
-        continue-on-error: true
         run: node tool/sync-levels.mjs --check
 
       - name: Detect Dart workspace

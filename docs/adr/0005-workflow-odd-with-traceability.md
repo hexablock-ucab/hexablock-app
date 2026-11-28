@@ -1,9 +1,9 @@
 # ADR-0005: Development workflow — ODD with requirement traceability
 
-- **Status:** Proposed — to review in the first team meeting
-- **Date:** 2026-10-28
+- **Status:** Accepted
+- **Date:** 2026-11-25 (proposed 2026-10-28)
 - **Proposed by:** Eduard Velasco
-- **Deciders:** —
+- **Deciders:** Eduard Velasco, Ali Dahouk, Valentina Maza
 - **Requirements:** C-03, C-04, C-10, C-13, C-18, C-27
 
 ## Context

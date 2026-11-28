@@ -1,0 +1,375 @@
+@startuml class-diagram-hexa-sort
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Variant hexa-sort — every layer, with its «bind» to the generic engine
+
+package "hexablock_engine / variants/hexa_sort" {
+  class HexaSortEngine << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class HexaSortFactory << (▲,#D4A300) >> #FFF4C2 {
+    +gameId : GameId {readOnly}
+    -level : SortLevel {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    --
+    +createBoard() : Board<ColorStack>
+    +createRules() : IGameRules<ColorStack, SortMove, SortState>
+    +createInitialState(board : Board<ColorStack>) : SortState
+    +createCapabilities(engine : GameEngine<ColorStack, SortMove, SortState>) : CapabilitySet
+    +createProgressModel() : IProgressModel
+  }
+  class SortLevel << (▲,#D4A300) Entity >> #FFF4C2 {
+    +header : LevelHeader {readOnly}
+    +topology : ITopology {readOnly}
+    +radius : Radius {readOnly}
+    +goal : GoalCount {readOnly}
+    +tray : TrayParams {readOnly}
+    +thresholds : MoveThresholds {readOnly}
+    --
+  }
+  class TrayParams << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +seed : Seed {readOnly}
+    +colors : List<ColorId> {readOnly}
+    +stackSize : StackSizeRange {readOnly}
+    --
+    +«create» TrayParams(seed : Seed, colors : List<ColorId>, stackSize : StackSizeRange)
+  }
+  class StackSizeRange << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +min : int {readOnly}
+    +max : int {readOnly}
+    --
+    +«create» StackSizeRange(min : int, max : int)
+  }
+  class SortLevelBuilder << (▲,#D4A300) >> #FFF4C2 {
+    -topologies : TopologyRegistry {readOnly}
+    -topologyId : TopologyId [0..1]
+    -header : LevelHeader [0..1]
+    -radius : Radius [0..1]
+    -goal : GoalCount [0..1]
+    -tray : TrayParams [0..1]
+    -thresholds : MoveThresholds [0..1]
+    --
+    +withHeader(header : LevelHeader) : SortLevelBuilder
+    +withTopology(id : TopologyId) : SortLevelBuilder
+    +withBoard(radius : Radius) : SortLevelBuilder
+    +withGoal(goal : GoalCount) : SortLevelBuilder
+    +withTray(tray : TrayParams) : SortLevelBuilder
+    +withThresholds(thresholds : MoveThresholds) : SortLevelBuilder
+    +build() : SortLevel
+  }
+  class ColorStack << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +tiles : List<ColorId> {readOnly}
+    +/height : int {readOnly}
+    --
+    +«create» ColorStack(tiles : List<ColorId>)
+    +top() : ColorId
+    +topBlock() : TopBlock
+    +withBlockOnTop(block : TopBlock) : ColorStack
+    +withoutTopBlock() : ColorStack [0..1]
+  }
+  class TopBlock << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +color : ColorId {readOnly}
+    +size : int {readOnly}
+    --
+    +«create» TopBlock(color : ColorId, size : int)
+    +reachesRemoval() : bool
+    +joinedWith(other : TopBlock) : TopBlock
+  }
+  class SortState << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<ColorStack> {readOnly}
+    +offered : ColorStack {readOnly}
+    +source : SeededPieceSource<ColorStack> {readOnly}
+    +goals : GoalCount {readOnly}
+    +moves : MoveCount {readOnly}
+    +score : Score {readOnly}
+    +lastTurn : SortTurn [0..1] {readOnly}
+    --
+    +«create» SortState(board : Board<ColorStack>, offered : ColorStack, source : SeededPieceSource<ColorStack>, goals : GoalCount, moves : MoveCount, score : Score, lastTurn : SortTurn [0..1])
+    +hasEmptyCell() : bool
+    +reaches(goal : GoalCount) : bool
+    +withStackPlaced(at : Coordinate) : SortState
+    +withCascade(result : CascadeResult) : SortState
+    +withPointsAdded(points : Score) : SortState
+  }
+  class SortMove << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +at : Coordinate {readOnly}
+    --
+    +«create» SortMove(at : Coordinate)
+  }
+  class SortTurn << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +removedBlocks : List<TopBlock> {readOnly}
+    --
+    +«create» SortTurn(removedBlocks : List<TopBlock>)
+  }
+  class HexaSortRules << (▲,#D4A300) >> #FFF4C2 {
+    -goal : GoalCount {readOnly}
+    -cascade : CascadeResolver {readOnly}
+    -scoring : IScoringPolicy<SortState> {readOnly}
+    --
+    +boardOf(state : SortState) : Board<ColorStack>
+    +validate(state : SortState, move : SortMove) : MoveValidation
+    +apply(state : SortState, move : SortMove) : SortState
+    +resolve(state : SortState) : Resolution<SortState>
+    +evaluate(state : SortState) : GameEnd
+    +outcomeOf(state : SortState) : GameOutcome
+  }
+  class CascadeResolver << (▲,#D4A300) >> #FFF4C2 {
+    --
+    +resolveFrom(board : Board<ColorStack>, placedAt : Coordinate) : CascadeResult
+  }
+  class CascadeResult << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<ColorStack> {readOnly}
+    +removedBlocks : List<TopBlock> {readOnly}
+    +events : List<GameEvent> {readOnly}
+    --
+    +«create» CascadeResult(board : Board<ColorStack>, removedBlocks : List<TopBlock>, events : List<GameEvent>)
+  }
+  class StackRecipe << (▲,#D4A300) >> #FFF4C2 {
+    -params : TrayParams {readOnly}
+    --
+    +draw(random : IRandomSource) : RandomDraw<ColorStack>
+  }
+  class SortScoringPolicy << (▲,#D4A300) >> #FFF4C2 {
+    --
+    +pointsFor(before : SortState, after : SortState) : Score
+  }
+  class SortLevelProgress << (▲,#D4A300) >> #FFF4C2 {
+    -thresholds : MoveThresholds {readOnly}
+    --
+  }
+  class StackTransferred << (▲,#D4A300) >> #FFF4C2 {
+    +from : Coordinate {readOnly}
+    +to : Coordinate {readOnly}
+    +block : TopBlock {readOnly}
+    --
+  }
+  class BlockRemoved << (▲,#D4A300) >> #FFF4C2 {
+    +at : Coordinate {readOnly}
+    +block : TopBlock {readOnly}
+    --
+  }
+}
+package "hexablock_adapters / variants/hexa_sort" {
+  class HexaSortModule << (●,#2F6DB5) >> #DCEBFA {
+    +gameId : GameId {readOnly}
+    +texts : VariantTexts {readOnly}
+    +resumable : IResumableVariant [0..1] {readOnly}
+    -levels : ILevelDtoSource {readOnly}
+    -levelMapper : SortLevelMapper {readOnly}
+    -randomSources : IRandomSourceFactory {readOnly}
+    --
+    +startSession(request : SessionRequest) : Future<PlayableSession>
+  }
+  class SortIntentTranslator << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +toMove(intent : PlayerIntent, state : SortState) : SortMove [0..1]
+  }
+  class SortPresenter << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +present(state : SortState, phase : PhaseKind) : SessionView
+  }
+  class SortLevelMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    -topologies : TopologyRegistry {readOnly}
+    --
+    +toLevel(dto : LevelDto) : SortLevel
+  }
+}
+package "app / variants/hexa_sort" {
+  class SortCellPainter << (●,#2F6DB5) >> #DCEBFA {
+    --
+    +paint(canvas : Canvas, cell : CellView, outline : Path)
+  }
+}
+package "hexablock_engine / core/engine" {
+  class GameEngine<TCell, TMove, TState> << (▲,#D4A300) >> #FFF4C2
+  interface IGameFactory<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  interface IGameRules<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  class GameAssembler << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/random" {
+  interface IRandomSourceFactory << (▲,#D4A300) interface >> #FFF4C2
+  class Seed << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/capabilities" {
+  class SeedRecord << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/levels" {
+  class LevelHeader << (▲,#D4A300) Value Object >> #FFF4C2
+  class MoveThresholds << (▲,#D4A300) Value Object >> #FFF4C2
+  class ColorId << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/geometry" {
+  interface ITopology << (▲,#D4A300) interface >> #FFF4C2
+  class Radius << (▲,#D4A300) Value Object >> #FFF4C2
+  class TopologyRegistry << (▲,#D4A300) >> #FFF4C2
+  class Coordinate << (▲,#D4A300) Value Object >> #FFF4C2
+  class TopologyId << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/progress" {
+  class GoalCount << (▲,#D4A300) Value Object >> #FFF4C2
+  class MoveCount << (▲,#D4A300) Value Object >> #FFF4C2
+  class Score << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IScoringPolicy<TState> << (▲,#D4A300) interface >> #FFF4C2
+  interface IProgressModel << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/errors" {
+  class InvalidLevelError << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/board" {
+  class Board<TCell> << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/pieces" {
+  class SeededPieceSource<TPiece> << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IPieceRecipe<TPiece> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/events" {
+  abstract class GameEvent << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_application / variants" {
+  interface VariantModule << (■,#7E57C2) interface >> #ECE2F7
+}
+package "hexablock_adapters / session" {
+  class GameSessionAdapter<TCell, TMove, TState> << (●,#2F6DB5) Adapter >> #DCEBFA
+  interface IIntentTranslator<TMove, TState> << (●,#2F6DB5) interface >> #DCEBFA
+  interface ISessionPresenter<TCell, TState> << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_adapters / levels" {
+  interface ILevelDtoSource << (●,#2F6DB5) interface >> #DCEBFA
+  class LevelDto << (●,#2F6DB5) DTO >> #DCEBFA
+}
+package "app / rendering" {
+  interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
+}
+
+hide GameEngine members
+hide IGameFactory members
+hide IRandomSourceFactory members
+hide SeedRecord members
+hide LevelHeader members
+hide ITopology members
+hide Radius members
+hide GoalCount members
+hide MoveThresholds members
+hide Seed members
+hide ColorId members
+hide TopologyRegistry members
+hide InvalidLevelError members
+hide Board members
+hide SeededPieceSource members
+hide MoveCount members
+hide Score members
+hide Coordinate members
+hide IGameRules members
+hide IScoringPolicy members
+hide IPieceRecipe members
+hide IProgressModel members
+hide GameEvent members
+hide VariantModule members
+hide GameAssembler members
+hide GameSessionAdapter members
+hide ILevelDtoSource members
+hide IIntentTranslator members
+hide ISessionPresenter members
+hide TopologyId members
+hide LevelDto members
+hide ICellPainter members
+hide CellView members
+HexaSortEngine ..> GameEngine : <<bind>>\n<TCell -> ColorStack, TMove -> SortMove, TState -> SortState>
+HexaSortFactory ..|> IGameFactory : <TCell -> ColorStack, TMove -> SortMove, TState -> SortState>
+HexaSortFactory --> "1" SortLevel : level
+HexaSortFactory --> "1" IRandomSourceFactory : randomSources
+HexaSortFactory ..> HexaSortRules : <<create>>
+HexaSortFactory ..> SortState : <<create>>
+HexaSortFactory ..> StackRecipe : <<create>>
+HexaSortFactory ..> SeedRecord : <<create>>
+HexaSortFactory ..> SortLevelProgress : <<create>>
+SortLevel --> "1" LevelHeader : header
+SortLevel --> "1" ITopology : topology
+SortLevel --> "1" Radius : radius
+SortLevel --> "1" GoalCount : goal
+SortLevel *--> "1" TrayParams : tray
+SortLevel --> "1" MoveThresholds : thresholds
+TrayParams --> "1" Seed : seed
+TrayParams o--> "2..*" ColorId : colors
+TrayParams --> "1" StackSizeRange : stackSize
+SortLevelBuilder --> "1" TopologyRegistry : topologies
+SortLevelBuilder ..> SortLevel : <<create>>
+SortLevelBuilder ..> InvalidLevelError : <<create>>
+ColorStack o--> "1..*" ColorId : tiles
+ColorStack ..> TopBlock : <<create>>
+TopBlock --> "1" ColorId : color
+SortState --> "1" Board : board
+SortState --> "1" ColorStack : offered
+SortState --> "1" SeededPieceSource : source
+SortState --> "1" GoalCount : goals
+SortState --> "1" MoveCount : moves
+SortState --> "1" Score : score
+SortState --> "0..1" SortTurn : lastTurn
+SortState ..> CascadeResult : <<use>>
+SortMove --> "1" Coordinate : at
+SortTurn o--> "0..*" TopBlock : removedBlocks
+HexaSortRules ..|> IGameRules : <TCell -> ColorStack, TMove -> SortMove, TState -> SortState>
+HexaSortRules --> "1" CascadeResolver : cascade
+HexaSortRules --> "1" IScoringPolicy : scoring
+CascadeResolver ..> CascadeResult : <<create>>
+CascadeResolver ..> StackTransferred : <<create>>
+CascadeResolver ..> BlockRemoved : <<create>>
+CascadeResult --> "1" Board : board
+CascadeResult o--> "0..*" TopBlock : removedBlocks
+StackRecipe ..|> IPieceRecipe : <TPiece -> ColorStack>
+StackRecipe --> "1" TrayParams : params
+SortScoringPolicy ..|> IScoringPolicy : <TState -> SortState>
+SortLevelProgress ..|> IProgressModel
+SortLevelProgress --> "1" MoveThresholds : thresholds
+StackTransferred --|> GameEvent
+BlockRemoved --|> GameEvent
+HexaSortModule ..|> VariantModule
+HexaSortModule ..> HexaSortFactory : <<create>>
+HexaSortModule ..> GameAssembler : <<use>>
+HexaSortModule ..> GameSessionAdapter : <<create>>
+HexaSortModule --> "1" ILevelDtoSource : levels
+HexaSortModule --> "1" SortLevelMapper : levelMapper
+SortIntentTranslator ..|> IIntentTranslator : <TMove -> SortMove, TState -> SortState>
+SortPresenter ..|> ISessionPresenter : <TCell -> ColorStack, TState -> SortState>
+SortLevelMapper --> "1" TopologyRegistry : topologies
+SortLevelMapper ..> SortLevelBuilder : <<create>>
+SortLevelMapper ..> TopologyId : <<create>>
+SortLevelMapper ..> LevelDto : <<use>>
+SortCellPainter ..|> ICellPainter
+SortCellPainter ..> CellView : <<use>>
+
+note right of HexaSortFactory : Abstract Factory: concrete factory
+note right of SortLevelBuilder : Builder: builder
+note right of HexaSortRules : Strategy: concrete strategy\nStrategy: context
+note right of StackRecipe : Strategy: concrete strategy
+note right of SortScoringPolicy : Strategy: concrete strategy
+note right of SortLevelProgress : Strategy: concrete strategy
+note right of SortCellPainter : Strategy: concrete strategy
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml

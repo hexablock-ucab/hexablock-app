@@ -1,0 +1,319 @@
+@startuml class-diagram-hexa-fit
+' Generated from docs/diagrams/class-model.json. Do not edit by hand: edit the model and regenerate.
+!pragma layout smetana
+skinparam dpi 192
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle folder
+skinparam defaultFontName Arial
+skinparam class {
+  FontSize 12
+  AttributeFontSize 11
+}
+skinparam note {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 10
+}
+title Variant hexa-fit — every layer, with its «bind» to the generic engine
+
+package "hexablock_engine / variants/hexa_fit" {
+  class HexaFitEngine << (▲,#D4A300) >> #FFF4C2 {
+    --
+  }
+  class HexaFitFactory << (▲,#D4A300) >> #FFF4C2 {
+    +gameId : GameId {readOnly}
+    -level : FitLevel {readOnly}
+    -clock : Clock {readOnly}
+    --
+    +createBoard() : Board<PieceId>
+    +createRules() : IGameRules<PieceId, FitMove, FitState>
+    +createInitialState(board : Board<PieceId>) : FitState
+    +createCapabilities(engine : GameEngine<PieceId, FitMove, FitState>) : CapabilitySet
+    +createProgressModel() : IProgressModel
+  }
+  class FitLevel << (▲,#D4A300) Entity >> #FFF4C2 {
+    +header : LevelHeader {readOnly}
+    +topology : ITopology {readOnly}
+    +figure : Figure {readOnly}
+    +pieces : List<FitPiece> {readOnly}
+    +par : LevelPar {readOnly}
+    --
+  }
+  class Figure << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +cells : Set<Coordinate> {readOnly}
+    +/area : int {readOnly}
+    --
+    +«create» Figure(cells : Set<Coordinate>)
+  }
+  class FitPiece << (▲,#D4A300) Entity >> #FFF4C2 {
+    +id : PieceId {readOnly}
+    +shape : Shape {readOnly}
+    --
+  }
+  class PieceId << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +value : int {readOnly}
+    --
+    +«create» PieceId(value : int)
+  }
+  class FitState << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<PieceId> {readOnly}
+    +pieces : List<FitPiece> {readOnly}
+    +placements : Map<PieceId, PiecePlacement> {readOnly}
+    +orientations : Map<PieceId, RotationSteps> {readOnly}
+    +moves : MoveCount {readOnly}
+    --
+    +«create» FitState(board : Board<PieceId>, pieces : List<FitPiece>, placements : Map<PieceId, PiecePlacement>, orientations : Map<PieceId, RotationSteps>, moves : MoveCount)
+    +toSnapshot() : FitSnapshot
+    +restoredFrom(snapshot : FitSnapshot) : FitState
+    +isPlaced(piece : PieceId) : bool
+    +freePieces() : List<FitPiece>
+    +isCovered() : bool
+    +canPlace(piece : PieceId, at : Coordinate) : bool
+    +withPlaced(piece : PieceId, at : Coordinate) : FitState
+    +withLifted(piece : PieceId) : FitState
+    +withRotated(piece : PieceId, by : RotationSteps) : FitState
+  }
+  class FitSnapshot << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +board : Board<PieceId> {readOnly}
+    +placements : Map<PieceId, PiecePlacement> {readOnly}
+    +orientations : Map<PieceId, RotationSteps> {readOnly}
+    --
+    +«create» FitSnapshot(board : Board<PieceId>, placements : Map<PieceId, PiecePlacement>, orientations : Map<PieceId, RotationSteps>)
+  }
+  class PiecePlacement << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +at : Coordinate {readOnly}
+    --
+    +«create» PiecePlacement(at : Coordinate)
+  }
+  abstract class FitMove << (▲,#D4A300) >> #FFF4C2 {
+    +piece : PieceId {readOnly}
+    --
+  }
+  class PlaceFitPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +at : Coordinate {readOnly}
+    --
+    +«create» PlaceFitPiece(at : Coordinate)
+  }
+  class RemoveFitPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
+    --
+    +«create» RemoveFitPiece()
+  }
+  class RotateFitPiece << (▲,#D4A300) Value Object >> #FFF4C2 {
+    +by : RotationSteps {readOnly}
+    --
+    +«create» RotateFitPiece(by : RotationSteps)
+  }
+  class HexaFitRules << (▲,#D4A300) >> #FFF4C2 {
+    --
+    +boardOf(state : FitState) : Board<PieceId>
+    +validate(state : FitState, move : FitMove) : MoveValidation
+    +apply(state : FitState, move : FitMove) : FitState
+    +resolve(state : FitState) : Resolution<FitState>
+    +evaluate(state : FitState) : GameEnd
+    +outcomeOf(state : FitState) : GameOutcome
+  }
+  class FitLevelBuilder << (▲,#D4A300) >> #FFF4C2 {
+    -topologies : TopologyRegistry {readOnly}
+    -topologyId : TopologyId [0..1]
+    -header : LevelHeader [0..1]
+    -figureCells : Set<Coordinate>
+    -pieceCells : List<Set<Coordinate>>
+    -par : LevelPar [0..1]
+    --
+    +withHeader(header : LevelHeader) : FitLevelBuilder
+    +withTopology(id : TopologyId) : FitLevelBuilder
+    +withFigure(cells : Iterable<Coordinate>) : FitLevelBuilder
+    +withPiece(cells : Iterable<Coordinate>) : FitLevelBuilder
+    +withPar(par : LevelPar) : FitLevelBuilder
+    +build() : FitLevel
+  }
+  class FitLevelProgress << (▲,#D4A300) >> #FFF4C2 {
+    -par : LevelPar {readOnly}
+    --
+  }
+}
+package "hexablock_adapters / variants/hexa_fit" {
+  class HexaFitModule << (●,#2F6DB5) >> #DCEBFA {
+    +gameId : GameId {readOnly}
+    +texts : VariantTexts {readOnly}
+    +resumable : IResumableVariant [0..1] {readOnly}
+    -levels : ILevelDtoSource {readOnly}
+    -levelMapper : FitLevelMapper {readOnly}
+    -clock : Clock {readOnly}
+    --
+    +startSession(request : SessionRequest) : Future<PlayableSession>
+  }
+  class FitIntentTranslator << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +toMove(intent : PlayerIntent, state : FitState) : FitMove [0..1]
+  }
+  class FitPresenter << (●,#2F6DB5) Adapter >> #DCEBFA {
+    --
+    +present(state : FitState, phase : PhaseKind) : SessionView
+  }
+  class FitLevelMapper << (●,#2F6DB5) Mapper >> #DCEBFA {
+    -topologies : TopologyRegistry {readOnly}
+    --
+    +toLevel(dto : LevelDto) : FitLevel
+  }
+}
+package "app / variants/hexa_fit" {
+  class FitCellPainter << (●,#2F6DB5) >> #DCEBFA {
+    --
+    +paint(canvas : Canvas, cell : CellView, outline : Path)
+  }
+}
+package "hexablock_engine / core/engine" {
+  class GameEngine<TCell, TMove, TState> << (▲,#D4A300) >> #FFF4C2
+  interface IGameFactory<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  interface IGameRules<TCell, TMove, TState> << (▲,#D4A300) interface >> #FFF4C2
+  class GameAssembler << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/time" {
+  interface Clock << (►,#2E8B57) interface >> #DDF2E1
+  class GameStopwatch<TState> << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_engine / core/memento" {
+  class RedoableSnapshotHistory<TState extends ISnapshotable<TState, TSnapshot>, TSnapshot> << (▲,#D4A300) >> #FFF4C2
+  interface ISnapshotable<TSelf, TSnapshot> << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/pieces" {
+  class FixedPieceSource<TPiece> << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/levels" {
+  class LevelHeader << (▲,#D4A300) Value Object >> #FFF4C2
+  class LevelPar << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/geometry" {
+  interface ITopology << (▲,#D4A300) interface >> #FFF4C2
+  class Shape << (▲,#D4A300) Value Object >> #FFF4C2
+  class Coordinate << (▲,#D4A300) Value Object >> #FFF4C2
+  class TopologyRegistry << (▲,#D4A300) >> #FFF4C2
+  class TopologyId << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/board" {
+  class Board<TCell> << (▲,#D4A300) Value Object >> #FFF4C2
+}
+package "hexablock_engine / core/progress" {
+  class MoveCount << (▲,#D4A300) Value Object >> #FFF4C2
+  interface IProgressModel << (▲,#D4A300) interface >> #FFF4C2
+}
+package "hexablock_engine / core/errors" {
+  class InvalidLevelError << (▲,#D4A300) >> #FFF4C2
+}
+package "hexablock_application / variants" {
+  interface VariantModule << (■,#7E57C2) interface >> #ECE2F7
+}
+package "hexablock_adapters / session" {
+  class GameSessionAdapter<TCell, TMove, TState> << (●,#2F6DB5) Adapter >> #DCEBFA
+  interface IIntentTranslator<TMove, TState> << (●,#2F6DB5) interface >> #DCEBFA
+  interface ISessionPresenter<TCell, TState> << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_adapters / levels" {
+  interface ILevelDtoSource << (●,#2F6DB5) interface >> #DCEBFA
+  class LevelDto << (●,#2F6DB5) DTO >> #DCEBFA
+}
+package "app / rendering" {
+  interface ICellPainter << (●,#2F6DB5) interface >> #DCEBFA
+}
+package "hexablock_application / session" {
+  class CellView << (■,#7E57C2) Value Object >> #ECE2F7
+}
+
+hide GameEngine members
+hide IGameFactory members
+hide Clock members
+hide RedoableSnapshotHistory members
+hide GameStopwatch members
+hide FixedPieceSource members
+hide LevelHeader members
+hide ITopology members
+hide LevelPar members
+hide Shape members
+hide ISnapshotable members
+hide Board members
+hide MoveCount members
+hide Coordinate members
+hide IGameRules members
+hide TopologyRegistry members
+hide InvalidLevelError members
+hide IProgressModel members
+hide VariantModule members
+hide GameAssembler members
+hide GameSessionAdapter members
+hide ILevelDtoSource members
+hide IIntentTranslator members
+hide ISessionPresenter members
+hide TopologyId members
+hide LevelDto members
+hide ICellPainter members
+hide CellView members
+HexaFitEngine ..> GameEngine : <<bind>>\n<TCell -> PieceId, TMove -> FitMove, TState -> FitState>
+HexaFitFactory ..|> IGameFactory : <TCell -> PieceId, TMove -> FitMove, TState -> FitState>
+HexaFitFactory --> "1" FitLevel : level
+HexaFitFactory --> "1" Clock : clock
+HexaFitFactory ..> HexaFitRules : <<create>>
+HexaFitFactory ..> FitState : <<create>>
+HexaFitFactory ..> RedoableSnapshotHistory : <<create>>
+HexaFitFactory ..> GameStopwatch : <<create>>
+HexaFitFactory ..> FixedPieceSource : <<create>>
+HexaFitFactory ..> FitLevelProgress : <<create>>
+FitLevel --> "1" LevelHeader : header
+FitLevel --> "1" ITopology : topology
+FitLevel *--> "1" Figure : figure
+FitLevel *--> "1..*" FitPiece : pieces
+FitLevel --> "1" LevelPar : par
+FitPiece --> "1" PieceId : id
+FitPiece --> "1" Shape : shape
+FitState ..|> ISnapshotable : <TSelf -> FitState, TSnapshot -> FitSnapshot>
+FitState --> "1" Board : board
+FitState o--> "1..*" FitPiece : pieces
+FitState o--> "0..*" PiecePlacement : placements
+FitState --> "1" MoveCount : moves
+FitSnapshot --> "1" Board : board
+PiecePlacement --> "1" Coordinate : at
+FitMove --> "1" PieceId : piece
+PlaceFitPiece --|> FitMove
+RemoveFitPiece --|> FitMove
+RotateFitPiece --|> FitMove
+HexaFitRules ..|> IGameRules : <TCell -> PieceId, TMove -> FitMove, TState -> FitState>
+FitLevelBuilder --> "1" TopologyRegistry : topologies
+FitLevelBuilder ..> FitLevel : <<create>>
+FitLevelBuilder ..> Shape : <<create>>
+FitLevelBuilder ..> InvalidLevelError : <<create>>
+FitLevelProgress ..|> IProgressModel
+FitLevelProgress --> "1" LevelPar : par
+HexaFitModule ..|> VariantModule
+HexaFitModule ..> HexaFitFactory : <<create>>
+HexaFitModule ..> GameAssembler : <<use>>
+HexaFitModule ..> GameSessionAdapter : <<create>>
+HexaFitModule --> "1" ILevelDtoSource : levels
+HexaFitModule --> "1" FitLevelMapper : levelMapper
+FitIntentTranslator ..|> IIntentTranslator : <TMove -> FitMove, TState -> FitState>
+FitPresenter ..|> ISessionPresenter : <TCell -> PieceId, TState -> FitState>
+FitLevelMapper --> "1" TopologyRegistry : topologies
+FitLevelMapper ..> FitLevelBuilder : <<create>>
+FitLevelMapper ..> TopologyId : <<create>>
+FitLevelMapper ..> LevelDto : <<use>>
+FitCellPainter ..|> ICellPainter
+FitCellPainter ..> CellView : <<use>>
+
+note right of HexaFitFactory : Abstract Factory: concrete factory
+note right of FitState : Memento: originator
+note right of FitSnapshot : Memento: memento
+note right of HexaFitRules : Strategy: concrete strategy
+note right of FitLevelBuilder : Builder: builder
+note right of FitLevelProgress : Strategy: concrete strategy
+note right of FitCellPainter : Strategy: concrete strategy
+
+legend right
+  <b>Layer</b> (docs/diagrams/README.md)
+  <color:#D4A300>▲</color> domain   <color:#7E57C2>■</color> application
+  <color:#2E8B57>◄</color> input port   <color:#2E8B57>►</color> output port
+  <color:#2F6DB5>●</color> interface adapters and frameworks
+  A class without members belongs to another view.
+  Generated from class-model.json; do not edit by hand.
+endlegend
+@enduml
