@@ -36,6 +36,12 @@ jobs:
       - name: Class model and its views agree
         run: node tool/class-model/generate.mjs --check
 
+      # levels/ in hexablock-api is the single source of the levels (team decision of 2026-11-23).
+      # The build fails when the app's copy differs; the step waits until the copy exists.
+      - name: Levels in sync with hexablock-api
+        if: hashFiles('app/assets/levels/source.json') != ''
+        run: node tool/sync-levels.mjs --check
+
       - name: Detect Dart workspace
         id: detect
         run: echo "present=$([ -f pubspec.yaml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"

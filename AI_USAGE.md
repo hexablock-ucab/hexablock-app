@@ -50,6 +50,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-25 | [Game rules completed with the team decisions of 2026-11-24](#2026-11-25--game-rules-completed-with-the-team-decisions-of-2026-11-24-oddtasks0002-game-rulesmd-pr-13) |
 | 2026-11-25 | [Requirements baseline](#2026-11-25--requirements-baseline-docs-no-task-document) |
 | 2026-11-25 | [ADRs of the app accepted](#2026-11-25--adrs-of-the-app-accepted-oddtasks0006-accept-adrsmd) |
+| 2026-11-24 | [Script that copies the levels from hexablock-api](#2026-11-24--script-that-copies-the-levels-from-hexablock-api-oddtasks0004-sync-levelsmd) |
 
 ### 2026-10-27 to 2026-10-28 — Project foundation: course analysis, repositories, tooling and documentation (setup; no task document)
 
@@ -293,6 +294,21 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 - **Verification:** `node tool/check-architecture.mjs` passes and `tool/architecture-rules.json` parses; a search for "Proposed" leaves only templates, generic instructions and dated history; every cited chapter was checked in the team's library (Martin 2017, ch. 30).
 - **Lessons:** Writing the decisions with their reasons in the team's plan first turned the acceptance into a translation step; the review time goes to the two new ADRs.
 
+### 2026-11-24 — Script that copies the levels from hexablock-api ([odd/tasks/0004-sync-levels.md](odd/tasks/0004-sync-levels.md))
+
+- **Author:** Valentina Maza
+- **Pull request:** #20
+- **Tool / model:** Claude (claude.ai agent session, configured model Claude Opus 5.5).
+- **Task:** Keep the app's copy of the levels equal to `levels/` in hexablock-api, the single source the team chose (FR-04, FR-14, FR-23, C-13).
+- **Prompts (faithful paraphrase; original in Spanish):**
+  - "Yes" (answering the offer to prepare the script that copies the levels to the app and the CI check).
+  - Eduard's review of #20, pasted: the CI must fail when the levels differ, and the script must not delete the whole destination folder.
+- **Result:** `tool/sync-levels.mjs` (copy and `--check`), its tests in `tool/sync-levels.test.mjs`, two npm scripts and a CI step that fails when the copy differs.
+- **Team modifications:** Eduard's review: no `continue-on-error`, and only level files are written or deleted.
+- **Errors and corrections:** The first version printed every file as "missing" on the first copy and a stack trace when the API had no `levels/` folder — detected by running it; it now prints a summary and a one-line message. It also deleted the whole destination folder before copying and only warned in CI — Eduard's review; it now copies only what changed, deletes only stale levels, and the CI step fails.
+- **Verification:** 4 tool tests on temporary folders (first copy, other files kept, only changed and stale levels touched, every difference listed); run against hexablock-api `main`: 25 levels copied, a `README.md` in the folder kept, an extra level reported and then removed.
+- **Lessons:** A script that writes into someone else's folder should touch only what it owns.
+
 ## Critical evaluation
 
 - **Approximate share of code with AI assistance:** TODO (updated at the end of the project).
@@ -314,6 +330,7 @@ Project rules for agents: [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
 | 2026-11-25 | Domain model with seven blocking design defects (anemic states, event type checks, uncheckable invariants, a fifth variant touching shared classes) | `architecture-reviewer` agent | Design |
 | 2026-11-25 | State transitions that needed the points before the scoring policy could compute them | The AI noticed it while applying the review fixes | Design |
 | 2026-11-25 | PlantUML files that did not parse, and PNGs cut at 4096 px | `plantuml -checkonly` and inspection of the PNGs | Tooling |
+| 2026-11-24 | `sync-levels.mjs` deleted the whole destination folder and the CI only warned | Eduard's review of #20 | Tooling |
 - **Impact on productivity and quality:** TODO.
 
 ## Effective prompts
